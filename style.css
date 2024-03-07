@@ -232,7 +232,7 @@ button:focus {
     vertical-align: middle;
 }
 
-span.poke-name {
+span.strongest-name {
     text-decoration: underline;
 }
 
@@ -312,6 +312,44 @@ span.poke-form-name {
     font-weight: bold;
 }
 
+#note {
+    position: fixed;
+    width: 250px;
+    top: 10%;
+    left: 50%;
+    transform: translate(+500px, +75px);
+    z-index: 6;
+}
+@media screen and (max-width: 1520px) {
+    #note { display: none; }
+}
+
+#note-header {
+    margin-bottom: 1em;
+}
+#note-header * {
+    display: inline-block;
+    vertical-align: top;
+    text-decoration: underline;
+    cursor: pointer;
+    margin: 0;
+}
+#note-icon {
+    width: 40px;
+}
+#note-title {
+    width: 150px;
+}
+#note-body {
+    border: 1px solid var(--col-off);
+    border-radius: var(--border-radius);
+    background: WhiteSmoke;
+    padding: 0.5em;
+}
+#note-body p {
+    margin: 0;
+}
+
 .settings-num {
     font-weight: bold;
     font-family: inherit;
@@ -343,7 +381,7 @@ span.poke-form-name {
     width: 0;
     height: 0;
     margin: 0 auto;
-    transform: translateX(+125px);
+    transform: translateX(+100px);
 }
 
 #strongest-button {
@@ -596,6 +634,15 @@ span.poke-form-name {
     text-decoration: underline;
 }
 
+#pokemongo-table td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#pokemongo-table tr > *:nth-child(1) { width: 18%; }
+#pokemongo-table tr > *:nth-child(2) { width: 18%; }
+
 #strongest { display: none; }
 
 #strongest a {
@@ -632,6 +679,10 @@ span.poke-form-name {
 
 #strongest-links a {
     text-decoration: none;
+}
+
+.strongest-link-selected {
+    font-weight: bold;
 }
 
 #strongest-table {

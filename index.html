@@ -10,6 +10,7 @@
     <script src=jquery-3.6.0.min.js></script>
     <script src=pokemon_utils.js></script>
     <script src=index.js></script>
+    <script async data-id="101440934" src="//static.getclicky.com/js"></script>
 </head>
 
 <body>
@@ -39,9 +40,20 @@
     <div id=header>
     </div>
 
+    <div class="left small-text" id=note>
+        <div class=unselectable id=note-header>
+            <img class=unselectable id=note-icon src="imgs/palkia.png">
+            <p class=unselectable id=note-title>note to fellow devs</p>
+        </div>
+        <div class=invisible id=note-body>
+            <p>Hello, did you find some missing or outdated data?<br><br>If you know basic computer science and how to make a PR in GitHub, feel free to <a target=_blank href=https://github.com/javi-b/pokemon-resources>update the repo yourself</a>!<br><br>It's very simple, just 2 scripts to run and a JSON to add manual data (more info in the README).<br><br>...any improvements you make will help all the other users :-) Thank you very much!</p><br>
+            <p class=right>best regards, Javi</p>
+        </div>
+    </div>
+
     <!-- search bar and strongest button -->
     <div class=center>
-        <div id=strongest-button-c><p id=strongest-button class="small-text off">or see the <a id=strongest-link href=#>strongest of each type</a></p></div>
+        <div id=strongest-button-c><p id=strongest-button class="small-text off">or see the <a id=strongest-link href=#>strongest list</a></p></div>
         <p class="center small-text off no-top-m">search a Pokémon name or id...</p>
         <form autocomplete=off>
             <input id=input type=text>

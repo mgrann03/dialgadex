@@ -457,6 +457,9 @@ function GetPokemonForms(pokemon_id) {
             return [ "West_sea", "East_sea" ];
         case 479: // Rotom
             return [ "Normal", "Heat", "Wash", "Frost", "Fan", "Mow" ]
+        case 483: // Dialga
+        case 484: // Palkia
+            return [ "Normal", "Origin" ];
         case 487: // Giratina
             return [ "Altered", "Origin" ];
         case 492: // Shaymin
@@ -466,7 +469,7 @@ function GetPokemonForms(pokemon_id) {
                 "Fighting", "Poison", "Ground", "Flying", "Psychic", "Bug",
                 "Rock", "Ghost", "Dragon", "Dark", "Steel", "Fairy" ];
         case 550: // Basculin
-            return [ "Red_striped", "Blue_striped"];
+            return [ "Red_striped", "Blue_striped", "White_striped" ];
         case 555: // Darmanitan
             return [ "Standard", "Zen",
                 "Galarian_standard", "Galarian_zen" ];
@@ -740,9 +743,11 @@ function GetFormText(pokemon_id, form) {
         case "Douse":
             return form + " Drive";
         case "Red_striped":
-            return "Red-Striped";
+            return "Red-Striped Form";
         case "Blue_striped":
-            return "Blue-Striped";
+            return "Blue-Striped Form";
+        case "White_striped":
+            return "White-Striped Form";
         case "Standard":
             return "Standard Mode";
         case "Zen":
@@ -1047,6 +1052,9 @@ function GetPokemonIconCoords(pokemon_id, form, mega, mega_y) {
     } else if (pokemon_id == 146 && form == "Galarian") { // Moltres
         col = 10, row = 101;
 
+    } else if (pokemon_id == 157 && form == "Hisuian") { // Typhlosion
+        col = 6, row = 102;
+
     } else if (pokemon_id == 199 && form == "Galarian") { // Slowking
         col = 11, row = 101;
 
@@ -1067,11 +1075,18 @@ function GetPokemonIconCoords(pokemon_id, form, mega, mega_y) {
     } else if (pokemon_id == 479 && form == "Mow") { // Rotom
         col = 3, row = 89;
 
+    } else if (pokemon_id == 483 && form == "Origin") { // Dialga
+        col = 9, row = 104;
+    } else if (pokemon_id == 484 && form == "Origin") { // Palkia
+        col = 10, row = 104;
     } else if (pokemon_id == 487 && form == "Origin") { // Giratina
         col = 5, row = 89;
 
     } else if (pokemon_id == 492 && form == "Sky") { // Shaymin
         col = 6, row = 89;
+
+    } else if (pokemon_id == 503 && form == "Hisuian") { // Samurott
+        col = 9, row = 102;
 
     } else if (pokemon_id == 555 && form == "Zen") { // Darmanitan
             col = 9, row = 89;
@@ -1127,6 +1142,9 @@ function GetPokemonIconCoords(pokemon_id, form, mega, mega_y) {
     } else if (pokemon_id == 720 && form == "Unbound") { // Hoopa
         col = 10, row = 94;
 
+    } else if (pokemon_id == 724 && form == "Hisuian") { // Decidueye
+        col = 5, row = 103;
+
     } else if (pokemon_id == 741 && form == "Pompom") { // Oricorio
         col = 8, row = 96;
     } else if (pokemon_id == 741 && form == "Pau") { // Oricorio
@@ -1160,6 +1178,9 @@ function GetPokemonIconCoords(pokemon_id, form, mega, mega_y) {
         col = 0, row = 102;
     } else if (pokemon_id == 898 && form == "Shadow_rider") { // Calyrex
         col = 1, row = 102;
+
+    } else if (pokemon_id == 905 && form == "Therian") { // Enamorus
+        col = 7, row = 103;
 
     } else {
         col = pokemon_id % NUM_COLS;
