@@ -582,8 +582,12 @@ function CheckURLAndAct() {
             let type = params.get("t");
             type = type.charAt(0).toUpperCase()
                 + type.slice(1).toLowerCase();
-            if (POKEMON_TYPES.has(type) || type == "Any") { // if 't' param makes sense...
-                // loads strongest of type
+            
+            if (type == 'Each')
+                LoadStrongest("Each");
+            else if (type == "Any")
+                LoadStrongest("Any");
+            else if (POKEMON_TYPES.has(type))
                 LoadStrongest(type);
 
             return;
@@ -2247,7 +2251,7 @@ function ShowCounters() {
 /**
  * Calls the 'LoadStrongest' function and updates the url accordingly.
  */
-function LoadStrongestAndUpdateURL(type = "any") {
+function LoadStrongestAndUpdateURL(type = "Any") {
 
     if (!finished_loading)
         return false;
@@ -2263,7 +2267,7 @@ function LoadStrongestAndUpdateURL(type = "any") {
  * Loads the list of the strongest pokemon of a specific type in pokemon go.
  * The type can be 'each', 'any' or an actual type.
  */
-function LoadStrongest(type = "any") {
+function LoadStrongest(type = "Any") {
 
     if (!finished_loading)
         return;
@@ -2289,9 +2293,9 @@ function LoadStrongest(type = "any") {
     let strongest_link_each = $("#strongest-links > ul:first() > li:nth-child(2)");
     strongest_link_any.removeClass("strongest-link-selected");
     strongest_link_each.removeClass("strongest-link-selected");
-    if (type == "any")
+    if (type == "Any")
         strongest_link_any.addClass("strongest-link-selected");
-    else if (type == "each")
+    else if (type == "Each")
         strongest_link_each.addClass("strongest-link-selected");
     let links_types = $("#strongest-links-types");
     links_types.empty();
@@ -2326,7 +2330,7 @@ function LoadStrongest(type = "any") {
     let search_mixed =
         $("#strongest input[value='mixed']:checkbox").is(":checked");
 
-    if (type) {
+    if (type != "Each") {
         SetTableOfStrongestOfOneType(search_unreleased, search_mega,
                 search_shadow, search_legendary, search_elite, 
                 search_suboptimal, search_mixed, type);
@@ -2447,18 +2451,15 @@ function SetTableOfStrongestOfEachType(search_unreleased, search_mega,
         }
     }
 
-    // converts strongest map into array and TYPES set into ranks array
+    // converts map into array
     let str_pokemons_array = [];
-    let ranks = [];
     for (const type of POKEMON_TYPES) {
-        if (str_pokemons.has(type)) {
+        if (str_pokemons.has(type))
             str_pokemons_array.push(str_pokemons.get(type));
-            ranks.push(type.toLowerCase());
-        }
     }
 
     // sets table from array
-    SetStrongestTableFromArray(str_pokemons_array, ranks);
+    SetStrongestTableFromArray(str_pokemons_array);
 }
 
 /**
@@ -3042,10 +3043,6 @@ function SetStrongestTableFromArray(str_pokemons, num_rows = null,
     for (let row_i = 0; row_i < num_rows; row_i++) {
 
         if (row_i < str_pokemons.length) {
-
-            let rank = "#" + (row_i + 1);
-            if (ranks && ranks[row_i])
-                rank = ranks[row_i];
 
             const p = str_pokemons[row_i];
 

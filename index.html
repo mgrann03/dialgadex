@@ -10,7 +10,6 @@
     <script src=jquery-3.6.0.min.js></script>
     <script src=pokemon_utils.js></script>
     <script src=index.js></script>
-    <script async data-id="101440934" src="//static.getclicky.com/js"></script>
 </head>
 
 <body>
@@ -206,8 +205,8 @@
         <p class="center small-text off no-bottom-m">select what type's strongest Pokémon you want to see</p>
         <div id=strongest-links class="small-text unselectable">
             <ul>
-                <li><a class="type-text bg-any-type" onclick="LoadStrongestAndUpdateURL()">Each type</a></li>
                 <li><a class="type-text bg-any-type" onclick="LoadStrongestAndUpdateURL('Any')">All types</a></li>
+                <li><a class="type-text bg-any-type" onclick="LoadStrongestAndUpdateURL('Each')">Each type</a></li>
             </ul>
             <ul id=strongest-links-types></ul>
         </div>
