@@ -275,7 +275,7 @@ span.poke-form-name {
 
 #settings {
     position: absolute;
-    width: 200px;
+    width: 250px;
     transform: translate(+10px, -90px);
     background: var(--col-so-off);
     border: 1px solid var(--col-main);

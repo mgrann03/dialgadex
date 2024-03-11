@@ -51,7 +51,10 @@ const METRICS = new Set();
 METRICS.add("ER");
 METRICS.add("EER");
 METRICS.add("TER");
+METRICS.add("DPS");
+METRICS.add("TDO");
 let settings_metric = "EER";
+let settings_metric_exp = 0.775;
 let settings_default_level = 40;
 let settings_strongest_count = 20;
 
@@ -114,6 +117,8 @@ function Main() {
     $("#metric-er").click(function() { SetMetric("ER"); });
     $("#metric-eer").click(function() { SetMetric("EER"); });
     $("#metric-ter").click(function() { SetMetric("TER"); });
+    $("#metric-dps").click(function() { SetMetric("DPS"); });
+    $("#metric-tdo").click(function() { SetMetric("TDO"); });
     $("#lvl-40").click(function() { SetDefaultLevel(40); });
     $("#lvl-50").click(function() { SetDefaultLevel(50); });
 
@@ -254,15 +259,28 @@ function SetMetric(metric) {
     $("#metric-er").removeClass("settings-opt-sel");
     $("#metric-eer").removeClass("settings-opt-sel");
     $("#metric-ter").removeClass("settings-opt-sel");
+    $("#metric-dps").removeClass("settings-opt-sel");
+    $("#metric-tdo").removeClass("settings-opt-sel");
     switch (settings_metric) {
         case "ER":
             $("#metric-er").addClass("settings-opt-sel");
+            settings_metric_exp = 0.75;
             break;
         case "EER":
             $("#metric-eer").addClass("settings-opt-sel");
+            settings_metric_exp = 0.775;
             break;
         case "TER":
             $("#metric-ter").addClass("settings-opt-sel");
+            settings_metric_exp = 0.85;
+            break;
+        case "DPS":
+            $("#metric-dps").addClass("settings-opt-sel");
+            settings_metric_exp = 1.00;
+            break;
+        case "TDO":
+            $("#metric-tdo").addClass("settings-opt-sel");
+            settings_metric_exp = 0.00;
             break;
     }
 
@@ -1428,15 +1446,7 @@ function GetPokemonStrongestMovesetsAgainstEnemy(jb_pkm_obj, mega, mega_y, shado
                 fm_mult, cm_mult, enemy_stats.def, avg_y);
             const tdo = GetTDO(dps, hp, def, avg_y);
             // metrics from Reddit user u/Elastic_Space
-            let rat = 0;
-            if (settings_metric == "ER") {
-                const dps3tdo = Math.pow(dps, 3) * tdo;
-                rat = Math.pow(dps3tdo, 1/4);
-            } else if (settings_metric == "EER") {
-                rat = Math.pow(dps, 0.775) * Math.pow(tdo, 0.225);
-            } else if (settings_metric == "TER") {
-                rat = Math.pow(dps, 0.85) * Math.pow(tdo, 0.15);
-            }
+            const rat = Math.pow(dps, settings_metric_exp) * Math.pow(tdo, 1-settings_metric_exp);
 
             // if the array of movesets isn't full
             // or the current moveset is stronger than the weakest in the array,
@@ -1758,20 +1768,8 @@ function LoadPokemongoTable(jb_pkm_obj, mega, mega_y, stats, max_stats = null) {
             const tdo = GetTDO(dps, hp, def);
             const tdo_sh = GetTDO(dps_sh, hp, def_sh);
             // metrics from Reddit user u/Elastic_Space
-            let rat = 0;
-            let rat_sh = 0;
-            if (settings_metric == "ER") {
-                const dps3tdo = Math.pow(dps, 3) * tdo;
-                const dps3tdo_sh = Math.pow(dps_sh, 3) * tdo_sh;
-                rat = Math.pow(dps3tdo, 1/4);
-                rat_sh = Math.pow(dps3tdo_sh, 1/4);
-            } else if (settings_metric == "EER") {
-                rat = Math.pow(dps, 0.775) * Math.pow(tdo, 0.225);
-                rat_sh = Math.pow(dps_sh, 0.775) * Math.pow(tdo_sh, 0.225);
-            } else if (settings_metric == "TER") {
-                rat = Math.pow(dps, 0.85) * Math.pow(tdo, 0.15);
-                rat_sh = Math.pow(dps_sh, 0.85) * Math.pow(tdo_sh, 0.15);
-            }
+            const rat = Math.pow(dps, settings_metric_exp) * Math.pow(tdo, 1-settings_metric_exp);
+            const rat_sh = Math.pow(dps_sh, settings_metric_exp) * Math.pow(tdo_sh, 1-settings_metric_exp);
 
             // calculates average rating percentages against max stats
             if (max_stats) {
@@ -1779,15 +1777,7 @@ function LoadPokemongoTable(jb_pkm_obj, mega, mega_y, stats, max_stats = null) {
                     max_stats.hp, fm_obj, cm_obj);
                 const max_tdo = GetTDO(max_dps, max_stats.hp, max_stats.def);
                 // metrics from Reddit user u/Elastic_Space
-                let max_rat = 0;
-                if (settings_metric == "ER") {
-                    const max_dps3tdo = Math.pow(max_dps, 3) * max_tdo;
-                    max_rat = Math.pow(max_dps3tdo, 1/4);
-                } else if (settings_metric == "EER") {
-                    max_rat = Math.pow(max_dps, 0.775) * Math.pow(max_tdo, 0.225);
-                } else if (settings_metric == "TER") {
-                    max_rat = Math.pow(max_dps, 0.85) * Math.pow(max_tdo, 0.15);
-                }
+                const max_rat = Math.pow(dps, settings_metric_exp) * Math.pow(tdo, 1-settings_metric_exp);
 
                 rat_pcts_vs_max += rat / max_rat;
                 rat_sh_pcts_vs_max += rat_sh / max_rat;
@@ -2463,132 +2453,6 @@ function SetTableOfStrongestOfEachType(search_unreleased, search_mega,
 }
 
 /**
- * Searches the strongest pokemon of any type and sets the strongest
- * pokemon table with the result.
- */
-function SetTableOfStrongestOfAnyType(search_unreleased, search_mega,
-        search_shadow, search_legendary, search_elite, search_different_type) {
-
-    const num_rows = POKEMON_TYPES.size;
-
-    // array of strongest pokemon and moveset found so far
-    let str_pokemons = [];
-
-    /**
-     * Checks if the strongest moveset of a specific pokemon is
-     * stronger than any of the current strongest pokemons. If it is,
-     * updates the strongest pokemons array.
-     *
-     * The array is sorted every time so that it is always the weakest
-     * pokemon in it that gets replaced.
-     */
-    function CheckIfStronger(jb_pkm_obj, mega, mega_y, shadow) {
-
-        const moveset = GetPokemonStrongestMoveset(jb_pkm_obj,
-                mega, mega_y, shadow, search_elite, search_different_type);
-
-        let is_strong_enough = false;
-
-        if (str_pokemons.length < num_rows) { // if array isn't full...
-
-            if (moveset.rat > 0)
-                is_strong_enough = true;
-
-        } else { // if array isn't empty...
-
-            // if finds something better than worst in array...
-            if (moveset.rat > str_pokemons[0].rat)
-                is_strong_enough = true;
-        }
-
-        if (is_strong_enough) {
-
-            // adds pokemon to array of strongest
-            const str_pokemon = {
-                rat: moveset.rat, id: jb_pkm_obj.id,
-                name: jb_pkm_obj.name, form: jb_pkm_obj.form,
-                mega: mega, mega_y: mega_y, shadow: shadow,
-                fm: moveset.fm, fm_type: moveset.fm_type,
-                fm_is_elite: moveset.fm_is_elite,
-                cm: moveset.cm, cm_type: moveset.cm_type,
-                cm_is_elite: moveset.cm_is_elite
-            };
-
-            if (str_pokemons.length < num_rows)
-                str_pokemons.push(str_pokemon);
-            else
-                str_pokemons[0] = str_pokemon;
-
-            // sorts array
-           str_pokemons.sort(function compareFn(a , b) {
-               return ((a.rat > b.rat) || - (a.rat < b.rat));
-           });
-        }
-    }
-
-    // searches for pokemons...
-
-    for (let id = 1; id <= jb_max_id; id++) {
-
-        const forms = GetPokemonForms(id);
-        const def_form = forms[0];
-
-        let jb_pkm_obj = jb_pkm.find(entry =>
-                entry.id == id && entry.form == def_form);
-
-        // checks whether pokemon should be skipped
-        // (not released or legendary when not allowed)
-        if (!jb_pkm_obj || !search_unreleased && !jb_pkm_obj.released
-                || !search_legendary && jb_pkm_obj.class) {
-            continue;
-        }
-
-        const can_be_shadow = jb_pkm_obj.shadow;
-        const can_be_mega = jb_pkm_obj.mega;
-
-        // default form
-        CheckIfStronger(jb_pkm_obj, false, false, false);
-
-        // shadow (except not released when it shouldn't)
-        if (search_shadow && can_be_shadow
-                && !(!search_unreleased && !jb_pkm_obj.shadow_released)) {
-            CheckIfStronger(jb_pkm_obj, false, false, true);
-        }
-
-        // mega(s)
-        if (search_mega && can_be_mega) {
-            CheckIfStronger(jb_pkm_obj, true, false, false);
-            if (id == 6 || id == 150) // charizard and mewtwo
-                CheckIfStronger(jb_pkm_obj, true, true, false);
-        }
-
-        // other forms
-        for (let form_i = 1; form_i < forms.length; form_i++) {
-
-            jb_pkm_obj = jb_pkm.find(entry =>
-                    entry.id == id && entry.form == forms[form_i]);
-
-            // checks whether pokemon should be skipped (form not released)
-            if (!jb_pkm_obj || !search_unreleased && !jb_pkm_obj.released)
-                continue;
-
-            CheckIfStronger(jb_pkm_obj, false, false, false);
-            // other forms and shadow (except not released when it shouldn't)
-            if (search_shadow && can_be_shadow
-                    && !(!search_unreleased && !jb_pkm_obj.shadow_released)) {
-                CheckIfStronger(jb_pkm_obj, false, false, true);
-            }
-        }
-    }
-
-    // reverses strongest pokemon array
-    str_pokemons.reverse();
-
-    // sets table from array
-    SetStrongestTableFromArray(str_pokemons, null, num_rows);
-}
-
-/**
  * Searches the strongest pokemon of a specific type and sets the strongest
  * pokemon table with the result.
  * 
@@ -2871,15 +2735,7 @@ function GetPokemonStrongestMovesets(jb_pkm_obj, mega, mega_y, shadow,
                 
                 const tdo = GetTDO(dps, hp, def);
                 // metrics from Reddit user u/Elastic_Space
-                let rat = 0;
-                if (settings_metric == "ER") {
-                    const dps3tdo = Math.pow(dps, 3) * tdo;
-                    rat = Math.pow(dps3tdo, 1/4);
-                } else if (settings_metric == "EER") {
-                    rat = Math.pow(dps, 0.775) * Math.pow(tdo, 0.225);
-                } else if (settings_metric == "TER") {
-                    rat = Math.pow(dps, 0.85) * Math.pow(tdo, 0.15);
-                }
+                const rat = Math.pow(dps, settings_metric_exp) * Math.pow(tdo, 1-settings_metric_exp);
 
                 // summary of this moveset and its rating
                 const cur_moveset = {
@@ -2998,15 +2854,7 @@ function GetPokemonStrongestMoveset(jb_pkm_obj, mega, mega_y, shadow,
             const dps = GetDPS(types, atk, def, hp, fm_obj, cm_obj);
             const tdo = GetTDO(dps, hp, def);
             // metrics from Reddit user u/Elastic_Space
-            let rat = 0;
-            if (settings_metric == "ER") {
-                const dps3tdo = Math.pow(dps, 3) * tdo;
-                rat = Math.pow(dps3tdo, 1/4);
-            } else if (settings_metric == "EER") {
-                rat = Math.pow(dps, 0.775) * Math.pow(tdo, 0.225);
-            } else if (settings_metric == "TER") {
-                rat = Math.pow(dps, 0.85) * Math.pow(tdo, 0.15);
-            }
+            const rat = Math.pow(dps, settings_metric_exp) * Math.pow(tdo, 1-settings_metric_exp);
 
             // checks whether this moveset is stronger than current strongest,
             // if it is, overrides the previous strongest
