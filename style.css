@@ -702,3 +702,5 @@ span.poke-form-name {
 #strongest-table tr > *:nth-child(5) { width: 15%; }
 
 #legend { display: none; }
+
+sup { vertical-align: top; }

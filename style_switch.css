@@ -1,0 +1,107 @@
+/* Copyright - 2024 namecho (Diff) 
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Source: https://uiverse.io/namecho/quiet-panther-93
+
+Some modifications made to suit this application
+*/
+
+.switch {
+    --button-width: 36px;
+    --button-height: 16px;
+    --toggle-diameter: 12px;
+    --button-toggle-offset: calc((var(--button-height) - var(--toggle-diameter)) / 2);
+    --toggle-shadow-offset: 10px;
+    --toggle-wider: 1em;
+    --color-grey: #c0c0c0;
+    --color-green: #4296f4;
+    --color-disabled-border: #a0a0a0;
+    --label-spacing: 6px;
+    --disable-border-width: 1px;
+}
+
+.slider {
+    display: inline-block;
+    width: var(--button-width);
+    height: var(--button-height);
+    background-color: var(--color-grey);
+    border-radius: calc(var(--button-height) / 2);
+    position: relative;
+    -webkit-transition: 0.3s all ease-in-out;
+    transition: 0.3s all ease-in-out;
+}
+
+.slider::after {
+    content: "";
+    display: inline-block;
+    width: var(--toggle-diameter);
+    height: var(--toggle-diameter);
+    background-color: #fff;
+    border-radius: calc(var(--toggle-diameter) / 2);
+    position: absolute;
+    top: var(--button-toggle-offset);
+    -webkit-transform: translateX(var(--button-toggle-offset));
+        -ms-transform: translateX(var(--button-toggle-offset));
+            transform: translateX(var(--button-toggle-offset));
+    -webkit-box-shadow: var(--toggle-shadow-offset) 0 calc(var(--toggle-shadow-offset) * 4) rgba(0, 0, 0, 0.1);
+            box-shadow: var(--toggle-shadow-offset) 0 calc(var(--toggle-shadow-offset) * 4) rgba(0, 0, 0, 0.1);
+    -webkit-transition: 0.3s all ease-in-out;
+    transition: 0.3s all ease-in-out;
+}
+
+.switch input[type="checkbox"]:checked + .slider {
+    background-color: var(--color-green);
+}
+
+.switch input[type="checkbox"]:disabled + .slider {
+    background-color: transparent;
+    border: var(--disable-border-width) solid var(--color-disabled-border);
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+.switch input[type="checkbox"]:disabled + .slider:after {
+    background-color: transparent;
+    border: var(--disable-border-width) solid var(--color-disabled-border);
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    top: calc(var(--button-toggle-offset) - var(--disable-border-width));
+    left: calc(-1*var(--disable-border-width));
+    transition: none;
+    -webkit-transition: none;
+}
+
+.switch input[type="checkbox"]:checked + .slider::after {
+    -webkit-transform: translateX(calc(var(--button-width) - var(--toggle-diameter) - var(--button-toggle-offset)));
+        -ms-transform: translateX(calc(var(--button-width) - var(--toggle-diameter) - var(--button-toggle-offset)));
+            transform: translateX(calc(var(--button-width) - var(--toggle-diameter) - var(--button-toggle-offset)));
+    -webkit-box-shadow: calc(var(--toggle-shadow-offset) * -1) 0 calc(var(--toggle-shadow-offset) * 4) rgba(0, 0, 0, 0.1);
+            box-shadow: calc(var(--toggle-shadow-offset) * -1) 0 calc(var(--toggle-shadow-offset) * 4) rgba(0, 0, 0, 0.1);
+}
+
+.switch input[type="checkbox"] {
+    display: none;
+}
+
+.switch input[type="checkbox"]:active + .slider::after {
+    width: var(--toggle-wider);
+}
+
+.switch input[type="checkbox"]:checked:active + .slider::after {
+    -webkit-transform: translateX(calc(var(--button-width) - var(--toggle-wider) - var(--button-toggle-offset)));
+        -ms-transform: translateX(calc(var(--button-width) - var(--toggle-wider) - var(--button-toggle-offset)));
+            transform: translateX(calc(var(--button-width) - var(--toggle-wider) - var(--button-toggle-offset)));
+}
+
+.switch .labeltext {
+    line-height: var(--button-height);
+    padding-inline-start: var(--label-spacing);
+    vertical-align: top;
+}

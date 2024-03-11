@@ -6,6 +6,7 @@
     <title>Palkiadex</title>
     <link rel="icon" type="image/ico" href="favicon.ico"/>
     <link rel="stylesheet" href="style_general.css">
+    <link rel="stylesheet" href="style_switch.css">
     <link rel="stylesheet" href="style.css">
     <script src=jquery-3.6.0.min.js></script>
     <script src=pokemon_utils.js></script>
@@ -31,7 +32,7 @@
                         <span id=lvl-40 class="settings-opt settings-opt-sel unselectable">40</span>
                         <span id=lvl-50 class="settings-opt unselectable">50</span></li>
                     <li id=settings-showstrongest>Show strongest
-                        <input type="number" id=strongest-count class="settings-num" value="20" min="20" max="50" step="10"></li>
+                        <input type="number" id=strongest-count class="settings-num" value="20" min="20" max="100" step="10"></li>
                     <!--<li>Pkm sprites → 3DS POGO</li>-->
                 </ul>
             </div>
@@ -204,7 +205,7 @@
 
     <!-- strongest pokemon section -->
     <div id=strongest>
-        <p class="center small-text off no-bottom-m">select what type's strongest Pokémon you want to see</p>
+        <!--<p class="center small-text off no-bottom-m">select what type's strongest Pokémon you want to see</p>-->
         <div id=strongest-links class="small-text unselectable">
             <ul>
                 <li><a class="type-text bg-any-type" onclick="LoadStrongestAndUpdateURL('Any')">All types</a></li>
@@ -217,39 +218,47 @@
             <div width=100% class=center id=strongest-title></div>
             <div id=strongest-filters class="small-text filters-nowrap">
                 <div class="filters-box" id=pokemon-filters>
-                    <label>
+                    <label class="switch">
                         <input type=checkbox value=unreleased unchecked>
-                        Unreleased
+                        <span class="slider"></span>
+                        <span class="labeltext">Unreleased</span>
                     </label>
-                    <label>
+                    <label class="switch">
                         <input type=checkbox value=mega checked>
-                        Mega and Primal
+                        <span class="slider"></span>
+                        <span class="labeltext">Mega or Primal</span>
                     </label>
-                    <label>
+                    <label class="switch">
                         <input type=checkbox value=shadow checked>
-                        Shadow
+                        <span class="slider"></span>
+                        <span class="labeltext">Shadow</span>
                     </label>
-                    <label>
+                    <label class="switch">
                         <input type=checkbox value=legendary checked>
-                        Legendary, Mythical and Ultrabeast
+                        <span class="slider"></span>
+                        <span class="labeltext">Legendary, Mythical and Ultrabeast</span>
                     </label>
                 </div>
                 <div class="filters-box" id=move-filters>
-                    <label>
+                    <label class="switch">
                         <input type=checkbox value=elite checked>
-                        Elite moves
+                        <span class="slider"></span>
+                        <span class="labeltext">Elite moves</span>
                     </label>
-                    <label>
+                    <label class="switch">
                         <input type=checkbox value=suboptimal id=chk-suboptimal unchecked>
-                        Suboptimal moves
+                        <span class="slider"></span>
+                        <span class="labeltext">Suboptimal moves</span>
                     </label>
-                    <label class="opt-indent">
+                    <label class="switch opt-indent">
                         <input type=checkbox value=grouped id=chk-grouped checked disabled>
-                        Display grouped
+                        <span class="slider"></span>
+                        <span class="labeltext">Display grouped</span>
                     </label>
-                    <label>
-                        <input type=checkbox value=mixed id=chk-mixed unchecked>
-                        Mixed movesets<sup>&dagger;</sup>
+                    <label class="switch">
+                        <input type=checkbox value=mixed id=chk-mixed checked>
+                        <span class="slider"></span>
+                        <span class="labeltext">Mixed movesets<sup>&dagger;</sup></span>
                     </label>
                 </div>
             </div>
