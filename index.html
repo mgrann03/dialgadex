@@ -7,6 +7,7 @@
     <link rel="icon" type="image/ico" href="favicon.ico"/>
     <link rel="stylesheet" href="style_general.css">
     <link rel="stylesheet" href="style_switch.css">
+    <link rel="stylesheet" href="style_togglebutton.css">
     <link rel="stylesheet" href="style.css">
     <script src=jquery-3.6.0.min.js></script>
     <script src=pokemon_utils.js></script>
@@ -215,7 +216,18 @@
         </div>
         <br>
         <div id=strongest-header>
-            <div width=100% class=center id=strongest-title></div>
+            <div width=100% class=center id=strongest-title>
+                <span>Strongest Pokemon </span>
+                <input type='checkbox' class='toggling' value='versus' id='chk-versus' unchecked>
+                <label class='togglebutton' for='chk-versus'>
+                    <div class='action'>
+                        <span class='option-1'>of</span>
+                        <span class='option-2'>vs</span>
+                    </div>
+                </label>
+                <span id="strongest-type-title"></span>
+                <span> type</span>
+            </div>
             <div id=strongest-filters class="small-text filters-nowrap">
                 <div class="filters-box" id=pokemon-filters>
                     <label class="switch">

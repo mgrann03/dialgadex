@@ -148,6 +148,18 @@ function Main() {
         $("#chk-grouped").prop("disabled", !this.checked);
     })
 
+    $("#chk-versus").change(function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        if (this.checked && urlParams.has('t') 
+            && urlParams.get('t') != 'Each' && urlParams.get('t') != 'Any') {
+            urlParams.set('v', '');
+        }
+        else if (urlParams.has('v')) urlParams.delete('v');
+        
+        window.history.pushState({}, "", "?" + urlParams.toString().replace(/=(?=&|$)/gm, ''));
+    });
+
     $("#strongest :checkbox").change(function() {
         //LoadStrongest();
         CheckURLAndAct();
@@ -592,6 +604,9 @@ function CheckURLAndAct() {
 
     // if url has 'strongest' param...
     if (params.has("strongest")) {
+
+        // preserve versus param
+         $("#chk-versus").prop("checked", params.has("v") == true);
 
         // if url has 't' param...
         if (params.has("t")) {
@@ -2249,6 +2264,7 @@ function LoadStrongestAndUpdateURL(type = "Any") {
     LoadStrongest(type);
 
     let url = "?strongest&t=" + type;
+    if ($("#chk-versus").prop("checked")) url += '&v';
 
     window.history.pushState({}, "", url);
 }
@@ -2296,10 +2312,21 @@ function LoadStrongest(type = "Any") {
                 + "\")'>" + t + "</a></li>");
     }
 
+    // Handle logic for "versus"
+    const versus_chk = $("#strongest input[value='versus']:checkbox");
+    if (type == "Any" || type == "Each") { // disabled if not a specific type
+        versus_chk.prop("checked", false);
+        versus_chk.prop("disabled", true);
+    }
+    else {
+        versus_chk.prop("disabled", false);
+    }
+    let search_versus = versus_chk.is(":checked");
+
     // sets titles
     let title = "Strongest Pokémon of " + type + " type";
     document.title = title + " - Palkiadex"; // page title
-    $("#strongest-title").text(title); // table title
+    $("#strongest-type-title").text(type);
 
     // removes previous table rows
     $("#strongest-table tr:not(.table-header)").remove();
@@ -2323,7 +2350,7 @@ function LoadStrongest(type = "Any") {
     if (type != "Each") {
         SetTableOfStrongestOfOneType(search_unreleased, search_mega,
                 search_shadow, search_legendary, search_elite, 
-                search_suboptimal, search_mixed, type);
+                search_suboptimal, search_mixed, type, search_versus);
     } else {
         SetTableOfStrongestOfEachType(search_unreleased, search_mega,
                 search_shadow, search_legendary, search_elite, search_mixed);
@@ -2461,7 +2488,7 @@ function SetTableOfStrongestOfEachType(search_unreleased, search_mega,
  */
 function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
         search_shadow, search_legendary, search_elite, 
-        search_suboptimal, search_mixed, type = null) {
+        search_suboptimal, search_mixed, type = null, versus = false) {
 
     const num_rows = settings_strongest_count;
 
@@ -2481,7 +2508,7 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
         // Consider max 5 best movesets per pokemon
         let moveset_count = (search_suboptimal) ? 5 : 1; 
         const types_movesets = GetPokemonStrongestMovesets(jb_pkm_obj,
-                mega, mega_y, shadow, search_elite, moveset_count, type, search_mixed);
+                mega, mega_y, shadow, search_elite, moveset_count, type, search_mixed, versus);
         
         if (!types_movesets.has(type))
             return;
@@ -2625,7 +2652,7 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
  * type is neutral.
  */
 function GetPokemonStrongestMovesets(jb_pkm_obj, mega, mega_y, shadow,
-        search_elite, moveset_count, search_type = null, search_mixed = false) {
+        search_elite, moveset_count, search_type = null, search_mixed = false, versus = false) {
 
     let types_movesets = new Map();
 
@@ -2662,6 +2689,11 @@ function GetPokemonStrongestMovesets(jb_pkm_obj, mega, mega_y, shadow,
     const all_fms = fms.concat(elite_fms);
     const all_cms = cms.concat(elite_cms);
 
+    let atk_mult_map;
+    if (versus) {
+        atk_mult_map = GetTypesEffectivenessAgainstTypes([search_type]);
+    }
+
     // searches for the moveset
 
     for (fm of all_fms) {
@@ -2677,8 +2709,9 @@ function GetPokemonStrongestMovesets(jb_pkm_obj, mega, mega_y, shadow,
             continue;
 
         // checks that fm type matches the type searched
-        // (if search type isn't specified, any type goes)
-        if (search_type && search_type != "Any" && 
+        // if search type isn't specified, any type goes
+        // if checking "versus", any type goes
+        if (search_type && search_type != "Any" && !versus &&
             fm_obj.type != search_type && !search_mixed)
             continue;
 
@@ -2695,13 +2728,14 @@ function GetPokemonStrongestMovesets(jb_pkm_obj, mega, mega_y, shadow,
                 continue;
 
             // checks that cm type matches the type searched
-            // (if search type isn't specified, any type goes)
-            if (search_type && search_type != "Any" && 
+            // if search type isn't specified, any type goes
+            // if checking "versus", any type goes
+            if (search_type && search_type != "Any" && !versus && 
                 cm_obj.type != search_type && !search_mixed)
                 continue;
 
             // ensure at least one type matches if mixing
-            if (search_type && search_type != "Any" &&
+            if (search_type && search_type != "Any" && !versus &&
                 search_mixed && fm_obj.type != search_type && cm_obj.type != search_type)
                 continue;
 
@@ -2721,19 +2755,61 @@ function GetPokemonStrongestMovesets(jb_pkm_obj, mega, mega_y, shadow,
             // calculates the data
             for (let mt of moves_types) {
                 let dps;
+                let tdo;
+
+                // use appropriate multipliers if searching "versus"
+                if (versus) {
+                    let fm_mult = GetEffectivenessMultOfType(atk_mult_map, fm_obj.type);
+                    let cm_mult = GetEffectivenessMultOfType(atk_mult_map, cm_obj.type);
+                    
+                    if (jb_pkm_obj.name == 'Terrakion'){
+                        console.log("Here");
+                    }
+
+                    let def_types = jb_pkm_obj.types;
+                    if (mega) {
+                        def_types = jb_pkm_obj.mega[0].types;
+                    }
+                    if (mega_y) {
+                        def_types = jb_pkm_obj.mega[1].types;
+                    }
+                    const def_mult_map = GetTypesEffectivenessAgainstTypes(def_types);
+                    const defense_mult = GetEffectivenessMultOfType(def_mult_map, search_type);
+
+                    /*
+                    // use traditional dps in simple scenarios, to keep EER consistent
+                    if (fm_mult == cm_mult && fm_mult == 1.60) {
+                        dps = GetDPS(types, atk, def, hp, 
+                            fm_obj, cm_obj);
+                    }
+                    else { // use mixed logic otherwise
+                        dps = GetDPS(types, atk, def, hp, 
+                            fm_obj, cm_obj,
+                            fm_mult, cm_mult) / 1.6;
+                    }
+
+                    tdo = GetTDO(dps, hp, def, 1550/def) / (defense_mult * 1.6);
+                    */
+                    const y_est = 900/def*defense_mult;
+                    dps = GetDPS(types, atk, def, hp, 
+                        fm_obj, cm_obj,
+                        fm_mult, cm_mult, null, y_est);
+                    tdo = GetTDO(dps, hp, def, y_est);
+                }
                 // non-mixed or "anything-goes" searches use traditional dps
-                if (fm_obj.type == cm_obj.type || search_type == "Any") {
+                else if (fm_obj.type == cm_obj.type || search_type == "Any") {
                     dps = GetDPS(types, atk, def, hp, 
                         fm_obj, cm_obj);
+                    tdo = GetTDO(dps, hp, def);
                 }
                 else { // mixed movesets scale based on search type (super-effective mult)
                     dps = GetDPS(types, atk, def, hp, 
                         fm_obj, cm_obj,
                         (fm_obj.type == mt && search_mixed) ? 1.60 : 1,
                         (cm_obj.type == mt && search_mixed) ? 1.60 : 1) / 1.60;
+                    tdo = GetTDO(dps, hp, def);
                 }
                 
-                const tdo = GetTDO(dps, hp, def);
                 // metrics from Reddit user u/Elastic_Space
                 const rat = Math.pow(dps, settings_metric_exp) * Math.pow(tdo, 1-settings_metric_exp);
 
