@@ -26,6 +26,13 @@ Some modifications made to suit this application
     --disable-border-width: 1px;
 }
 
+#settings .switch {
+    --button-width: 24px;
+    --button-height: 12px;
+    --toggle-diameter: 10px;
+    vertical-align: middle;
+}
+
 .slider {
     display: inline-block;
     width: var(--button-width);

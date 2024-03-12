@@ -53,7 +53,7 @@ button:focus {
 #strongest-table td.td-poke-name { 
     font-weight: bold; 
     text-align: left;
-    padding-left: 10%;
+    /*padding-left: 5%;*/
     vertical-align: middle;
 }
 #strongest-table tr.suboptimal td.td-poke-name { 
@@ -73,7 +73,7 @@ button:focus {
     font-size: 90%;
 }
 #strongest-table tr.suboptimal.grouped td.td-poke-name { 
-    padding-left: 12%; 
+    padding-left: 2%; 
 }
 #strongest-table tr.suboptimal.grouped .pokemon-icon { 
     background-image: none !important; 
@@ -275,8 +275,8 @@ span.poke-form-name {
 
 #settings {
     position: absolute;
-    width: 250px;
-    transform: translate(+10px, -90px);
+    width: 265px;
+    transform: translate(+10px, 0px);
     background: var(--col-so-off);
     border: 1px solid var(--col-main);
     border-radius: var(--border-radius);
@@ -302,6 +302,10 @@ span.poke-form-name {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+
+#settings span {
+    margin: 0 2px 0 2px;
 }
 
 .settings-opt {
@@ -654,7 +658,7 @@ span.poke-form-name {
 #strongest-header {
     background-color: var(--col-so-off);
     margin: 0;
-    padding: 0.25em 0;
+    padding: 0.25em 0 1em 0;
 }
 
 #strongest-links {
@@ -696,12 +700,39 @@ span.poke-form-name {
     padding-bottom: 0;
 }
 
-#strongest-table tr > *:nth-child(1) { width: 5%; }
-#strongest-table tr > *:nth-child(2) { width: 50%; }
+#strongest-table tr > *:nth-child(1) { width: 10%; }
+#strongest-table tr > *:nth-child(2) { width: 35%; }
 #strongest-table tr > *:nth-child(3) { width: 15%; }
 #strongest-table tr > *:nth-child(4) { width: 15%; }
 #strongest-table tr > *:nth-child(5) { width: 15%; }
+#strongest-table tr > *:nth-child(6) { width: 10%; }
+
+#strongest-table tr > *:nth-child(5):last-child { width: 25%; }
 
 #legend { display: none; }
 
 sup { vertical-align: top; }
+
+sup.xl { 
+    font-size: 60%;
+    color: var(--col-off);
+}
+
+.bar-bg {
+    background-color: var(--col-so-off);
+    margin: 5px;
+    border: 1px solid var(--col-dark-bg);
+    box-sizing: content-box;
+}
+
+.bar-fg {
+    background-color: var(--col-light);
+    text-align: left;
+    box-sizing: content-box;
+}
+
+.bar-txt {
+    color: inherit;
+    font-size: 0.8em;
+    margin: 2px 2px 2px 4px;
+}

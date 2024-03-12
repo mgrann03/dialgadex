@@ -4,14 +4,10 @@
     --col-main: White;
     --col-off: Grey;
     --col-so-off: #343434;
-    --col-light: SteelBlue;
     --col-alt-bg: #222;
-    /* dark colors */
-    --col-dark-bg: SlateGrey;
-    --col-dark-main: Snow;
-    --col-shadow: DarkMagenta;
-    /* general */
-    --border-radius: 2px;
+
+    --col-bar-bg: #606060;
+    --col-bar-fg: #1c497d;
 }
 
 .darkmode .table-bg tr:nth-of-type(odd):not(.table-header) { background-color: var(--col-alt-bg); }
@@ -46,9 +42,9 @@
 }
 
 .darkmode .switch {
-    --color-handle: #aaa;
-    --color-grey: #606060;
-    --color-green: #1c497d;
+    --color-handle: #bbb;
+    --color-grey: var(--col-bar-bg);
+    --color-green: var(--col-bar-fg);
 }
 
 .darkmode #strongest-header {
@@ -68,4 +64,22 @@
 
 .darkmode span.strongest-name {
     text-decoration: none;
+}
+
+.darkmode #note-body p:not(:last-child) {
+    margin-bottom: 1em;
+}
+
+
+.darkmode .bar-bg {
+    background-color: transparent;
+    border: 0px;
+}
+
+.darkmode .bar-fg {
+    background-color: var(--col-bar-fg);
+}
+
+.darkmode .suboptimal .bar-fg {
+    background-color: #0f3057;
 }

@@ -57,7 +57,9 @@ METRICS.add("Custom");
 let settings_metric = "EER";
 let settings_metric_exp = 0.775;
 let settings_default_level = 40;
+let settings_xl_budget = false;
 let settings_strongest_count = 20;
+let settings_compare = "top";
 
 // global variables
 
@@ -120,9 +122,14 @@ function Main() {
     $("#metric-ter").click(function() { SetMetric("TER"); });
     $("#metric-dps").click(function() { SetMetric("DPS"); });
     $("#metric-tdo").click(function() { SetMetric("TDO"); });
-    $("#lvl-40").click(function() { SetDefaultLevel(40); });
-    $("#lvl-50").click(function() { SetDefaultLevel(50); });
+    $("#lvl-40").click(function() { SetDefaultLevel(40, false); });
+    $("#lvl-50").click(function() { SetDefaultLevel(50, false); });
+    $("#lvl-xl-budget").click(function() { SetDefaultLevel(40, true); });
     $("#dps-exp").change(function() { SetMetric("Custom"); });
+    
+    $("#cmp-top").click(function() { SetCompare("top"); });
+    $("#cmp-budget").click(function() { SetCompare("budget"); });
+    $("#cmp-espace").click(function() { SetCompare("ESpace"); });
 
     $("#note-icon").click(function() { ToggleNote(); });
     $("#note-title").click(function() { ToggleNote(); });
@@ -337,20 +344,25 @@ function SetMetric(metric) {
 /**
  * Sets the default level setting and, if necessary, updates the page accordingly.
  */
-function SetDefaultLevel(level) {
+function SetDefaultLevel(level, xl_budget = false) {
 
     if (level != 40 && level != 50)
         return;
 
-    // sets global variable
+    // sets global variables
     settings_default_level = level;
+    settings_xl_budget = xl_budget;
 
     // sets settings options selected class
     $("#lvl-40").removeClass("settings-opt-sel");
     $("#lvl-50").removeClass("settings-opt-sel");
+    $("#lvl-xl-budget").removeClass("settings-opt-sel");
     switch (level) {
         case 40:
-            $("#lvl-40").addClass("settings-opt-sel");
+            if (xl_budget) 
+                $("#lvl-xl-budget").addClass("settings-opt-sel");
+            else
+                $("#lvl-40").addClass("settings-opt-sel");
             break;
         case 50:
             $("#lvl-50").addClass("settings-opt-sel");
@@ -386,6 +398,33 @@ function SetStrongestCount(count) {
 
     // sets global variable
     settings_strongest_count = count;
+
+    // reload page
+    CheckURLAndAct();
+}
+
+/**
+ * Sets the pokemon used for comparison in "percentage" bars
+ */
+function SetCompare(compareTo = "top") {
+    // sets global variable
+    settings_compare = compareTo;
+
+    $("#cmp-top").removeClass("settings-opt-sel");
+    $("#cmp-budget").removeClass("settings-opt-sel");
+    $("#cmp-espace").removeClass("settings-opt-sel");
+    
+    switch (compareTo) {
+        case "top":
+            $("#cmp-top").addClass("settings-opt-sel");
+            break;
+        case "budget":
+            $("#cmp-budget").addClass("settings-opt-sel");
+            break;
+        case "ESpace":
+            $("#cmp-espace").addClass("settings-opt-sel");
+            break;
+    }
 
     // reload page
     CheckURLAndAct();
@@ -721,8 +760,11 @@ function LoadPokemon(clean_input, form = "def", mega = false,
         form = GetPokemonDefaultForm(pokemon_id);
 
     // sets the default level
-    if (level == null)
+    if (level == null) {
         level = settings_default_level;
+        if (jb_pkm.find(e=>e.id == pokemon_id).class == undefined && settings_xl_budget)
+            level = 50;
+    }
     
     // sets level input value
     $("#input-lvl").val(level);
@@ -1000,8 +1042,11 @@ function LoadPokemongo(pokemon_id, form, mega, mega_y, level, ivs) {
  */
 function GetPokemonStats(jb_pkm_obj, mega, mega_y, level = null, ivs = null) {
 
-    if (!level)
+    if (!level) {
         level = settings_default_level;
+        if (settings_xl_budget && !jb_pkm_obj.class)
+            level = 50;
+    }
     if (!ivs)
         ivs = { atk: 15, def: 15, hp: 15 };
 
@@ -2434,7 +2479,7 @@ function SetTableOfStrongestOfEachType(search_unreleased, search_mega,
                 const str_pokemon = {
                     rat: moveset.rat, id: jb_pkm_obj.id,
                     name: jb_pkm_obj.name, form: jb_pkm_obj.form,
-                    mega: mega, mega_y: mega_y, shadow: shadow,
+                    mega: mega, mega_y: mega_y, shadow: shadow, class: jb_pkm_obj.class,
                     fm: moveset.fm, fm_is_elite: moveset.fm_is_elite, fm_type: moveset.fm_type,
                     cm: moveset.cm, cm_is_elite: moveset.cm_is_elite, cm_type: moveset.cm_type
                 };
@@ -2566,7 +2611,7 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
                 const str_pokemon = {
                     rat: moveset.rat, id: jb_pkm_obj.id,
                     name: jb_pkm_obj.name, form: jb_pkm_obj.form,
-                    mega: mega, mega_y: mega_y, shadow: shadow,
+                    mega: mega, mega_y: mega_y, shadow: shadow, class: jb_pkm_obj.class,
                     fm: moveset.fm, fm_is_elite: moveset.fm_is_elite, fm_type: moveset.fm_type,
                     cm: moveset.cm, cm_is_elite: moveset.cm_is_elite, cm_type: moveset.cm_type
                 };
@@ -2646,6 +2691,20 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
     const display_grouped =
         $("#strongest input[value='grouped']:checkbox").is(":checked") && search_suboptimal;
     
+    let top_compare;
+    const best_mon = str_pokemons[0].rat;
+    switch (settings_compare) {
+        case "top":
+            top_compare = best_mon;
+            break;
+        case "budget":
+            top_compare = str_pokemons.find(e => e.class == undefined && !e.shadow && !e.mega).rat;
+            break;
+        case "ESpace":
+            top_compare = str_pokemons.find(e => !(e.class == undefined && e.shadow) && !e.mega && !e.mega_y).rat;
+            break;
+    }
+
     // re-order array based on the optimal movesets of each pokemon
     if (display_grouped) {
         let str_pokemons_optimal = new Map(); // map of top movesets per mon
@@ -2655,20 +2714,31 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
             const pok_uniq_id = str_pok.id + "-" + str_pok.form + "-" + str_pok.mega + "-" + str_pok.mega_y + "-" + str_pok.shadow;
             if (!str_pokemons_optimal.has(pok_uniq_id)) {
                 // array was already sorted, so first instance of mon is strongest
-                str_pokemons_optimal.set(pok_uniq_id, rat_order);
+                str_pokemons_optimal.set(pok_uniq_id, [rat_order, str_pok.rat]);
                 str_pok.grouped_rat = rat_order;
+                str_pok.pct = 100 * str_pok.rat / top_compare;
+                str_pok.pct_display = str_pok.pct;
                 rat_order++;
             }
             // map all instances of this mon to the same "grouped" ranking
-            str_pok.grouped_rat = str_pokemons_optimal.get(pok_uniq_id);
+            const gp_compare = str_pokemons_optimal.get(pok_uniq_id);
+            str_pok.grouped_rat = gp_compare[0];
+            str_pok.pct = 100 * str_pok.rat / gp_compare[1];
+            str_pok.pct_display = str_pok.pct;
         }
 
         // re-sort by grouped ranking, then individual moveset rank
         str_pokemons.sort((a,b) => a.grouped_rat - b.grouped_rat || b.rat - a.rat);
     }
+    else {
+        for (let str_pok of str_pokemons) {
+            str_pok.pct = 100.0 * str_pok.rat / top_compare;
+            str_pok.pct_display = str_pok.pct * (top_compare / best_mon);
+        }
+    }
 
     // sets table from array
-    SetStrongestTableFromArray(str_pokemons, num_rows, display_grouped, true, true);
+    SetStrongestTableFromArray(str_pokemons, num_rows, display_grouped, true, true, true, (best_mon / top_compare));
 }
 
 /**
@@ -2983,7 +3053,7 @@ function GetPokemonStrongestMoveset(jb_pkm_obj, mega, mega_y, shadow,
  * there will be as many rows as pokemon in the array.
  */
 function SetStrongestTableFromArray(str_pokemons, num_rows = null, 
-    display_grouped = false, display_numbered = false, highlight_suboptimal = false) {
+    display_grouped = false, display_numbered = false, highlight_suboptimal = false, show_pct = false, best_pct = 1.0) {
 
     if (!num_rows)
         num_rows = str_pokemons.length;
@@ -3001,6 +3071,7 @@ function SetStrongestTableFromArray(str_pokemons, num_rows = null,
             const can_be_mega_y = p.id == 6 || p.id == 150; 
             const primal = p.mega && (p.id == 382 || p.id == 383);
             const form_text = GetFormText(p.id, p.form);
+            const legendary = p.class !== undefined;
 
             const tr = $("<tr></tr>");
             if (display_grouped) 
@@ -3036,6 +3107,7 @@ function SetStrongestTableFromArray(str_pokemons, num_rows = null,
                 + ((p.mega && can_be_mega_y)
                     ? ((p.mega_y) ? " Y" : " X") : "")
                 +"</span>"
+                + ((!legendary && settings_xl_budget) ? "<sup class='xl'>XL</sup>" : "")
                 + ((form_text.length > 0)
                     ? "<span class=poke-form-name> (" + form_text + ")</span>" 
                     : "")
@@ -3049,12 +3121,19 @@ function SetStrongestTableFromArray(str_pokemons, num_rows = null,
                 + p.cm + ((p.cm_is_elite) ? "*" : "") + "</span></td>";
             const td_rat = "<td>" + settings_metric + " <b>"
                 + p.rat.toFixed(2) + "</b></td>";
+            const td_pct = ((show_pct) ? "<td>" 
+                + "<div class='bar-bg' style='width: " + (100 / best_pct) + "%;'>"
+                + "<div class='bar-fg' style='width: calc(" + p.pct + "% - 10px);'>"
+                + "<span class='bar-txt'>"
+                + p.pct.toFixed(1) + "%</td>"
+                + "</span></div></div>" : "");
 
             tr.append(td_rank);
             tr.append(td_name);
             tr.append(td_fm);
             tr.append(td_cm);
             tr.append(td_rat);
+            tr.append(td_pct);
 
             $("#strongest-table").append(tr);
 
