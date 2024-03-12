@@ -2693,16 +2693,22 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
     
     let top_compare;
     const best_mon = str_pokemons[0].rat;
-    switch (settings_compare) {
-        case "top":
+    try {
+        switch (settings_compare) {
+            case "top":
+                top_compare = best_mon;
+                break;
+            case "budget":
+                top_compare = str_pokemons.find(e => e.class == undefined && !e.shadow && !e.mega).rat;
+                break;
+            case "ESpace":
+                top_compare = str_pokemons.find(e => !(e.class !== undefined && e.shadow) && !e.mega && !e.mega_y).rat;
+                break;
+        }
+    }
+    catch (err) {
+        if (!top_compare) 
             top_compare = best_mon;
-            break;
-        case "budget":
-            top_compare = str_pokemons.find(e => e.class == undefined && !e.shadow && !e.mega).rat;
-            break;
-        case "ESpace":
-            top_compare = str_pokemons.find(e => !(e.class == undefined && e.shadow) && !e.mega && !e.mega_y).rat;
-            break;
     }
 
     // re-order array based on the optimal movesets of each pokemon
