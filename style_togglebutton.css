@@ -20,8 +20,8 @@ label.togglebutton {
     cursor: pointer;
     user-select: none;
     border-radius: 5px;
-    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-    color: black;
+    /*box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;*/
+    color: inherit;
 }
 
 input.toggling:disabled + label.togglebutton {

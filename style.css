@@ -48,7 +48,7 @@ button:focus {
 }
 
 .table-bg th { background-color: var(--col-so-off); }
-.table-bg tr:nth-child(even) { background-color: WhiteSmoke; }
+.table-bg tr:nth-child(even) { background-color: var(--col-alt-bg); }
 
 #strongest-table td.td-poke-name { 
     font-weight: bold; 
@@ -343,7 +343,7 @@ span.poke-form-name {
 #note-body {
     border: 1px solid var(--col-off);
     border-radius: var(--border-radius);
-    background: WhiteSmoke;
+    background: var(--col-alt-bg);
     padding: 0.5em;
 }
 #note-body p {
@@ -354,6 +354,7 @@ span.poke-form-name {
     font-weight: bold;
     font-family: inherit;
     font-size: inherit;
+    color: inherit;
     outline: none;
     border: none;
     background: none;
@@ -578,7 +579,7 @@ span.poke-form-name {
 #counters-outline {
     border: 1px solid var(--col-off);
     border-radius: var(--border-radius);
-    background: WhiteSmoke;
+    background: var(--col-alt-bg);
 }
 
 #counters table {

@@ -124,7 +124,10 @@ function Main() {
 
     $("#note-icon").click(function() { ToggleNote(); });
     $("#note-title").click(function() { ToggleNote(); });
-    $("#strongest-count").change(function() { SetStrongestCount($("#strongest-count").val()); });
+    $("#strongest-count").change(function() { 
+        SetStrongestCount(this.value); 
+        this.style.width = (this.value.length + 2) + "ch";
+    });
 
     $("#stats-form").submit(function(e) {
         UpdatePokemonStatsAndURL();
@@ -684,7 +687,7 @@ function LoadPokemon(clean_input, form = "def", mega = false,
     // sets the page title
     const pokemon_name = jb_names[pokemon_id].name;
     document.title = "#" + pokemon_id + " " + pokemon_name
-            + " - Palkiadex";
+            + " - DialgaDex";
 
     // sets the default form
     if (form == "def")
@@ -2325,7 +2328,7 @@ function LoadStrongest(type = "Any") {
 
     // sets titles
     let title = "Strongest Pokémon of " + type + " type";
-    document.title = title + " - Palkiadex"; // page title
+    document.title = title + " - DialgaDex"; // page title
     $("#strongest-type-title").text(type);
 
     // removes previous table rows

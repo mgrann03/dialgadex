@@ -1,0 +1,71 @@
+.darkmode {
+    /* light colors */
+    --col-bg: #0b0b28;
+    --col-main: White;
+    --col-off: Grey;
+    --col-so-off: #343434;
+    --col-light: SteelBlue;
+    --col-alt-bg: #222;
+    /* dark colors */
+    --col-dark-bg: SlateGrey;
+    --col-dark-main: Snow;
+    --col-shadow: DarkMagenta;
+    /* general */
+    --border-radius: 2px;
+}
+
+.darkmode .table-bg tr:nth-of-type(odd):not(.table-header) { background-color: var(--col-alt-bg); }
+.darkmode .table-bg tr:nth-of-type(even):not(.table-header) { background-color: var(--col-so-off); }
+
+.darkmode .type-text { 
+    text-shadow: 1px 1px 2px black;
+    /*text-transform: uppercase;*/
+}
+.darkmode #strongest-table .type-text { 
+    text-transform: none;
+}
+.darkmode .bg-Dark { background-color: rgb(56, 44, 36); }
+
+.darkmode .ascii-bar { color: #aaa; }
+
+.darkmode input { 
+    color: inherit;
+    background-color: var(--col-so-off);
+}
+
+.darkmode #suggestions {
+    background-color: rgba(20,20,20,0.8);
+}
+
+.darkmode .selected-suggestion {
+    background-color: rgba(255,255,255,0.1);
+}
+
+.darkmode label.togglebutton {
+    background-color: #505050;
+}
+
+.darkmode .switch {
+    --color-handle: #aaa;
+    --color-grey: #606060;
+    --color-green: #1c497d;
+}
+
+.darkmode #strongest-header {
+    border-radius: 20px 20px 0 0;
+}
+
+.darkmode .table-bg th:first-child {
+    border-radius: 20px 0 0 0;
+}
+.darkmode .table-bg th:last-child {
+    border-radius: 0 20px 0 0;
+}
+
+.darkmode #input[type="text"] {
+    font-size: 1.5em;
+}
+
+.darkmode span.strongest-name {
+    text-decoration: none;
+}

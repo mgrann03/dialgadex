@@ -18,6 +18,7 @@ Some modifications made to suit this application
     --button-toggle-offset: calc((var(--button-height) - var(--toggle-diameter)) / 2);
     --toggle-shadow-offset: 10px;
     --toggle-wider: 1em;
+    --color-handle: #fff;
     --color-grey: #c0c0c0;
     --color-green: #4296f4;
     --color-disabled-border: #a0a0a0;
@@ -41,7 +42,7 @@ Some modifications made to suit this application
     display: inline-block;
     width: var(--toggle-diameter);
     height: var(--toggle-diameter);
-    background-color: #fff;
+    background-color: var(--color-handle);
     border-radius: calc(var(--toggle-diameter) / 2);
     position: absolute;
     top: var(--button-toggle-offset);
