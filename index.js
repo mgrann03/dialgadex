@@ -53,6 +53,7 @@ METRICS.add("EER");
 METRICS.add("TER");
 METRICS.add("DPS");
 METRICS.add("TDO");
+METRICS.add("Custom");
 let settings_metric = "EER";
 let settings_metric_exp = 0.775;
 let settings_default_level = 40;
@@ -121,6 +122,7 @@ function Main() {
     $("#metric-tdo").click(function() { SetMetric("TDO"); });
     $("#lvl-40").click(function() { SetDefaultLevel(40); });
     $("#lvl-50").click(function() { SetDefaultLevel(50); });
+    $("#dps-exp").change(function() { SetMetric("Custom"); });
 
     $("#note-icon").click(function() { ToggleNote(); });
     $("#note-title").click(function() { ToggleNote(); });
@@ -264,12 +266,32 @@ function SwapSettingsStatus() {
  */
 function SetMetric(metric) {
 
-    if (!METRICS.has(metric) || metric == settings_metric)
+    if (!METRICS.has(metric))
         return;
-
+    
     // sets global variable
     settings_metric = metric;
 
+    if (metric == "Custom") {
+        settings_metric_exp = parseFloat($("#dps-exp").val());
+        switch (settings_metric_exp) {
+            case 0.75:
+                settings_metric = "ER";
+                break;
+            case 0.775:
+                settings_metric = "EER";
+                break;
+            case 0.85:
+                settings_metric = "TER";
+                break;
+            case 1.0:
+                settings_metric = "DPS";
+                break;
+            case 0.0:
+                settings_metric = "TDO";
+                break;
+        }
+    }
     // sets settings options selected class
     $("#metric-er").removeClass("settings-opt-sel");
     $("#metric-eer").removeClass("settings-opt-sel");
@@ -297,7 +319,12 @@ function SetMetric(metric) {
             $("#metric-tdo").addClass("settings-opt-sel");
             settings_metric_exp = 0.00;
             break;
+        case "Custom":
+            settings_metric_exp = parseFloat($("#dps-exp").val());
+            break;
     }
+    
+    $("#dps-exp").val(settings_metric_exp.toFixed(3));
 
     // sets pokemongo table header
     $("#table-metric-header").html(settings_metric);
