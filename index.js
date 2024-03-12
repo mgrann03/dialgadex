@@ -2764,10 +2764,6 @@ function GetPokemonStrongestMovesets(jb_pkm_obj, mega, mega_y, shadow,
                 if (versus) {
                     let fm_mult = GetEffectivenessMultOfType(atk_mult_map, fm_obj.type);
                     let cm_mult = GetEffectivenessMultOfType(atk_mult_map, cm_obj.type);
-                    
-                    if (jb_pkm_obj.name == 'Terrakion'){
-                        console.log("Here");
-                    }
 
                     let def_types = jb_pkm_obj.types;
                     if (mega) {
