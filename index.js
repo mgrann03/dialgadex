@@ -3129,7 +3129,7 @@ function SetStrongestTableFromArray(str_pokemons, num_rows = null,
                 + p.rat.toFixed(2) + "</b></td>";
             const td_pct = ((show_pct) ? "<td>" 
                 + "<div class='bar-bg' style='width: " + (100 / best_pct) + "%;'>"
-                + "<div class='bar-fg' style='width: calc(" + p.pct + "% - 10px);'>"
+                + "<div class='bar-fg" + ((Math.abs(p.pct - 100) < 0.000001) ? " bar-compare" : "") + "' style='width: calc(" + p.pct + "% - 10px);'>"
                 + "<span class='bar-txt'>"
                 + p.pct.toFixed(1) + "%</td>"
                 + "</span></div></div>" : "");

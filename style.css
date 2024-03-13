@@ -735,4 +735,9 @@ sup.xl {
     color: inherit;
     font-size: 0.8em;
     margin: 2px 2px 2px 4px;
+    text-shadow: 1px 1px 2px black;
+}
+
+.bar-compare .bar-txt {
+    color: var(--col-contrast);
 }
