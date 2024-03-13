@@ -197,20 +197,22 @@
             </div>
             <p class="center" id="movesets-title"></p>
             <table class=table-bg id=pokemongo-table>
-                <tr class=table-header>
-                    <th>Fast<br>Move</th>
-                    <th>Charged<br>Move</th>
-                    <th>DPS</th>
-                    <th>DPS<br>(Shadow)</th>
-                    <th>TDO</th>
-                    <th>TDO<br>(Shadow)</th>
-                    <th id=table-metric-header class=sortable onclick=SortPokemongoTable(6)>
-                        EER <span class=th-triangle>▿</span>
-                    </th>
-                    <th id=table-metric-header-sh>EER<br>(Shadow)</th>
-                </tr>
+                <thead>
+                    <tr class=table-header>
+                        <th>Fast<br>Move</th>
+                        <th>Charged<br>Move</th>
+                        <th>DPS</th>
+                        <th>DPS<br>(Shadow)</th>
+                        <th>TDO</th>
+                        <th>TDO<br>(Shadow)</th>
+                        <th id=table-metric-header class=sortable onclick=SortPokemongoTable(6)>
+                            EER <span class=th-triangle>▿</span>
+                        </th>
+                        <th id=table-metric-header-sh>EER<br>(Shadow)</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
             </table>
-            <p class="small-text no-top-m">* elite fast or charged move</p>
         </div> <!-- end of 'released' div -->
     </div> <!-- end of 'pokemongo' div -->
 
@@ -286,8 +288,6 @@
             </div>
         </div>
         <table class="table-bg" id=strongest-table></table>
-        <p class="small-text no-top-m no-bottom-m">* elite fast or charged move</p>
-        <p class="small-text no-top-m"><sup>&dagger;</sup> mixed moveset rankings are calculated using super-effective multiplier for the chosen type, and neutral damage for all other types</p>
     </div> <!-- end of 'strongest' div -->
 
     <!-- technical information legend and sources, and footer -->

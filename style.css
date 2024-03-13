@@ -631,7 +631,7 @@ span.poke-form-name {
 
 #pokemongo-table {
     width: 100%;
-    table-layout: fixed;
+    /*table-layout: fixed;*/
 }
 
 #pokemongo-table .sortable {
@@ -740,4 +740,18 @@ sup.xl {
 
 .bar-compare .bar-txt {
     color: var(--col-contrast);
+}
+
+tr.table-footer td {
+    border-radius: 0 0 20px 20px;
+    padding: 0;
+    margin: 0;
+}
+
+ul.footnotes {
+    text-align: left;
+    font-size: 90%;
+    padding: 10px 20px;
+    margin: 0;
+    list-style: none;
 }

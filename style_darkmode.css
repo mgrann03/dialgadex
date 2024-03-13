@@ -9,8 +9,8 @@
     --col-bar-fg: #1c497d;
 }
 
-.darkmode .table-bg tr:nth-of-type(odd):not(.table-header) { background-color: var(--col-alt-bg); }
-.darkmode .table-bg tr:nth-of-type(even):not(.table-header) { background-color: var(--col-so-off); }
+.darkmode .table-bg tr:not(.table-header):nth-of-type(odd) { background-color: var(--col-alt-bg); }
+.darkmode .table-bg tr:not(.table-header):nth-of-type(even) { background-color: var(--col-so-off); }
 
 .darkmode .type-text { 
     text-shadow: 1px 1px 2px black;

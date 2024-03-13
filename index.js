@@ -1794,7 +1794,7 @@ function LoadPokemongoTable(jb_pkm_obj, mega, mega_y, stats, max_stats = null) {
     const def_sh = def * 5 / 6;
 
     // removes previous table rows
-    $("#pokemongo-table tr:not(.table-header)").remove();
+    $("#pokemongo-table tbody tr").remove();
 
     const moves = GetPokemongoMoves(jb_pkm_obj);
     if (moves.length != 4)
@@ -1908,9 +1908,8 @@ function LoadPokemongoTable(jb_pkm_obj, mega, mega_y, stats, max_stats = null) {
             tr.append(td_rat);
             tr.append(td_rat_sh);
 
-            $("#pokemongo-table").append(tr);
+            $("#pokemongo-table tbody").append(tr);
         }
-
         // if necessary, calculates average rating percentage of specific stats
         // against max stats of all movesets and displays it on the CP section
         if (max_stats) {
@@ -1945,6 +1944,14 @@ function LoadPokemongoTable(jb_pkm_obj, mega, mega_y, stats, max_stats = null) {
     AppendFMChunk(0, function() {
         SortPokemongoTable(6);
         loading_pogo_moves = false;
+        
+        const footer = $("<tr class='table-footer'></tr>");
+        const footer_td = $("<td colspan='100%'></td>");
+        const footnotes = $("<ul class='footnotes'></ul>")
+        footnotes.append("<li>* elite fast or charged move</li>");
+        footer_td.append(footnotes);
+        footer.append(footer_td);
+        footer.appendTo("<tfoot></tfoot>").appendTo("#pokemongo-table");
     });
 }
 
@@ -2114,7 +2121,7 @@ function GetTDO(dps, hp, def, y = null) {
  */
 function SortPokemongoTable(column_i) {
 
-    let table = $("#pokemongo-table")[0];
+    let table = $("#pokemongo-table tbody")[0];
 
     // updates downside triangles
     let triangles = $(".th-triangle");
@@ -3150,6 +3157,15 @@ function SetStrongestTableFromArray(str_pokemons, num_rows = null,
             $("#strongest-table").append(empty_row);
         }
     }
+
+    const footer = $("<tr class='table-footer'></tr>");
+    const footer_td = $("<td colspan='100%'></td>");
+    const footnotes = $("<ul class='footnotes'></ul>")
+    footnotes.append("<li>* elite fast or charged move</li>");
+    footnotes.append("<li><sup>†</sup> mixed moveset rankings are calculated using super-effective multiplier for the chosen type, and neutral damage for all other types</li>");
+    footer_td.append(footnotes);
+    footer.append(footer_td);
+    footer.appendTo("<tfoot></tfoot>").appendTo("#strongest-table");
 }
 
 /**
