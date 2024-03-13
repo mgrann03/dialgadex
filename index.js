@@ -2722,7 +2722,7 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
             break;
     }
     
-    str_pokemons.length = settings_strongest_count;
+    str_pokemons.length = Math.min(str_pokemons.length, settings_strongest_count);
 
     // re-order array based on the optimal movesets of each pokemon
     if (display_grouped) {
