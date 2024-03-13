@@ -59,7 +59,7 @@ let settings_metric_exp = 0.775;
 let settings_default_level = 40;
 let settings_xl_budget = false;
 let settings_strongest_count = 20;
-let settings_compare = "top";
+let settings_compare = "budget";
 
 // global variables
 
@@ -2572,7 +2572,8 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
         search_shadow, search_legendary, search_elite, 
         search_suboptimal, search_mixed, type = null, versus = false) {
 
-    const num_rows = settings_strongest_count;
+    // over-create list, then filter down later
+    const num_rows = 200; //settings_strongest_count;
 
     // array of strongest pokemon and moveset found so far
     let str_pokemons = [];
@@ -2700,23 +2701,28 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
     
     let top_compare;
     const best_mon = str_pokemons[0].rat;
-    try {
-        switch (settings_compare) {
-            case "top":
-                top_compare = best_mon;
-                break;
-            case "budget":
-                top_compare = str_pokemons.find(e => e.class == undefined && !e.shadow && !e.mega).rat;
-                break;
-            case "ESpace":
-                top_compare = str_pokemons.find(e => !(e.class !== undefined && e.shadow) && !e.mega && !e.mega_y).rat;
-                break;
-        }
-    }
-    catch (err) {
-        if (!top_compare) 
+    
+    switch (settings_compare) {
+        case "top":
             top_compare = best_mon;
+            break;
+        case "budget":
+            try {
+                top_compare = str_pokemons.find(e => e.class == undefined && !e.shadow && !e.mega).rat;
+            } catch (err) {
+                top_compare = str_pokemons[str_pokemons.length-1].rat; // budget must be even lower
+            }
+            break;
+        case "ESpace":
+            try {
+                top_compare = str_pokemons.find(e => !(e.class !== undefined && e.shadow) && !e.mega && !e.mega_y).rat;
+            } catch (err) {
+                top_compare = str_pokemons[str_pokemons.length-1].rat; // budget must be even lower
+            }
+            break;
     }
+    
+    str_pokemons.length = settings_strongest_count;
 
     // re-order array based on the optimal movesets of each pokemon
     if (display_grouped) {
@@ -2751,7 +2757,7 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
     }
 
     // sets table from array
-    SetStrongestTableFromArray(str_pokemons, num_rows, display_grouped, true, true, true, (best_mon / top_compare));
+    SetStrongestTableFromArray(str_pokemons, str_pokemons.length, display_grouped, true, true, true, (best_mon / top_compare));
 }
 
 /**
@@ -3135,8 +3141,8 @@ function SetStrongestTableFromArray(str_pokemons, num_rows = null,
             const td_rat = "<td>" + settings_metric + " <b>"
                 + p.rat.toFixed(2) + "</b></td>";
             const td_pct = ((show_pct) ? "<td>" 
-                + "<div class='bar-bg' style='width: " + (100 / best_pct) + "%;'>"
-                + "<div class='bar-fg" + ((Math.abs(p.pct - 100) < 0.000001) ? " bar-compare" : "") + "' style='width: calc(" + p.pct + "% - 10px);'>"
+                + "<div class='bar-bg' style='width: calc(" + (100 / best_pct) + "% - 10px);'>"
+                + "<div class='bar-fg" + ((Math.abs(p.pct - 100) < 0.000001) ? " bar-compare" : "") + "' style='width: " + p.pct + "%;'>"
                 + "<span class='bar-txt'>"
                 + p.pct.toFixed(1) + "%</td>"
                 + "</span></div></div>" : "");
