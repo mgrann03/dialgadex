@@ -2753,6 +2753,18 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
         for (let str_pok of str_pokemons) {
             str_pok.pct = 100.0 * str_pok.rat / top_compare;
             str_pok.pct_display = str_pok.pct * (top_compare / best_mon);
+            if (str_pok.pct >= 100.0 - 0.00001) { //S+
+                const num_S = Math.floor((str_pok.pct - 99.9999)/15)+1;
+                if (num_S > 4) 
+                    str_pok.tier = "MRay";
+                else 
+                    str_pok.tier = "S".repeat(num_S);
+            }
+            else {
+                let tier_cnt = Math.floor((99.9999 - str_pok.pct)/10);
+                if (tier_cnt >= 4) tier_cnt = 5 // Everything past D -> F
+                str_pok.tier = String.fromCharCode("A".charCodeAt(0) + tier_cnt);
+            }
         }
     }
 
@@ -3078,6 +3090,8 @@ function SetStrongestTableFromArray(str_pokemons, num_rows = null,
         num_rows = str_pokemons.length;
 
     const encountered_mons = new Set();
+    let cur_tier_td = null;
+    let cur_tier_i = 0;
 
     for (let row_i = 0; row_i < num_rows; row_i++) {
 
@@ -3106,6 +3120,22 @@ function SetStrongestTableFromArray(str_pokemons, num_rows = null,
                     encountered_mons.add(pok_uniq_id);
                 }
             }
+
+            const td_tier = $("<td></td>");
+            if (!display_grouped && show_pct) {
+                if (!cur_tier_td || p.tier != cur_tier_td.text()) {
+                    td_tier.text(p.tier);
+                    td_tier.addClass("tier-label");
+                    td_tier.addClass("tier-" + p.tier);
+                    if (cur_tier_td) cur_tier_td.prop("rowspan", row_i - cur_tier_i);
+                    cur_tier_td = td_tier;
+                    cur_tier_i = row_i;
+                }
+                else {
+                    if (cur_tier_td && row_i == num_rows-1) cur_tier_td.prop("rowspan", row_i - cur_tier_i + 1);
+                    td_tier.css("display", "none");
+                }
+            } 
 
             const td_rank = "<td>"
                 + ((display_numbered) 
@@ -3147,6 +3177,7 @@ function SetStrongestTableFromArray(str_pokemons, num_rows = null,
                 + p.pct.toFixed(1) + "%</td>"
                 + "</span></div></div>" : "");
 
+            tr.append(td_tier);
             tr.append(td_rank);
             tr.append(td_name);
             tr.append(td_fm);

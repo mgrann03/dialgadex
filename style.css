@@ -64,7 +64,7 @@ button:focus {
     font-style: italic;
 }
 
-#strongest-table tr.suboptimal.grouped > *:nth-child(1) { 
+#strongest-table tr.suboptimal.grouped > *:nth-child(-n + 3) { 
     color: transparent;
     user-select: none; 
 }
@@ -73,10 +73,13 @@ button:focus {
     font-size: 90%;
 }
 #strongest-table tr.suboptimal.grouped td.td-poke-name { 
-    padding-left: 2%; 
+    padding-left: 2%;
 }
 #strongest-table tr.suboptimal.grouped .pokemon-icon { 
     background-image: none !important; 
+}
+#strongest-table tr.suboptimal.grouped .strongest-name { 
+    display: none;
 }
 
 #strongest-table td.td-poke-name a {
@@ -239,7 +242,8 @@ span.strongest-name {
 span.poke-form-name {
     text-decoration: none;
     font-weight: normal;
-    font-size: 90%;
+    font-size: 80%;
+    color: var(--col-off);
 }
 
 .shadow-text {
@@ -700,14 +704,18 @@ span.poke-form-name {
     padding-bottom: 0;
 }
 
-#strongest-table tr > *:nth-child(1) { width: 10%; }
-#strongest-table tr > *:nth-child(2) { width: 35%; }
-#strongest-table tr > *:nth-child(3) { width: 15%; }
+#strongest-table tr > *:nth-child(1) { width: 5%; }
+#strongest-table tr > *:nth-child(2) { width: 5%; 
+    text-align: left; 
+    padding-left: 1%;
+}
+#strongest-table tr > *:nth-child(3) { width: 35%; }
 #strongest-table tr > *:nth-child(4) { width: 15%; }
 #strongest-table tr > *:nth-child(5) { width: 15%; }
-#strongest-table tr > *:nth-child(6) { width: 10%; }
+#strongest-table tr > *:nth-child(6) { width: 15%; }
+#strongest-table tr > *:nth-child(7) { width: 10%; }
 
-#strongest-table tr > *:nth-child(5):last-child { width: 25%; }
+#strongest-table tr > *:nth-child(7):last-child { width: 25%; }
 
 #legend { display: none; }
 
@@ -755,3 +763,23 @@ ul.footnotes {
     margin: 0;
     list-style: none;
 }
+
+.tier-label {
+    text-shadow: 1px 1px 2px black;
+    color: white;
+    opacity: 0.8;
+}
+
+.tier-MRay {
+    background-color: #64a882;
+    color: #f9da5f;
+}
+.tier-SSSS { background-color: #3a125f; }
+.tier-SSS { background-color: #15125f; }
+.tier-SS { background-color: #2521ab; }
+.tier-S { background-color: #5854de; }
+.tier-A { background-color: #38ab21; }
+.tier-B { background-color: #a2ab21; }
+.tier-C { background-color: #ab8621; }
+.tier-D { background-color: #ab5f21; }
+.tier-F { background-color: #ab2121; }
