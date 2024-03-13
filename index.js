@@ -3103,7 +3103,7 @@ function SetStrongestTableFromArray(str_pokemons, num_rows = null,
             const coords = GetPokemonIconCoords(p.id, p.form, p.mega, p.mega_y);
             const can_be_mega_y = p.id == 6 || p.id == 150; 
             const primal = p.mega && (p.id == 382 || p.id == 383);
-            const form_text = GetFormText(p.id, p.form);
+            const form_text = GetFormText(p.id, p.form).replace(/\s+Forme?/,"");
             const legendary = p.class !== undefined;
 
             const tr = $("<tr></tr>");
