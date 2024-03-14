@@ -131,6 +131,19 @@ function Main() {
     $("#cmp-budget").click(function() { SetCompare("budget"); });
     $("#cmp-espace").click(function() { SetCompare("ESpace"); });
 
+    $("#darkmode-toggle").click(function() { 
+        if ($("body").hasClass("darkmode")) {
+            $("body").removeClass("darkmode");
+            $("#toggle-sun").css("display", "none");
+            $("#toggle-moon").css("display", "inline");
+        }
+        else {
+            $("body").addClass("darkmode");
+            $("#toggle-sun").css("display", "inline");
+            $("#toggle-moon").css("display", "none");
+        }
+    });
+
     $("#note-icon").click(function() { ToggleNote(); });
     $("#note-title").click(function() { ToggleNote(); });
     $("#strongest-count").change(function() { 

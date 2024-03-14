@@ -292,6 +292,12 @@ span.poke-form-name {
     text-decoration: underline;
 }
 
+#settings-expand {
+    display: inline-block;
+    text-align: center;
+    width: 100%;
+}
+
 #settings p, #settings ul {
     margin: 0.25em 0.5em;
     padding: 0;
@@ -308,8 +314,14 @@ span.poke-form-name {
     text-overflow: ellipsis;
 }
 
-#settings span {
+#settings-list span {
     margin: 0 2px 0 2px;
+}
+
+#darkmode-toggle {
+    position: absolute;
+    right: 0;
+    cursor: pointer;
 }
 
 .settings-opt {
