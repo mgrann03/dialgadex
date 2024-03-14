@@ -2768,8 +2768,10 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
             str_pok.pct_display = str_pok.pct * (top_compare / best_mon);
             if (str_pok.pct >= 100.0 - 0.00001) { //S+
                 const num_S = Math.floor((str_pok.pct - 99.9999)/15)+1;
-                if (num_S > 4) 
+                if (num_S > 4 && str_pok.name == "Rayquaza" && str_pok.mega) 
                     str_pok.tier = "MRay";
+                else if (num_S >= 4)
+                    str_pok.tier = "SSSS";
                 else 
                     str_pok.tier = "S".repeat(num_S);
             }
