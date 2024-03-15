@@ -1957,14 +1957,6 @@ function LoadPokemongoTable(jb_pkm_obj, mega, mega_y, stats, max_stats = null) {
     AppendFMChunk(0, function() {
         SortPokemongoTable(6);
         loading_pogo_moves = false;
-        
-        const footer = $("<tr class='table-footer'></tr>");
-        const footer_td = $("<td colspan='100%'></td>");
-        const footnotes = $("<ul class='footnotes'></ul>")
-        footnotes.append("<li>* elite fast or charged move</li>");
-        footer_td.append(footnotes);
-        footer.append(footer_td);
-        $("#pokemongo-table").append($("<tfoot></tfoot>").append(footer));
     });
 }
 
@@ -2425,7 +2417,7 @@ function LoadStrongest(type = "Any") {
     $("#strongest-type-title").text(type);
 
     // removes previous table rows
-    $("#strongest-table tr:not(.table-header)").remove();
+    $("#strongest-table tbody tr").remove();
 
     // gets checkboxes filters
     let search_unreleased =
@@ -3201,25 +3193,15 @@ function SetStrongestTableFromArray(str_pokemons, num_rows = null,
             tr.append(td_rat);
             tr.append(td_pct);
 
-            $("#strongest-table").append(tr);
+            $("#strongest-table tbody").append(tr);
 
         } else {
 
             const empty_row =
                 "<tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>"
-            $("#strongest-table").append(empty_row);
+            $("#strongest-table tbody").append(empty_row);
         }
     }
-
-    const footer = $("<tr class='table-footer'></tr>");
-    const footer_td = $("<td colspan='100%'></td>");
-    const footnotes = $("<ul class='footnotes'></ul>")
-    footnotes.append("<li>* elite fast or charged move</li>");
-    footnotes.append("<li><sup>†</sup> mixed moveset rankings are calculated using super-effective multiplier for the chosen type, and neutral damage for all other types</li>");
-    footer_td.append(footnotes);
-    footer.append(footer_td);
-    $("#strongest-table").append($("<tfoot></tfoot>").append(footer));
-
 }
 
 /**
