@@ -1964,7 +1964,7 @@ function LoadPokemongoTable(jb_pkm_obj, mega, mega_y, stats, max_stats = null) {
         footnotes.append("<li>* elite fast or charged move</li>");
         footer_td.append(footnotes);
         footer.append(footer_td);
-        footer.appendTo("<tfoot></tfoot>").appendTo("#pokemongo-table");
+        $("#pokemongo-table").append($("<tfoot></tfoot>").append(footer));
     });
 }
 
@@ -2134,13 +2134,14 @@ function GetTDO(dps, hp, def, y = null) {
  */
 function SortPokemongoTable(column_i) {
 
-    let table = $("#pokemongo-table tbody")[0];
+    let table = $("#pokemongo-table")[0];
 
     // updates downside triangles
     let triangles = $(".th-triangle");
     for (triangle of triangles)
         triangle.remove();
-    cells = table.rows[0].cells;
+
+    cells = table.tHead.rows[0].cells;
     for (let cell_i = 0; cell_i < cells.length; cell_i++) {
         let cell = $(cells[cell_i]);
         if (cell_i == column_i) {
@@ -2153,10 +2154,10 @@ function SortPokemongoTable(column_i) {
     }
 
     // sorts rows
-    let rows_array = Array.from(table.rows).slice(1);
+    let rows_array = Array.from(table.tBodies[0].rows);
     rows_array = MergeSortPokemongoTable(rows_array, column_i);
     for (let i = 0; i < rows_array.length; i++)
-        table.append(rows_array[i]);
+        table.tBodies[0].append(rows_array[i]);
 }
 
 /**
@@ -3217,7 +3218,8 @@ function SetStrongestTableFromArray(str_pokemons, num_rows = null,
     footnotes.append("<li><sup>†</sup> mixed moveset rankings are calculated using super-effective multiplier for the chosen type, and neutral damage for all other types</li>");
     footer_td.append(footnotes);
     footer.append(footer_td);
-    footer.appendTo("<tfoot></tfoot>").appendTo("#strongest-table");
+    $("#strongest-table").append($("<tfoot></tfoot>").append(footer));
+
 }
 
 /**
