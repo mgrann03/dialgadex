@@ -72,17 +72,11 @@ button:focus {
 #strongest-table tr.suboptimal.grouped {
     font-size: 90%;
 }
-#strongest-table tr.suboptimal.grouped td.td-poke-name { 
-    padding-left: 2%;
-}
-#strongest-table tr.suboptimal.grouped .pokemon-icon { 
-    background-image: none !important; 
-}
-#strongest-table tr.suboptimal.grouped .strongest-name { 
-    display: none;
+#strongest-table tr.suboptimal.grouped td.td-poke-name * { 
+    visibility: hidden;
 }
 
-#strongest-table td.td-poke-name a {
+.a-poke-name {
     display: block;
     text-decoration: none;
     width: fit-content;
@@ -390,11 +384,15 @@ span.poke-form-name {
     flex-wrap: wrap;
     justify-content: flex-start;
     flex-direction: column;
+    text-wrap: nowrap;
 }
 
-.filters-nowrap {
+.filters-wrap {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    margin: 0 5%;
 }
 
 #strongest-button-c {
@@ -539,18 +537,12 @@ span.poke-form-name {
 }
 
 #max-cp-div {
-    width: 0;
     height: 0;
-    position: relative;
-    left: 150px;
-    top: -0.6em;
+    display: block;
 }
 
 #max-cp {
-    width: 100px;
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: relative;
     font-size: 1.25em;
 }
 
@@ -603,7 +595,7 @@ span.poke-form-name {
 }
 
 #counters table {
-    margin: 0 auto;
+    margin-left: auto;
     width: 85%;
     table-layout: fixed;
     white-space: nowrap;
@@ -678,7 +670,6 @@ span.poke-form-name {
 }
 
 #strongest-links {
-    width: 37.5%;
     margin: 0 auto;
     padding-top: 0.25em;
 }
@@ -696,6 +687,11 @@ span.poke-form-name {
 #strongest-links li {
     margin: 0.25em;
     margin-top: 0;
+}
+
+#strongest-links li.line-break {
+    margin: 0;
+    width: 100%;
 }
 
 #strongest-links a {

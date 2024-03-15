@@ -1,0 +1,202 @@
+#site, #additional-containers {
+    width: 100%;
+}
+
+body {
+    text-size-adjust: none;
+    font-size: 18px;
+}
+
+/* pokemon name */
+#strongest-table tr > *:nth-child(3) { 
+    width: auto !important;
+    padding-right: 10px;
+}
+
+@media screen and (max-width:800px) { 
+    /* fast and charge move */
+    #strongest-table tr > *:nth-child(4), #strongest-table tr > *:nth-child(5)  { 
+        margin: 3px 0;
+        display: flex; 
+        width: auto;
+    }
+
+    /* rename moveset column */
+    #pokemongo-table thead tr > *:nth-child(1) {
+        font-size: 0;
+    }
+    #pokemongo-table thead tr > *:nth-child(1):after {
+        content: "Moveset";
+        font-size: 18px;
+    }
+
+    #pokemongo-table thead tr > *:nth-child(2), #pokemongo-table thead tr > *:nth-child(2n+3) {
+        display: none;
+    }
+
+    #pokemongo-table, #pokemongo-table > * {
+        display: block;
+    }
+    #pokemongo-table tbody tr {
+        display: grid;
+        grid-auto-flow: column;
+        grid-template-columns: 2fr repeat(3, 1fr);
+        grid-template-rows: repeat(2, auto);
+    }
+
+    #pokemongo-table tbody td {
+        width: 100% !important;
+        text-align: center;
+    }
+
+    #pokemongo-table tbody td:nth-child(2n+4) {
+        font-size: 0.8em;
+        font-weight: bold;
+        color: var(--col-shadow);
+    }
+
+    #pokemongo-table tbody td:nth-child(2n+4)::before {
+        content: "(";
+    }
+    #pokemongo-table tbody td:nth-child(2n+4)::after {
+        content: ")";
+    }
+
+    #pokemongo-table thead tr {
+        display: grid;
+        grid-auto-flow: column;
+        grid-template-columns: 2fr repeat(3, 1fr);
+        grid-template-rows: auto;
+    }
+    #pokemongo-table thead th {
+        width: 100% !important;
+    }
+}
+
+/* % rating */
+#strongest-table tr > *:nth-child(6) {
+    padding: 0 10px;
+}
+
+/* % comparison bars */
+#strongest-table tr > *:nth-child(7) {
+    display: none;
+}
+#settings-compare {
+    display: none;
+}
+
+.a-poke-name {
+    display: grid;
+    grid-template-rows: 1fr min-content;
+    align-items: center;
+
+    .pokemon-icon {
+        grid-column: 1;
+        grid-row: 1/3;
+    }
+    
+    .strongest-name {
+        grid-column: 2;
+        grid-row: 1;
+        text-wrap: wrap;
+    }
+
+    .poke-form-name {
+        grid-column: 2;
+        grid-row: 2;
+        text-wrap: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+#settings {
+    position: fixed;
+    transform: none;
+    width: 90vw;
+    left: 5vw;
+    top: 1vw;
+}
+#settings-c { z-index: 12; }
+
+.column-l, .column-r {
+    flex-basis: 100%;
+    margin: 0;
+}
+#legend .row {
+    flex-direction: column;
+    font-size: 80%;
+}
+
+/* fixes to header searchbar + strongest link */
+#strongest-button-c {
+    position: static;
+    transform: none;
+    width: 100%;
+}
+#strongest-button {
+    position: static;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: 4%;
+}
+#page-nav {
+    text-align: left;
+}
+#search-label {
+    margin-left: 4%;
+    margin-right: auto;
+    text-align: left;
+}
+#poke-search {
+    width: auto;
+    margin-left: 4%;
+}
+#suggestions-c {
+    width: auto;
+    margin-left: 4%;
+    z-index: 10;
+}
+#suggestions {
+    position: static;
+    width: 40%;
+}
+#input[type="text"] {
+    width: 40%;
+}
+
+@media screen and (max-width:600px) { 
+    #strongest-table, #strongest-links, #page-nav, #pokemongo, 
+    #pokemongo-table thead tr > *:nth-child(1):after {
+        font-size: 14px;
+    }
+
+    .tier-label {
+        display: none;
+    }
+
+    #base-stats tr > *:nth-child(1), #stats-form tr > *:nth-child(1),
+    #base-stats tr > *:nth-child(12), #stats-form tr > *:nth-child(12) { 
+        width: 0%;
+    }
+
+    #effectiveness {
+        margin-left: 0%;
+        width: 100%;
+    }
+
+    .prgr {
+        width: 66%;
+    }
+
+    #previous-containers > *:nth-child(1), #next-containers > *:nth-child(2) {
+        display: none;
+    }
+}
+
+@media screen and (max-width:400px) { 
+    #strongest-table, #strongest-links {
+        font-size: 12px;
+    }
+}

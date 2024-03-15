@@ -2393,11 +2393,17 @@ function LoadStrongest(type = "Any") {
         strongest_link_each.addClass("strongest-link-selected");
     let links_types = $("#strongest-links-types");
     links_types.empty();
+
+    let ndx = 0;
     for (const t of POKEMON_TYPES) {
         links_types.append("<li><a class='type-text bg-" + t
                 + ((t == type) ? " strongest-link-selected" : "")
                 + "' onclick='LoadStrongestAndUpdateURL(\"" + t
                 + "\")'>" + t + "</a></li>");
+        if ((ndx+1) % 6 == 0) { //every 6th type
+            links_types.append("<li class='line-break'><li>");
+        }
+        ndx++;
     }
 
     // Handle logic for "versus"
@@ -3151,7 +3157,7 @@ function SetStrongestTableFromArray(str_pokemons, num_rows = null,
                         ? p.grouped_rat : row_i) + 1) : "")
                 +"</td>";
             const td_name = "<td class='td-poke-name'>"
-                + "<a class='' onclick='LoadPokemonAndUpdateURL(" + p.id
+                + "<a class='a-poke-name' onclick='LoadPokemonAndUpdateURL(" + p.id
                 + ",\"" + p.form + "\"," + p.mega + "," + p.mega_y + ")'>"
                 + "<span class=pokemon-icon style='background-image:url("
                 + ICONS_URL + ");background-position:" + coords.x + "px "
@@ -3163,8 +3169,8 @@ function SetStrongestTableFromArray(str_pokemons, num_rows = null,
                 + name
                 + ((p.mega && can_be_mega_y)
                     ? ((p.mega_y) ? " Y" : " X") : "")
-                +"</span>"
                 + ((!legendary && settings_xl_budget) ? "<sup class='xl'>XL</sup>" : "")
+                +"</span>"
                 + ((form_text.length > 0)
                     ? "<span class=poke-form-name> (" + form_text + ")</span>" 
                     : "")
