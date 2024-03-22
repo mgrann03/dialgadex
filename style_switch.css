@@ -27,9 +27,9 @@ Some modifications made to suit this application
 }
 
 #settings .switch {
-    --button-width: 24px;
-    --button-height: 12px;
-    --toggle-diameter: 10px;
+    --button-width: 2em;
+    --button-height: 1em;
+    --toggle-diameter: calc(var(--button-height) - 2px);
     vertical-align: middle;
 }
 

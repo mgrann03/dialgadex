@@ -126,6 +126,8 @@ function Main() {
     $("#lvl-50").click(function() { SetDefaultLevel(50, false); });
     $("#lvl-xl-budget").click(function() { SetDefaultLevel(40, true); });
     $("#dps-exp").change(function() { SetMetric("Custom"); });
+
+    $("#chk-rescale").change(function() { CheckURLAndAct(); });
     
     $("#cmp-top").click(function() { SetCompare("top"); });
     $("#cmp-budget").click(function() { SetCompare("budget"); });
@@ -2838,6 +2840,7 @@ function GetPokemonStrongestMovesets(jb_pkm_obj, mega, mega_y, shadow,
     if (versus) {
         atk_mult_map = GetTypesEffectivenessAgainstTypes([search_type]);
     }
+    const rescale = $("#settings input[value='rescale']:checkbox").is(":checked");
 
     // searches for the moveset
 
@@ -2917,37 +2920,31 @@ function GetPokemonStrongestMovesets(jb_pkm_obj, mega, mega_y, shadow,
                     const def_mult_map = GetTypesEffectivenessAgainstTypes(def_types);
                     const defense_mult = GetEffectivenessMultOfType(def_mult_map, search_type);
 
-                    /*
-                    // use traditional dps in simple scenarios, to keep EER consistent
-                    if (fm_mult == cm_mult && fm_mult == 1.60) {
-                        dps = GetDPS(types, atk, def, hp, 
-                            fm_obj, cm_obj);
-                    }
-                    else { // use mixed logic otherwise
-                        dps = GetDPS(types, atk, def, hp, 
-                            fm_obj, cm_obj,
-                            fm_mult, cm_mult) / 1.6;
-                    }
-
-                    tdo = GetTDO(dps, hp, def, 1550/def) / (defense_mult * 1.6);
-                    */
                     const y_est = 900/def*defense_mult;
                     dps = GetDPS(types, atk, def, hp, 
                         fm_obj, cm_obj,
                         fm_mult, cm_mult, null, y_est);
                     tdo = GetTDO(dps, hp, def, y_est);
+
+                    if (rescale && settings_metric != 'DPS' && settings_metric != 'TDO') {
+                        dps /= 1.6;
+                        tdo /= 1.6*1.6; // have to ALSO remove the extra scalar on the dps used in the TDO calc
+                    }
                 }
-                // non-mixed or "anything-goes" searches use traditional dps
-                else if (fm_obj.type == cm_obj.type || search_type == "Any") {
-                    dps = GetDPS(types, atk, def, hp, 
-                        fm_obj, cm_obj);
-                    tdo = GetTDO(dps, hp, def);
-                }
-                else { // mixed movesets scale based on search type (super-effective mult)
+                else if (search_mixed && search_type != "Any") { // mixed movesets scale based on search type (super-effective mult)
                     dps = GetDPS(types, atk, def, hp, 
                         fm_obj, cm_obj,
-                        (fm_obj.type == mt && search_mixed) ? 1.60 : 1,
-                        (cm_obj.type == mt && search_mixed) ? 1.60 : 1) / 1.60;
+                        (fm_obj.type == mt) ? 1.60 : 1,
+                        (cm_obj.type == mt) ? 1.60 : 1);
+
+                    if (rescale && settings_metric != 'DPS' && settings_metric != 'TDO')
+                        dps /= 1.6;
+                    tdo = GetTDO(dps, hp, def);
+                }
+                // non-mixed or "anything-goes" searches use traditional dps
+                else {
+                    dps = GetDPS(types, atk, def, hp, 
+                        fm_obj, cm_obj);
                     tdo = GetTDO(dps, hp, def);
                 }
                 
