@@ -303,9 +303,9 @@ span.poke-form-name {
 
 #settings li {
     list-style-position: inside;
-    overflow: hidden;
+    /*overflow: hidden;
     white-space: nowrap;
-    text-overflow: ellipsis;
+    text-overflow: ellipsis;*/
 }
 
 #settings-list span {

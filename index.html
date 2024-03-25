@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="style_darkmode.css">
     <link rel="stylesheet" href="style_switch.css">
     <link rel="stylesheet" href="style_togglebutton.css">
+    <link rel="stylesheet" href="style_tooltips.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="style_mobile.css" media="screen and (max-width:900px)">
     <script src=jquery-3.6.0.min.js></script>
@@ -43,28 +44,51 @@
             <div id=settings-list class=invisible>
                 <ul>
                     <li id=settings-metric>PvE metric →
-                        <span id=metric-er class="settings-opt unselectable">ER</span>
-                        <span id=metric-eer class="settings-opt settings-opt-sel unselectable">EER</span>
-                        <span id=metric-ter class="settings-opt unselectable">TER</span>
-                        <span id=metric-dps class="settings-opt unselectable">DPS</span>
-                        <span id=metric-tdo class="settings-opt unselectable">TDO</span></li>
-                    <li id=settings-dps-exponent>DPS Exponent → 
+                        <span id=metric-er class="settings-opt tooltip-bottom unselectable" 
+                            data-tooltip='"Equivalent Rating"
+                                • Deprecated/un-fitted DPS-TDO mix'>ER</span>
+                        <span id=metric-eer class="settings-opt tooltip-bottom settings-opt-sel unselectable" 
+                            data-tooltip='"Estimator Equivalent Rating"
+                                • DPS-TDO mix fitted to Pokebattler "Estimator"
+                                • Best for short-manning'>EER</span>
+                        <span id=metric-ter class="settings-opt tooltip-bottom unselectable" 
+                            data-tooltip='"Time Equivalent Rating"
+                                • DPS-TDO mix fitted to Pokebattler "Time to Win"
+                                • Best for large raid lobbies'>TER</span>
+                        <span id=metric-dps class="settings-opt tooltip-bottom unselectable" 
+                            data-tooltip='"Damage Per Second"
+                                • Speed of damage output
+                                • (Favors glass cannons)'>DPS</span>
+                        <span id=metric-tdo class="settings-opt tooltip-bottom unselectable" 
+                            data-tooltip='"Total Damage Output
+                                • Amount of damage done before fainting
+                                • (Favors bulk)'>TDO</span></li>
+                    <li id=settings-dps-exponent class="tooltip-bottom" data-tooltip="Defines the mixture between DPS and TDO">DPS Exponent → 
                         <input id=dps-exp class="settings-num" value="0.775" style="width: 7ch"></li>
                     <li id=settings-rescale>Rescale Effectiveness 
-                        <label class="switch">
+                        <label class="switch tooltip-bottom" data-tooltip="Force ratings to a common scale, allowing them to be compared more easily">
                             <input id=chk-rescale type=checkbox value=rescale checked>
                             <span class="slider"></span>
                         </label></li>
-                    <li id=settings-showstrongest>Show strongest →
+                    <li id=settings-showstrongest class="tooltip-bottom" data-tooltip='Number of rows to display in "Strongest" Tables'>Show strongest →
                         <input type="number" id=strongest-count class="settings-num" value="20" min="20" max="100" step="10"></li>
-                    <li id=settings-lvl>Level →
+                    <li id=settings-lvl><span class="tooltip-bottom" style="margin: 0" data-tooltip="Level to use when computing Pokemon stats">Level →</span>
                         <span id=lvl-40 class="settings-opt settings-opt-sel unselectable">40</span>
                         <span id=lvl-50 class="settings-opt unselectable">50</span>
-                        <span id=lvl-xl-budget class="settings-opt unselectable">Budget50</span></li>
-                    <li id=settings-compare>Compare to →
-                        <span id=cmp-budget class="settings-opt settings-opt-sel unselectable">Budget</span>
-                        <span id=cmp-top class="settings-opt unselectable">Best</span>
-                        <span id=cmp-espace class="settings-opt unselectable">ESpace</span></li>
+                        <span id=lvl-xl-budget class="settings-opt unselectable tooltip-bottom" 
+                            data-tooltip='Use Level 40 for Legendaries, otherwise Level 50
+                                to reflect the scarcity of rare XL candies'>Budget50</span></li>
+                    <li id=settings-compare><span class="tooltip-bottom" style="margin: 0" data-tooltip='Sets the "100%" reference Pokemon'>Compare To →</span>
+                        <span id=cmp-budget class="settings-opt settings-opt-sel unselectable tooltip-bottom" 
+                            data-tooltip='Compare to the top "cheap" Pokemon
+                                • No legendaries, megas, or shadows'>Budget</span>
+                        <span id=cmp-top class="settings-opt unselectable tooltip-bottom" 
+                            data-tooltip='Compare to the absolute best Pokemon'>Best</span>
+                        <span id=cmp-espace class="settings-opt unselectable tooltip-bottom" 
+                            data-tooltip='Compare to the top "available-ish" Pokemon
+                                • No shadow legendaries, no megas
+                                • Defined by /u/Elastic_Space
+                                • Used in infographics by /u/bulbavisual'>ESpace</span></li>
                     <!--<li>Pkm sprites → 3DS POGO</li>-->
                 </ul>
             </div>
@@ -273,7 +297,7 @@
                     <label class="switch">
                         <input type=checkbox value=unreleased unchecked>
                         <span class="slider"></span>
-                        <span class="labeltext">Unreleased</span>
+                        <span class="labeltext" data-tooltip="Include Pokemon found in the Game Master but not yet available in game">Unreleased</span>
                     </label>
                     <label class="switch">
                         <input type=checkbox value=mega checked>
@@ -292,22 +316,24 @@
                     </label>
                 </div>
                 <div class="filters-box" id=move-filters>
-                    <label class="switch">
+                    <label class="switch" data-tooltip="Allow moves only available via special events or Elite TMs">
                         <input type=checkbox value=elite checked>
                         <span class="slider"></span>
                         <span class="labeltext">Elite moves</span>
                     </label>
-                    <label class="switch">
+                    <label class="switch" data-tooltip="Allow multiple movesets per Pokemon">
                         <input type=checkbox value=suboptimal id=chk-suboptimal unchecked>
                         <span class="slider"></span>
                         <span class="labeltext">Suboptimal moves</span>
                     </label>
-                    <label class="switch opt-indent">
+                    <label class="switch opt-indent"
+                        data-tooltip="Checked → Compare suboptimal movesets to a Pokemon's best
+                            Unchecked → Compare all movesets to each other">
                         <input type=checkbox value=grouped id=chk-grouped checked disabled>
-                        <span class="slider"></span>
+                        <span class="slider" ></span>
                         <span class="labeltext">Display grouped</span>
                     </label>
-                    <label class="switch">
+                    <label class="switch" data-tooltip="Allow fast and charged moves with different types">
                         <input type=checkbox value=mixed id=chk-mixed checked>
                         <span class="slider"></span>
                         <span class="labeltext">Mixed movesets<sup>&dagger;</sup></span>
@@ -319,8 +345,11 @@
             <tbody></tbody>
             <tfoot><tr class="table-footer">
                 <td colspan="100%"><ul class="footnotes">
-                    <li>* elite fast or charged move</li>
-                    <li><sup>†</sup> mixed moveset rankings are calculated using super-effective multiplier for the chosen type, and neutral damage for all other types</li>
+                    <li>* Elite fast or charged move</li>
+                    <li><sup>†</sup> Mixed moveset rankings are calculated using super-effective damage for the chosen type, and neutral damage for all other types.</li>
+                    <li>"Versus" rankings are calculated using appopriate effectiveness multiplier for attacking damage.<br />
+                        Versus rankings also assume incoming damage is of the chosen type, and apply relevant defensive multipliers.
+                    </li>
                 </ul></td>
             </tr></tfoot>
         </table>
@@ -332,16 +361,6 @@
         <!-- technical information legend and sources -->
         <div class="row small-text">
             <div class=column-l>
-                <p class=no-bottom-m>Legend:</p>
-                <ul class=no-top-m>
-                    <li><b>DPS</b>: Damage Per Second that a Pokémon with a specific moveset deals against a <i>reference</i> Pokémon. (How fast a Pokémon deals damage).</li>
-                    <li><b>TDO</b>: Total Damage Output from a Pokémon with a specific moveset against a <i>reference</i> Pokémon until the attacking Mon faints. (This metric gives more value to the <i>bulk</i>).</li>
-                    <li><b>ER</b>: Equivalent Rating. Overall metric for PvE - a balance between DPS and TDO. <span class=red><i>deprecated since the introduction of EER and TER</i></span></li>
-                    <li><b>EER</b>: Estimator Equivalent Rating. More realistic metric, for when short-manning or expecting to relobby.</li>
-                    <li><b>TER</b>: Time Equivalent Rating. More realistic metric, for when raiding in a large group and not going to relobby.</li>
-                </ul>
-            </div>
-            <div class=column-r>
                 <p class=no-bottom-m>Sources:</p>
                 <ol class="no-top-m left">
                     <li><a target=blank href=https://gamepress.gg/pokemongo/damage-mechanics>GamePress. Damage Mechanics</a></li>
@@ -349,6 +368,8 @@
                     <li><a target=blank href=https://www.reddit.com/r/TheSilphRoad/comments/z3xuzc/analysis_legendarymythical_signature_moves/>r/TheSliphRoad. u/Elastic_Space. [Analysis] Legendary/Mythical Signature Moves: Improving the GamePress Overall Metric and a Cross-type PvE Meta Overview</a></li>
                     <li><a target=blank href=https://www.reddit.com/r/TheSilphRoad/comments/135nz6o/analysis_improving_pve_overall_theoretical_metric/>r/TheSliphRoad. u/Elastic_Space. [Analysis] Improving PvE Overall Theoretical Metric: Modification to Equivalent Rating (ER)</a></li>
                 </ol>
+            </div>
+            <div class=column-r>
                 <p class=no-bottom-m>Credits:</p>
                 <ul class=no-top-m>
                     <li>Thanks to <a target=blank href=https://pokeminers.com/>PokeMiners</a> for providing the PoGo data.</li>
