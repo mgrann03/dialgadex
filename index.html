@@ -44,27 +44,34 @@
             <div id=settings-list class=invisible>
                 <ul>
                     <li id=settings-metric>PvE metric →
-                        <span id=metric-er class="settings-opt tooltip-bottom unselectable" 
-                            data-tooltip='"Equivalent Rating"
-                                • Deprecated/un-fitted DPS-TDO mix'>ER</span>
-                        <span id=metric-eer class="settings-opt tooltip-bottom settings-opt-sel unselectable" 
-                            data-tooltip='"Estimator Equivalent Rating"
-                                • DPS-TDO mix fitted to Pokebattler "Estimator"
-                                • Best for short-manning'>EER</span>
-                        <span id=metric-ter class="settings-opt tooltip-bottom unselectable" 
-                            data-tooltip='"Time Equivalent Rating"
-                                • DPS-TDO mix fitted to Pokebattler "Time to Win"
-                                • Best for large raid lobbies'>TER</span>
                         <span id=metric-dps class="settings-opt tooltip-bottom unselectable" 
                             data-tooltip='"Damage Per Second"
                                 • Speed of damage output
-                                • (Favors glass cannons)'>DPS</span>
+                                • (Favors glass cannons)
+                                • TOF-exponent: 0.00'>DPS</span>
+                        <span id=metric-ter class="settings-opt tooltip-bottom unselectable" 
+                            data-tooltip='"Time Equivalent Rating"
+                                • DPS-TDO mix fitted to Pokebattler "Time to Win"
+                                • Best for large raid lobbies
+                                • TOF-exponent: 0.15'>TER</span>
+                        <span id=metric-eer class="settings-opt tooltip-bottom settings-opt-sel unselectable" 
+                            data-tooltip='"Estimator Equivalent Rating"
+                                • DPS-TDO mix fitted to Pokebattler "Estimator"
+                                • Best for short-manning
+                                • TOF-exponent: 0.225'>EER</span>
+                        <span id=metric-er class="settings-opt tooltip-bottom unselectable" 
+                            data-tooltip='"Equivalent Rating"
+                                • Deprecated/un-fitted DPS-TDO mix
+                                • TOF-exponent: 0.25'>ER</span>
                         <span id=metric-tdo class="settings-opt tooltip-bottom unselectable" 
                             data-tooltip='"Total Damage Output
                                 • Amount of damage done before fainting
-                                • (Favors bulk)'>TDO</span></li>
-                    <li id=settings-dps-exponent class="tooltip-bottom" data-tooltip="Defines the mixture between DPS and TDO">DPS Exponent → 
-                        <input id=dps-exp class="settings-num" value="0.775" style="width: 7ch"></li>
+                                • (Favors bulk)
+                                • TOF-exponent: 1.00'>TDO</span></li>
+                    <li id=settings-tof-exponent class="tooltip-bottom" data-tooltip="Defines the mixture between DPS and TDO
+                        Rating = DPS * TOF^exp 
+                        = DPS^(1-exp) * TDO^exp">TOF Exponent → 
+                        <input id=tof-exp class="settings-num" value="0.225" style="width: 7ch"></li>
                     <li id=settings-rescale>Rescale Effectiveness 
                         <label class="switch tooltip-bottom" data-tooltip="Force ratings to a common scale, allowing them to be compared more easily">
                             <input id=chk-rescale type=checkbox value=rescale checked>
@@ -87,6 +94,7 @@
                         <span id=cmp-espace class="settings-opt unselectable tooltip-bottom" 
                             data-tooltip='Compare to the top "available-ish" Pokemon
                                 • No shadow legendaries, no megas
+                                • No Dragon Ascent
                                 • Defined by /u/Elastic_Space
                                 • Used in infographics by /u/bulbavisual'>ESpace</span></li>
                     <!--<li>Pkm sprites → 3DS POGO</li>-->
@@ -347,8 +355,8 @@
                 <td colspan="100%"><ul class="footnotes">
                     <li>* Elite fast or charged move</li>
                     <li><sup>†</sup> Mixed moveset rankings are calculated using super-effective damage for the chosen type, and neutral damage for all other types.</li>
-                    <li>"Versus" rankings are calculated using appopriate effectiveness multiplier for attacking damage.<br />
-                        Versus rankings also assume incoming damage is of the chosen type, and apply relevant defensive multipliers.
+                    <li>"Versus" rankings are calculated using appopriate effectiveness multiplier for attacking damage.
+                        <!--<br />Versus rankings also assume incoming damage is of the chosen type, and apply relevant defensive multipliers.-->
                     </li>
                 </ul></td>
             </tr></tfoot>

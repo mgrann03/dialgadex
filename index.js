@@ -55,7 +55,7 @@ METRICS.add("DPS");
 METRICS.add("TDO");
 METRICS.add("Custom");
 let settings_metric = "EER";
-let settings_metric_exp = 0.775;
+let settings_metric_exp = 0.225;
 let settings_default_level = 40;
 let settings_xl_budget = false;
 let settings_strongest_count = 20;
@@ -125,7 +125,7 @@ function Main() {
     $("#lvl-40").click(function() { SetDefaultLevel(40, false); });
     $("#lvl-50").click(function() { SetDefaultLevel(50, false); });
     $("#lvl-xl-budget").click(function() { SetDefaultLevel(40, true); });
-    $("#dps-exp").change(function() { SetMetric("Custom"); });
+    $("#tof-exp").change(function() { SetMetric("Custom"); });
 
     $("#chk-rescale").change(function() { CheckURLAndAct(); });
     
@@ -295,21 +295,21 @@ function SetMetric(metric) {
     settings_metric = metric;
 
     if (metric == "Custom") {
-        settings_metric_exp = parseFloat($("#dps-exp").val());
+        settings_metric_exp = parseFloat($("#tof-exp").val());
         switch (settings_metric_exp) {
-            case 0.75:
+            case 0.25:
                 settings_metric = "ER";
                 break;
-            case 0.775:
+            case 0.225:
                 settings_metric = "EER";
                 break;
-            case 0.85:
+            case 0.15:
                 settings_metric = "TER";
                 break;
-            case 1.0:
+            case 0.0:
                 settings_metric = "DPS";
                 break;
-            case 0.0:
+            case 1.0:
                 settings_metric = "TDO";
                 break;
         }
@@ -323,30 +323,30 @@ function SetMetric(metric) {
     switch (settings_metric) {
         case "ER":
             $("#metric-er").addClass("settings-opt-sel");
-            settings_metric_exp = 0.75;
+            settings_metric_exp = 0.25;
             break;
         case "EER":
             $("#metric-eer").addClass("settings-opt-sel");
-            settings_metric_exp = 0.775;
+            settings_metric_exp = 0.225;
             break;
         case "TER":
             $("#metric-ter").addClass("settings-opt-sel");
-            settings_metric_exp = 0.85;
+            settings_metric_exp = 0.15;
             break;
         case "DPS":
             $("#metric-dps").addClass("settings-opt-sel");
-            settings_metric_exp = 1.00;
+            settings_metric_exp = 0.00;
             break;
         case "TDO":
             $("#metric-tdo").addClass("settings-opt-sel");
-            settings_metric_exp = 0.00;
+            settings_metric_exp = 1.00;
             break;
         case "Custom":
-            settings_metric_exp = parseFloat($("#dps-exp").val());
+            settings_metric_exp = parseFloat($("#tof-exp").val());
             break;
     }
     
-    $("#dps-exp").val(settings_metric_exp.toFixed(3));
+    $("#tof-exp").val(settings_metric_exp.toFixed(3));
 
     // sets pokemongo table header
     $("#table-metric-header").html(settings_metric);
@@ -1551,7 +1551,7 @@ function GetPokemonStrongestMovesetsAgainstEnemy(jb_pkm_obj, mega, mega_y, shado
                 fm_mult, cm_mult, enemy_stats.def, avg_y);
             const tdo = GetTDO(dps, hp, def, avg_y);
             // metrics from Reddit user u/Elastic_Space
-            const rat = Math.pow(dps, settings_metric_exp) * Math.pow(tdo, 1-settings_metric_exp);
+            const rat = Math.pow(dps, 1-settings_metric_exp) * Math.pow(tdo, settings_metric_exp);
 
             // if the array of movesets isn't full
             // or the current moveset is stronger than the weakest in the array,
@@ -1873,8 +1873,8 @@ function LoadPokemongoTable(jb_pkm_obj, mega, mega_y, stats, max_stats = null) {
             const tdo = GetTDO(dps, hp, def);
             const tdo_sh = GetTDO(dps_sh, hp, def_sh);
             // metrics from Reddit user u/Elastic_Space
-            const rat = Math.pow(dps, settings_metric_exp) * Math.pow(tdo, 1-settings_metric_exp);
-            const rat_sh = Math.pow(dps_sh, settings_metric_exp) * Math.pow(tdo_sh, 1-settings_metric_exp);
+            const rat = Math.pow(dps, 1-settings_metric_exp) * Math.pow(tdo, settings_metric_exp);
+            const rat_sh = Math.pow(dps_sh, 1-settings_metric_exp) * Math.pow(tdo_sh, settings_metric_exp);
 
             // calculates average rating percentages against max stats
             if (max_stats) {
@@ -1882,7 +1882,7 @@ function LoadPokemongoTable(jb_pkm_obj, mega, mega_y, stats, max_stats = null) {
                     max_stats.hp, fm_obj, cm_obj);
                 const max_tdo = GetTDO(max_dps, max_stats.hp, max_stats.def);
                 // metrics from Reddit user u/Elastic_Space
-                const max_rat = Math.pow(dps, settings_metric_exp) * Math.pow(tdo, 1-settings_metric_exp);
+                const max_rat = Math.pow(dps, 1-settings_metric_exp) * Math.pow(tdo, settings_metric_exp);
 
                 rat_pcts_vs_max += rat / max_rat;
                 rat_sh_pcts_vs_max += rat_sh / max_rat;
@@ -2729,7 +2729,7 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
             break;
         case "ESpace":
             try {
-                top_compare = str_pokemons.find(e => !(e.class !== undefined && e.shadow) && !e.mega && !e.mega_y).rat;
+                top_compare = str_pokemons.find(e => !(e.class !== undefined && e.shadow) && !e.mega && !e.mega_y && !(e.name == 'Rayquaza' && e.cm == 'Dragon Ascent')).rat;
             } catch (err) {
                 top_compare = str_pokemons[str_pokemons.length-1].rat; // budget must be even lower
             }
@@ -2767,17 +2767,17 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
         for (let str_pok of str_pokemons) {
             str_pok.pct = 100.0 * str_pok.rat / top_compare;
             str_pok.pct_display = str_pok.pct * (top_compare / best_mon);
-            if (str_pok.pct >= 100.0 - 0.00001) { //S+
-                const num_S = Math.floor((str_pok.pct - 99.9999)/15)+1;
-                if (num_S > 4 && str_pok.name == "Rayquaza" && str_pok.mega) 
+            if (str_pok.pct >= 100.0 + 0.00001) { //S+
+                const num_S = Math.floor((str_pok.pct - 99.9999)/20)+1;
+                if (num_S > 3 && str_pok.name == "Rayquaza" && str_pok.mega) 
                     str_pok.tier = "MRay";
-                else if (num_S >= 4)
-                    str_pok.tier = "SSSS";
+                else if (num_S >= 3)
+                    str_pok.tier = "SSS";
                 else 
                     str_pok.tier = "S".repeat(num_S);
             }
             else {
-                let tier_cnt = Math.floor((99.9999 - str_pok.pct)/10);
+                let tier_cnt = Math.floor((100.00001 - str_pok.pct)/10);
                 if (tier_cnt >= 4) tier_cnt = 5 // Everything past D -> F
                 str_pok.tier = String.fromCharCode("A".charCodeAt(0) + tier_cnt);
             }
@@ -2918,7 +2918,7 @@ function GetPokemonStrongestMovesets(jb_pkm_obj, mega, mega_y, shadow,
                         def_types = jb_pkm_obj.mega[1].types;
                     }
                     const def_mult_map = GetTypesEffectivenessAgainstTypes(def_types);
-                    const defense_mult = GetEffectivenessMultOfType(def_mult_map, search_type);
+                    const defense_mult = 1; //GetEffectivenessMultOfType(def_mult_map, search_type);
 
                     const y_est = 900/def*defense_mult;
                     dps = GetDPS(types, atk, def, hp, 
@@ -2949,7 +2949,7 @@ function GetPokemonStrongestMovesets(jb_pkm_obj, mega, mega_y, shadow,
                 }
                 
                 // metrics from Reddit user u/Elastic_Space
-                const rat = Math.pow(dps, settings_metric_exp) * Math.pow(tdo, 1-settings_metric_exp);
+                const rat = Math.pow(dps, 1-settings_metric_exp) * Math.pow(tdo, settings_metric_exp);
 
                 // summary of this moveset and its rating
                 const cur_moveset = {
@@ -3068,7 +3068,7 @@ function GetPokemonStrongestMoveset(jb_pkm_obj, mega, mega_y, shadow,
             const dps = GetDPS(types, atk, def, hp, fm_obj, cm_obj);
             const tdo = GetTDO(dps, hp, def);
             // metrics from Reddit user u/Elastic_Space
-            const rat = Math.pow(dps, settings_metric_exp) * Math.pow(tdo, 1-settings_metric_exp);
+            const rat = Math.pow(dps, 1-settings_metric_exp) * Math.pow(tdo, settings_metric_exp);
 
             // checks whether this moveset is stronger than current strongest,
             // if it is, overrides the previous strongest
