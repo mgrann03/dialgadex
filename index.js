@@ -60,6 +60,7 @@ let settings_default_level = 40;
 let settings_xl_budget = false;
 let settings_strongest_count = 20;
 let settings_compare = "budget";
+let settings_tiermethod = "jenks";
 
 // global variables
 
@@ -132,6 +133,11 @@ function Main() {
     $("#cmp-top").click(function() { SetCompare("top"); });
     $("#cmp-budget").click(function() { SetCompare("budget"); });
     $("#cmp-espace").click(function() { SetCompare("ESpace"); });
+    
+    $("#tier-jenks").click(function() { SetTierMethod("jenks"); });
+    $("#tier-broad").click(function() { SetTierMethod("broad"); });
+    $("#tier-espace").click(function() { SetTierMethod("ESpace"); });
+    $("#tier-abs").click(function() { SetTierMethod("absolute"); });
 
     $("#darkmode-toggle").click(function() { 
         if ($("body").hasClass("darkmode")) {
@@ -438,6 +444,37 @@ function SetCompare(compareTo = "top") {
             break;
         case "ESpace":
             $("#cmp-espace").addClass("settings-opt-sel");
+            break;
+    }
+
+    // reload page
+    CheckURLAndAct();
+}
+
+/**
+ * Sets the method used for finding tier breaks
+ */
+function SetTierMethod(method = "jenks") {
+    // sets global variable
+    settings_tiermethod = method;
+
+    $("#tier-jenks").removeClass("settings-opt-sel");
+    $("#tier-broad").removeClass("settings-opt-sel");
+    $("#tier-espace").removeClass("settings-opt-sel");
+    $("#tier-abs").removeClass("settings-opt-sel");
+    
+    switch (method) {
+        case "jenks":
+            $("#tier-jenks").addClass("settings-opt-sel");
+            break;
+        case "broad":
+            $("#tier-broad").addClass("settings-opt-sel");
+            break;
+        case "ESpace":
+            $("#tier-espace").addClass("settings-opt-sel");
+            break;
+        case "absolute":
+            $("#tier-abs").addClass("settings-opt-sel");
             break;
     }
 
@@ -2735,11 +2772,11 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
             }
             break;
     }
-    
-    str_pokemons.length = Math.min(str_pokemons.length, settings_strongest_count);
 
     // re-order array based on the optimal movesets of each pokemon
     if (display_grouped) {
+        str_pokemons.length = Math.min(str_pokemons.length, settings_strongest_count); //truncate to top movesets early
+
         let str_pokemons_optimal = new Map(); // map of top movesets per mon
         let rat_order = 0;
 
@@ -2763,12 +2800,44 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
         // re-sort by grouped ranking, then individual moveset rank
         str_pokemons.sort((a,b) => a.grouped_rat - b.grouped_rat || b.rat - a.rat);
     }
-    else {
+    else { // determine tiers
         for (let str_pok of str_pokemons) {
             str_pok.pct = 100.0 * str_pok.rat / top_compare;
             str_pok.pct_display = str_pok.pct * (top_compare / best_mon);
-            if (str_pok.pct >= 100.0 + 0.00001) { //S+
-                const num_S = Math.floor((str_pok.pct - 99.9999)/20)+1;
+        }
+        BuildTiers(str_pokemons, top_compare);
+    
+        str_pokemons.length = Math.min(str_pokemons.length, settings_strongest_count); // truncate late so all movesets could be evaluated
+    }
+
+    // sets table from array
+    SetStrongestTableFromArray(str_pokemons, str_pokemons.length, display_grouped, true, true, true, (best_mon / top_compare));
+}
+
+/**
+ * Modifies str_pokemons to include a "tier" attribute
+ * Can rely on each entry in str_pokemons having "rat" attribute (current metric rating)
+ *    and "pct" attribute (rating vs comparison mon aka [this.rat/top_compare])
+ * 
+ * Tier-making methods can optionally use the top_compare parameter as a benchmark
+ */
+function BuildTiers(str_pokemons, top_compare) {
+    const best_mon = str_pokemons[0].rat;
+
+    // Compare to benchmark, building tiers based on ratio (str_pok.pct)
+    if (settings_tiermethod == "broad" || settings_tiermethod == "ESpace") {
+        let S_breakpoint = 100.0;
+        let S_tier_size = 20.0;
+        let letter_tier_size = 10.0;
+        if (settings_tiermethod == "ESpace") { // slightly tweak tier sizes and breakpoints
+            S_breakpoint = 105.0;
+            S_tier_size = 10.0;
+            letter_tier_size = 5.0;
+        }
+
+        for (let str_pok of str_pokemons) {
+            if (str_pok.pct >= S_breakpoint + 0.00001) { //S+
+                const num_S = Math.floor((str_pok.pct - S_breakpoint + 0.00001)/S_tier_size)+1;
                 if (num_S > 3 && str_pok.name == "Rayquaza" && str_pok.mega) 
                     str_pok.tier = "MRay";
                 else if (num_S >= 3)
@@ -2777,15 +2846,120 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
                     str_pok.tier = "S".repeat(num_S);
             }
             else {
-                let tier_cnt = Math.floor((100.00001 - str_pok.pct)/10);
-                if (tier_cnt >= 4) tier_cnt = 5 // Everything past D -> F
+                let tier_cnt = Math.floor((S_breakpoint + 0.00001 - str_pok.pct)/letter_tier_size);
+                if (settings_tiermethod == "ESpace" && tier_cnt >=1) // Shift to an "A" breakpoint of 95.0
+                    tier_cnt--;
+                if (tier_cnt >= 4) // Everything past D -> F
+                    tier_cnt = 5;
                 str_pok.tier = String.fromCharCode("A".charCodeAt(0) + tier_cnt);
             }
         }
     }
+    // Compare to benchmark, generally trying to set the benchmark into "A" tier within reason
+    // Using Jenks Natural Breaks to compute reasonable tier breaks
+    // (Minimize internal tier variance, while maximizing variance between tiers)
+    else if (settings_tiermethod == "jenks") {
+        const n = Math.min(100, str_pokemons.length); // only consider top 100
 
-    // sets table from array
-    SetStrongestTableFromArray(str_pokemons, str_pokemons.length, display_grouped, true, true, true, (best_mon / top_compare));
+        let tier_breaks = jenks_wrapper(str_pokemons.map(e => e.rat).slice(0, n), 5); // truncate to only those above breakpoint
+        let compare_tier = tier_breaks.findIndex(e => e < top_compare);
+        if (compare_tier == -1) compare_tier = 5; //not found
+        if (compare_tier >= 2) { // need more tiers
+            tier_breaks = jenks_wrapper(str_pokemons.map(e => e.rat).slice(0, n), 5 + compare_tier); // truncate to only those above breakpoint
+            //compare_tier = tier_breaks.findIndex(e => e < top_compare);
+        }
+
+        let this_tier_idx = 0;
+        let this_tier = (compare_tier >= 2 ? 1 - compare_tier : 0); // if necessary, shift tiers down to make "top_compare" mon A-tier
+        for (let str_pok of str_pokemons) {
+            if (str_pok.rat <= tier_breaks[this_tier_idx]) {
+                this_tier_idx++;
+                this_tier++;
+            }
+            
+            if (this_tier <= 0) {
+                if (str_pok.rat == best_mon && str_pok.name == "Rayquaza" && str_pok.mega)
+                    str_pok.tier = "MRay";
+                else
+                    str_pok.tier = "S".repeat(1 - this_tier);
+            }
+            else {
+                str_pok.tier = String.fromCharCode("A".charCodeAt(0) + this_tier + (this_tier == 5 ? 0 : -1));
+            }
+        }
+    }
+    // Hand-tuned tier listing based on overall, objective evaluation of the Pokemon
+    // This is compared to the generalist "Any" ranking and tuned using the Jenks method
+    // Helps reveal situations where a Pokemon, despite being good *within its limited type context*
+    //   is actually suboptimal overall due to that type's inherent weakness
+    //   (e.g. Poison/Bug/Fairy tend to have very weak options and are often poor counters)
+    // Basic philosophy is that an "S" tier mon should actually be GOOD, not just better than
+    //   its counterparts
+    else if (settings_tiermethod == "absolute") {
+        for (let str_pok of str_pokemons) {
+            const rescale = $("#settings input[value='rescale']:checkbox").is(":checked");
+            let check_rat = str_pok.rat;
+            if ((!rescale || (settings_metric == 'DPS' || settings_metric == 'TDO')) 
+                && (versus || (type != 'Any' && search_mixed))) {
+                check_rat /= 1.6;
+            }
+            switch (settings_metric) {
+                case 'DPS':
+                    if (check_rat >= 20.0) str_pok.tier = 'SSS';
+                    else if (check_rat >= 19.5) str_pok.tier = 'SS';
+                    else if (check_rat >= 19.0) str_pok.tier = 'S';
+                    else if (check_rat >= 18.5) str_pok.tier = 'A';
+                    else if (check_rat >= 17.5) str_pok.tier = 'B';
+                    else if (check_rat >= 17.0) str_pok.tier = 'C';
+                    else if (check_rat >= 16.0) str_pok.tier = 'D';
+                    else str_pok.tier = 'F';
+                    break;
+                case 'TDO':
+                    if (check_rat >= 750) str_pok.tier = 'SSS';
+                    else if (check_rat >= 700) str_pok.tier = 'SS';
+                    else if (check_rat >= 650) str_pok.tier = 'S';
+                    else if (check_rat >= 600) str_pok.tier = 'A';
+                    else if (check_rat >= 550) str_pok.tier = 'B';
+                    else if (check_rat >= 500) str_pok.tier = 'C';
+                    else if (check_rat >= 450) str_pok.tier = 'D';
+                    else str_pok.tier = 'F';
+                    break;
+                case 'ER':
+                    if (check_rat >= 57.0) str_pok.tier = 'SSS';
+                    else if (check_rat >= 53.5) str_pok.tier = 'SS';
+                    else if (check_rat >= 49.0) str_pok.tier = 'S';
+                    else if (check_rat >= 45.0) str_pok.tier = 'A';
+                    else if (check_rat >= 42.5) str_pok.tier = 'B';
+                    else if (check_rat >= 41.0) str_pok.tier = 'C';
+                    else if (check_rat >= 39.0) str_pok.tier = 'D';
+                    else str_pok.tier = 'F';
+                    break;
+                case 'EER':
+                    if (check_rat >= 50.0) str_pok.tier = 'SSS';
+                    else if (check_rat >= 47.0) str_pok.tier = 'SS';
+                    else if (check_rat >= 43.0) str_pok.tier = 'S';
+                    else if (check_rat >= 40.0) str_pok.tier = 'A';
+                    else if (check_rat >= 37.5) str_pok.tier = 'B';
+                    else if (check_rat >= 36.0) str_pok.tier = 'C';
+                    else if (check_rat >= 34.5) str_pok.tier = 'D';
+                    else str_pok.tier = 'F';
+                    break;
+                case 'TER':
+                    if (check_rat >= 37.0) str_pok.tier = 'SSS';
+                    else if (check_rat >= 35.0) str_pok.tier = 'SS';
+                    else if (check_rat >= 34.0) str_pok.tier = 'S';
+                    else if (check_rat >= 32.0) str_pok.tier = 'A';
+                    else if (check_rat >= 31.0) str_pok.tier = 'B';
+                    else if (check_rat >= 30.0) str_pok.tier = 'C';
+                    else if (check_rat >= 29.0) str_pok.tier = 'D';
+                    else str_pok.tier = 'F';
+                    break;
+            }
+
+            if (str_pok.rat == best_mon && str_pok.name == "Rayquaza" && str_pok.mega)
+                str_pok.tier = "MRay";
+        }
+    }
 }
 
 /**

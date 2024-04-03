@@ -82,7 +82,7 @@ body {
 #strongest-table tr > *:nth-child(7) {
     display: none;
 }
-#settings-compare {
+#settings-compare, #settings-tiermethod {
     display: none;
 }
 

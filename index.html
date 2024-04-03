@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="style_mobile.css" media="screen and (max-width:900px)">
     <script src=jquery-3.6.0.min.js></script>
     <script src=pokemon_utils.js></script>
+    <script src=jenks.js></script>
     <script src=index.js></script>
 </head>
 
@@ -97,6 +98,20 @@
                                 • No Dragon Ascent
                                 • Defined by /u/Elastic_Space
                                 • Used in infographics by /u/bulbavisual'>ESpace</span></li>
+                    <li id=settings-tiermethod><span class="tooltip-bottom" style="margin: 0" 
+                            data-tooltip='Determines how tiers are computed 
+                                • Depends on comparison Pokemon'>Tiers →</span>
+                        <span id=tier-jenks class="settings-opt settings-opt-sel unselectable tooltip-bottom" 
+                            data-tooltip='Algorithmic tiers based on minimum variance'>Jenks</span>
+                        <span id=tier-broad class="settings-opt unselectable tooltip-bottom" 
+                            data-tooltip='Broad tiers based on hardcoded breakpoints for relative rating'>Broad</span>
+                        <span id=tier-espace class="settings-opt unselectable tooltip-bottom" 
+                            data-tooltip='Narrower tiers with hardcoded breakpoints
+                                • Defined by /u/Elastic_Space'>ESpace</span>
+                        <span id=tier-abs class="settings-opt unselectable tooltip-bottom" 
+                            data-tooltip='Absolute tiers for cross-listing comparison
+                                • Ignores context (comparison Pokemon)
+                                • Tuned to overall "Any" rankings'>Absol</span></li>
                     <!--<li>Pkm sprites → 3DS POGO</li>-->
                 </ul>
             </div>
