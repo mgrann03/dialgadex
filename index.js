@@ -3102,7 +3102,7 @@ function GetPokemonStrongestMovesets(jb_pkm_obj, mega, mega_y, shadow,
 
                     if (rescale && settings_metric != 'DPS' && settings_metric != 'TDO') {
                         dps /= 1.6;
-                        tdo /= 1.6*1.6; // have to ALSO remove the extra scalar on the dps used in the TDO calc
+                        tdo /= 1.6; // have to ALSO remove the extra scalar on the dps used in the TDO calc
                     }
                 }
                 else if (search_mixed && search_type != "Any") { // mixed movesets scale based on search type (super-effective mult)
