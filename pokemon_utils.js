@@ -531,6 +531,8 @@ function GetPokemonForms(pokemon_id) {
             return [ "Red" ]; // TODO not added to pokmeon go yet
         case 778: // Mimikyu
             return [ "Disguised", "Busted" ];
+        case 800: // Necrozma
+            return [ "Normal", "Dawn_wings", "Dusk_mane" ];
         case 849: // Toxtricity
             return [ "Amped", "Low_key" ];
         case 854: // Sinistea
@@ -556,6 +558,8 @@ function GetPokemonForms(pokemon_id) {
             return [ "Normal", "Female" ];
         case 916: // Oinkologne
             return [ "Normal", "Female" ];
+        case 925: // Maushold
+            return [ "Family_of_four", "Family_of_three" ]
         default:
             return [ "Normal" ];
     }
@@ -818,6 +822,10 @@ function GetFormText(pokemon_id, form) {
             return "Pa'u Style";
         case "Sensu":
             return "Sensu Style";
+        case "Dawn_wings":
+            return "Dawn Wings";
+        case "Dusk_mane":
+            return "Dusk Mane";
         case "Low_key":
             return "Low Key Form";
         case "Ice":
@@ -846,6 +854,10 @@ function GetFormText(pokemon_id, form) {
             return "Ice Rider";
         case "Shadow_rider":
             return "Shadow Rider";
+        case "Family_of_four":
+            return "Family of Four";
+        case "Family_of_three":
+            return "Family of Three";
     }
 
     return "";
@@ -1159,6 +1171,11 @@ function GetPokemonIconCoords(pokemon_id, form, mega, mega_y) {
 
     } else if (pokemon_id == 746 && form == "School") { // Wishiwashi
         col = 0, row = 97;
+
+    } else if (pokemon_id == 800 && form == "Dawn_wings") { // Necrozma
+        col = 6, row = 98;
+    } else if (pokemon_id == 800 && form == "Dusk_mane") { // Necrozma
+        col = 5, row = 98;
 
     } else if (pokemon_id == 849 && form == "Low_key") { // Toxtricity
         col = 2, row = 100;
