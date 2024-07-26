@@ -2766,7 +2766,11 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
             break;
         case "ESpace":
             try {
-                top_compare = str_pokemons.find(e => !(e.class !== undefined && e.shadow) && !e.mega && !e.mega_y && !(e.name == 'Rayquaza' && e.cm == 'Dragon Ascent')).rat;
+                top_compare = str_pokemons.find(e => !(e.class !== undefined && e.shadow) && 
+                                                    !e.mega && !e.mega_y && 
+                                                    !(e.name == 'Rayquaza' && e.cm == 'Dragon Ascent') &&
+                                                    !(e.name == 'Necrozma' && e.form != 'Normal')
+                                                ).rat;
             } catch (err) {
                 top_compare = str_pokemons[str_pokemons.length-1].rat; // budget must be even lower
             }
