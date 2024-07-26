@@ -42,78 +42,131 @@
                 </svg>
             </span>
             <span id=settings-expand><b>Settings</b> <span id=settings-hide class=unselectable>[show]</span></span>
-            <div id=settings-list class=invisible>
-                <ul>
-                    <li id=settings-metric>PvE metric →
-                        <span id=metric-dps class="settings-opt tooltip-bottom unselectable" 
-                            data-tooltip='"Damage Per Second"
-                                • Speed of damage output
-                                • (Favors glass cannons)
-                                • TOF-exponent: 0.00'>DPS</span>
-                        <span id=metric-ter class="settings-opt tooltip-bottom unselectable" 
-                            data-tooltip='"Time Equivalent Rating"
-                                • DPS-TDO mix fitted to Pokebattler "Time to Win"
-                                • Best for large raid lobbies
-                                • TOF-exponent: 0.15'>TER</span>
-                        <span id=metric-eer class="settings-opt tooltip-bottom settings-opt-sel unselectable" 
-                            data-tooltip='"Estimator Equivalent Rating"
-                                • DPS-TDO mix fitted to Pokebattler "Estimator"
-                                • Best for short-manning
-                                • TOF-exponent: 0.225'>EER</span>
-                        <span id=metric-er class="settings-opt tooltip-bottom unselectable" 
-                            data-tooltip='"Equivalent Rating"
-                                • Deprecated/un-fitted DPS-TDO mix
-                                • TOF-exponent: 0.25'>ER</span>
-                        <span id=metric-tdo class="settings-opt tooltip-bottom unselectable" 
-                            data-tooltip='"Total Damage Output
-                                • Amount of damage done before fainting
-                                • (Favors bulk)
-                                • TOF-exponent: 1.00'>TDO</span></li>
-                    <li id=settings-tof-exponent class="tooltip-bottom" data-tooltip="Defines the mixture between DPS and TDO
-                        Rating = DPS * TOF^exp 
-                        = DPS^(1-exp) * TDO^exp">TOF Exponent → 
-                        <input id=tof-exp class="settings-num" value="0.225" style="width: 7ch"></li>
-                    <li id=settings-rescale>Rescale Effectiveness 
-                        <label class="switch tooltip-bottom" data-tooltip="Force ratings to a common scale, allowing them to be compared more easily">
+            <div id=settings-container class=invisible>
+                <div id=settings-list>
+                    <div id=settings-metric>PvE metric →
+                        <span id=metric-dps class="settings-opt tooltip unselectable">DPS
+                            <span class="tooltiptext">
+                                <div class="tooltip-title">Damage Per Second</div>
+                                <ul>
+                                    <li>Speed of damage output</li>
+                                    <li>Favors glass cannons</li>
+                                    <li><i>TOF-exponent: 0.00</i></li>
+                                </ul></span></span>
+                        <span id=metric-ter class="settings-opt tooltip unselectable">TER
+                            <span class="tooltiptext">
+                                <div class="tooltip-title">Time Equivalent Rating</div>
+                                <ul>
+                                    <li>DPS-TDO mix fitted to Pokebattler "Time to Win"</li>
+                                    <li>Best for large raid lobbies</li>
+                                    <li><i>TOF-exponent: 0.15</i></li>
+                                </ul></span></span>
+                        <span id=metric-eer class="settings-opt tooltip settings-opt-sel unselectable">EER
+                            <span class="tooltiptext">
+                                <div class="tooltip-title">Estimator Equivalent Rating</div>
+                                <ul>
+                                    <li>DPS-TDO mix fitted to Pokebattler "Estimator"</li>
+                                    <li>Best for short-manning</li>
+                                    <li><i>TOF-exponent: 0.225</i></li>
+                                </ul></span></span>
+                        <span id=metric-er class="settings-opt tooltip unselectable">ER
+                            <span class="tooltiptext">
+                                <div class="tooltip-title">Equivalent Rating</div>
+                                <ul>
+                                    <li>Deprecated/un-fitted DPS-TDO mix</li>
+                                    <li><i>TOF-exponent: 0.25</i></li>
+                                </ul></span></span>
+                        <span id=metric-tdo class="settings-opt tooltip unselectable">TDO
+                            <span class="tooltiptext">
+                                <div class="tooltip-title">Total Damage Output</div>
+                                <ul>
+                                    <li>Amount of damage done before fainting</li>
+                                    <li>Favors bulk</li>
+                                    <li><i>TOF-exponent: 1.00</i></li>
+                                </ul></span></span>
+                    </div>
+                    <div id=settings-tof-exponent class="tooltip">TOF Exponent → 
+                        <span class="tooltiptext">
+                            <div class="tooltip-title">Time On Field Exponent</div>
+                            <p>Defines the mixture between DPS and TDO</p>
+                            <p><i>TOF&nbsp;= TDO&nbsp;/&nbsp;DPS</i></p>
+                            <p><i>Rating&nbsp;= DPS&nbsp;*&nbsp;TOF^exp&nbsp;= DPS^(1-exp)&nbsp;*&nbsp;TDO^exp</i></p></span>
+                        <input id=tof-exp class="settings-num" value="0.225" style="width: 7ch">
+                    </div>
+                    <div id=settings-rescale class="tooltip">Rescale Effectiveness 
+                        <span class="tooltiptext">
+                            <p>Corrects for type effectiveness multipliers.</p>
+                            <p>Forces ratings to a common scale, allowing them to be compared more easily.</p></span>
+                        <label class="switch">
                             <input id=chk-rescale type=checkbox value=rescale checked>
                             <span class="slider"></span>
-                        </label></li>
-                    <li id=settings-showstrongest class="tooltip-bottom" data-tooltip='Number of rows to display in "Strongest" Tables'>Show strongest →
-                        <input type="number" id=strongest-count class="settings-num" value="20" min="20" max="100" step="10"></li>
-                    <li id=settings-lvl><span class="tooltip-bottom" style="margin: 0" data-tooltip="Level to use when computing Pokemon stats">Level →</span>
+                        </label>
+                    </div>
+                    <div id=settings-showstrongest class="tooltip">Show strongest →
+                        <span class="tooltiptext">Number of rows to display in "Strongest" Tables</span>
+                        <input type="number" id=strongest-count class="settings-num" value="20" min="20" max="100" step="10">
+                    </div>
+                    <div id=settings-lvl><span class="tooltip">Level →
+                        <span class="tooltiptext">Level to use when computing Pokemon stats</span></span>
                         <span id=lvl-40 class="settings-opt settings-opt-sel unselectable">40</span>
                         <span id=lvl-50 class="settings-opt unselectable">50</span>
-                        <span id=lvl-xl-budget class="settings-opt unselectable tooltip-bottom" 
-                            data-tooltip='Use Level 40 for Legendaries, otherwise Level 50
-                                to reflect the scarcity of rare XL candies'>Budget50</span></li>
-                    <li id=settings-compare><span class="tooltip-bottom" style="margin: 0" data-tooltip='Sets the "100%" reference Pokemon'>Compare To →</span>
-                        <span id=cmp-budget class="settings-opt settings-opt-sel unselectable tooltip-bottom" 
-                            data-tooltip='Compare to the top "cheap" Pokemon
-                                • No legendaries, megas, or shadows'>Budget</span>
-                        <span id=cmp-top class="settings-opt unselectable tooltip-bottom" 
-                            data-tooltip='Compare to the absolute best Pokemon'>Best</span>
-                        <span id=cmp-espace class="settings-opt unselectable tooltip-bottom" 
-                            data-tooltip='Compare to the top "available-ish" Pokemon
-                                • No shadow legendaries, no megas
-                                • No Dragon Ascent
-                                • Defined by /u/Elastic_Space
-                                • Used in infographics by /u/bulbavisual'>ESpace</span></li>
-                    <li id=settings-tiermethod><span class="tooltip-bottom" style="margin: 0" 
-                            data-tooltip='Determines how tiers are computed 
-                                • Depends on comparison Pokemon'>Tiers →</span>
-                        <span id=tier-jenks class="settings-opt settings-opt-sel unselectable tooltip-bottom" 
-                            data-tooltip='Algorithmic tiers based on minimum variance'>Jenks</span>
-                        <span id=tier-broad class="settings-opt unselectable tooltip-bottom" 
-                            data-tooltip='Broad tiers based on hardcoded breakpoints for relative rating'>Broad</span>
-                        <span id=tier-espace class="settings-opt unselectable tooltip-bottom" 
-                            data-tooltip='Narrower tiers with hardcoded breakpoints
-                                • Defined by /u/Elastic_Space'>ESpace</span>
-                        <span id=tier-abs class="settings-opt unselectable tooltip-bottom" 
-                            data-tooltip='Absolute tiers for cross-listing comparison
-                                • Ignores context (comparison Pokemon)
-                                • Tuned to overall "Any" rankings'>Absol</span></li>
+                        <span id=lvl-xl-budget class="settings-opt unselectable tooltip">Budget50
+                            <span class="tooltiptext">
+                                <div class="tooltip-title">Level 50 for Budget Pokemon</div>
+                                <ul>
+                                    <li>Use stats at Level 40 for Legendaries</li>
+                                    <li>Use stats at Level 50 for non-Legendaries</li>
+                                    <li>Helps adjust for the scarcity of rare XL candies</li>
+                                </ul></span></span>
+                    </div>
+                    <div id=settings-compare><span class="tooltip">Compare To →
+                        <span class="tooltiptext">Sets the "100%" reference Pokemon</span></span>
+                        <span id=cmp-budget class="settings-opt settings-opt-sel unselectable tooltip">Budget
+                            <span class="tooltiptext">
+                                <p>Compare to the top "cheap" Pokemon</p>
+                                <ul>
+                                    <li>No Shadows</li>
+                                    <li>No Legendaries</li>
+                                    <li>No Megas</li>
+                                </ul></span></span>
+                        <span id=cmp-top class="settings-opt unselectable tooltip">Best
+                            <span class="tooltiptext">Compare to the absolute best Pokemon</span></span>
+                        <span id=cmp-espace class="settings-opt unselectable tooltip">ESpace
+                            <span class="tooltiptext">
+                                <p>Compare to the top "available-ish" Pokemon</p>
+                                <ul>
+                                    <li>No Shadow Legendaries</li>
+                                    <li>No Necrozma Fusions</li>
+                                    <li>No Dragon Ascent</li>
+                                    <li>No Megas</li>
+                                </ul>
+                                <p><i>Defined by <a href="http://reddit.com/u/Elastic_Space">/u/Elastic_Space</a></i></p>
+                                <p><i>Used in infographics by <a href="http://reddit.com/u/bulbavisual">/u/bulbavisual</a></i></p>
+                            </span></span>
+                    </div>
+                    <div id=settings-tiermethod><span class="tooltip">Tiers →
+                        <span class="tooltiptext"><p>Determines how tiers are computed.</p>
+                            <p>Depends on comparison Pokemon.</p></span></span>
+                        <span id=tier-jenks class="settings-opt settings-opt-sel unselectable tooltip">Jenks
+                            <span class="tooltiptext">Algorithmic tiers based on minimum variance</span></span>
+                        <span id=tier-broad class="settings-opt unselectable tooltip">Broad
+                            <span class="tooltiptext">Broad tiers based on hardcoded breakpoints</span></span>
+                        <span id=tier-espace class="settings-opt unselectable tooltip">ESpace
+                            <span class="tooltiptext">
+                                <p>Narrower tiers with hardcoded breakpoints</p>
+                                <p><i>Defined by <a href="http://reddit.com/u/Elastic_Space">/u/Elastic_Space</a></i></p>
+                            </span></span>
+                        <span id=tier-abs class="settings-opt unselectable tooltip">Absol
+                            <span class="tooltiptext">
+                                <p>Absolute tiers based on only the displayed rating</p>
+                                <ul>
+                                    <li>Ignores context (comparison Pokemon, type)</li>
+                                    <li>Tuned to overall "Any" rankings</li>
+                                    <li>Best for comparing across different types</li>
+                                </ul></span></span>
+                    </div>
                     <!--<li>Pkm sprites → 3DS POGO</li>-->
-                </ul>
+                </div>
             </div>
         </div>
     </div>
@@ -320,7 +373,8 @@
                     <label class="switch">
                         <input type=checkbox value=unreleased unchecked>
                         <span class="slider"></span>
-                        <span class="labeltext" data-tooltip="Include Pokemon found in the Game Master but not yet available in game">Unreleased</span>
+                        <span class="labeltext tooltip">Unreleased
+                            <span class="tooltiptext">Include Pokemon found in the Game Master but not yet available in game</span></span>
                     </label>
                     <label class="switch">
                         <input type=checkbox value=mega checked>
@@ -339,24 +393,29 @@
                     </label>
                 </div>
                 <div class="filters-box" id=move-filters>
-                    <label class="switch" data-tooltip="Allow moves only available via special events or Elite TMs">
+                    <label class="switch tooltip">
+                        <span class="tooltiptext"><p>Allow moves with limited availability</p>
+                            <p>(Requires Special event or Elite TMs)</p></span>
                         <input type=checkbox value=elite checked>
                         <span class="slider"></span>
                         <span class="labeltext">Elite moves</span>
                     </label>
-                    <label class="switch" data-tooltip="Allow multiple movesets per Pokemon">
+                    <label class="switch tooltip">
+                        <span class="tooltiptext">Allow multiple movesets per Pokemon</span>
                         <input type=checkbox value=suboptimal id=chk-suboptimal unchecked>
                         <span class="slider"></span>
                         <span class="labeltext">Suboptimal moves</span>
                     </label>
-                    <label class="switch opt-indent"
-                        data-tooltip="Checked → Compare suboptimal movesets to a Pokemon's best
-                            Unchecked → Compare all movesets to each other">
+                    <label class="switch opt-indent tooltip">
+                        <span class="tooltiptext"><div style="display: inline-grid; grid-template-columns: auto auto auto; column-gap: 5px;">
+                            <span>Checked</span><span>→</span><span>Compare suboptimal movesets to that Pokemon's best moveset</span>
+                            <span>Unchecked</span><span>→</span><span>Compare all movesets to each other</span></div></span>
                         <input type=checkbox value=grouped id=chk-grouped checked disabled>
                         <span class="slider" ></span>
                         <span class="labeltext">Display grouped</span>
                     </label>
-                    <label class="switch" data-tooltip="Allow fast and charged moves with different types">
+                    <label class="switch tooltip">
+                        <span class="tooltiptext">Allow fast and charged moves with different types</span>
                         <input type=checkbox value=mixed id=chk-mixed checked>
                         <span class="slider"></span>
                         <span class="labeltext">Mixed movesets<sup>&dagger;</sup></span>

@@ -292,24 +292,13 @@ span.poke-form-name {
     width: 100%;
 }
 
-#settings p, #settings ul {
+#settings-list {
     margin: 0.25em 0.5em;
     padding: 0;
 }
 
-#settings ul {
-    list-style-type: none;
-}
-
-#settings li {
-    list-style-position: inside;
-    /*overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;*/
-}
-
-#settings-list span {
-    margin: 0 2px 0 2px;
+#settings-list > div {
+    width: 100%;
 }
 
 #darkmode-toggle {
@@ -320,6 +309,7 @@ span.poke-form-name {
 
 .settings-opt {
     cursor: pointer;
+    margin: 0 2px 0 2px;
 }
 
 .settings-opt-sel {

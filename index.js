@@ -278,7 +278,7 @@ function OnDocumentClick(event)  {
  */
 function SwapSettingsStatus() {
 
-    const list = $("#settings-list");
+    const list = $("#settings-container");
 
     if (list.css("display") == "none") {
         list.css("display", "initial");
