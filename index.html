@@ -102,6 +102,15 @@
                             <span class="slider"></span>
                         </label>
                     </div>
+                    <div id=settings-pve-turns class="tooltip">Use PvE Turns
+                        <span class="tooltiptext">
+                            <p>Uses turn-based battles in PvE with a fixed multiple for move durations.</p>
+                            <p><i>Rounds all attack timers to 0.5s.</i></p></span>
+                        <label class="switch">
+                            <input id=chk-pve-turns type=checkbox value=pve-turns checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
                     <div id=settings-showstrongest class="tooltip">Show strongest →
                         <span class="tooltiptext">Number of rows to display in "Strongest" Tables</span>
                         <input type="number" id=strongest-count class="settings-num" value="20" min="20" max="100" step="10">
