@@ -443,6 +443,10 @@ function GetPokemonForms(pokemon_id) {
             return [ "Normal", "Hisuian" ];
         case 194: // Wooper
             return ["Normal", "Paldea"];
+        case 201: // Unown
+            return ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
+                "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y",
+                "Z", "Exclamation_point", "Question_mark"];
         case 351: // Castform
             return [ "Normal", "Sunny", "Rainy", "Snowy" ];
         case 386: // Deoxys
@@ -527,8 +531,8 @@ function GetPokemonForms(pokemon_id) {
             return [ "Normal", "Fire", "Water", "Grass", "Electric", "Ice",
                 "Fighting", "Poison", "Ground", "Flying", "Psychic", "Bug",
                 "Rock", "Ghost", "Dragon", "Dark", "Steel", "Fairy" ];
-        case 774: // Minior
-            return [ "Red" ]; // TODO not added to pokmeon go yet
+        //case 774: // Minior
+            //return [ "Red" ]; // TODO not added to pokmeon go yet
         case 778: // Mimikyu
             return [ "Disguised", "Busted" ];
         case 800: // Necrozma
@@ -587,39 +591,9 @@ function GetPokemonImgSrcName(pokemon_id, clean_name, form, mega, mega_y) {
 
     let img_src_name = clean_name;
 
-    if (form != GetPokemonDefaultForm(pokemon_id)) {
-
-        switch (form) {
-            case "Normal":
-            case "Meadow":
-                break;
-            case "Sunny":
-                if (pokemon_id == 421) // Cherrim
-                    img_src_name += "-sunshine";
-                else
-                    img_src_name += "-sunny";
-                break;
-            case "East_sea":
-                img_src_name += "-east";
-                break;
-            case "Ten_percent":
-                img_src_name += "-10";
-                break;
-            case "Crowned_sword":
-            case "Crowned_shield":
-                img_src_name += "-crowned";
-                break;
-            case "Ice_rider":
-                img_src_name += "-ice";
-                break;
-            case "Shadow_rider":
-                img_src_name += "-shadow";
-                break;
-            default:
-                img_src_name += "-";
-                img_src_name += form.toLowerCase().replace(/_/g, "");
-                break;
-        }
+    if (form != "Normal") {
+        img_src_name += "-";
+        img_src_name += form.toLowerCase().replace(/_/g, "");
     }
 
     if (mega) {
@@ -628,7 +602,6 @@ function GetPokemonImgSrcName(pokemon_id, clean_name, form, mega, mega_y) {
         else
             img_src_name += "-mega";
     }
-
     const can_be_mega_y = pokemon_id == 6 || pokemon_id == 150; 
     if (mega && can_be_mega_y)
         img_src_name += ((mega_y) ? "y" : "x");
@@ -641,8 +614,10 @@ function GetPokemonImgSrcName(pokemon_id, clean_name, form, mega, mega_y) {
  */
 function GetFormText(pokemon_id, form) {
 
-    if (pokemon_id == 493 || pokemon_id == 773) // Arceus or Silvally
+    if (pokemon_id == 493 || pokemon_id == 773 // Arceus or Silvally
+            || pokemon_id == 201 && form != "Exclamation_point" && form != "Question_mark") { // Unown letters
         return form;
+    }
 
     if (pokemon_id == 774) // TODO Minior not handled yet
         return "";
@@ -675,6 +650,10 @@ function GetFormText(pokemon_id, form) {
             return "Alolan Form";
         case "Paldea":
             return "Paldean Form";
+        case "Exclamation_point":
+            return "!";
+        case "Question_mark":
+            return "?";
         case "Plant":
         case "Sandy":
         case "Trash":
