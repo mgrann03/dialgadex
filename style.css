@@ -155,6 +155,7 @@ button:focus {
     font-size: 16px;
     transform: translateY(-2px);
     cursor: pointer;
+    position: relative;
 }
 
 .pokemon-types {
@@ -747,3 +748,18 @@ ul.footnotes {
 .tier-C { background-color: #ab8621; }
 .tier-D { background-color: #ab5f21; }
 .tier-F { background-color: #ab2121; }
+
+
+.shadow-icon {
+    width: 20px;
+    position: absolute;
+    left: 100%;
+    top: 0;
+}
+
+.filter-shadow {
+    filter: invert(75%) sepia(35%) saturate(2706%) hue-rotate(208deg) brightness(93%) contrast(102%);
+}
+.filter-noshadow {
+    filter: invert(37%) sepia(9%) saturate(2773%) hue-rotate(231deg) brightness(100%) contrast(91%);
+}

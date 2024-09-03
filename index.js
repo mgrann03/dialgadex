@@ -799,6 +799,7 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal",
             mega, mega_y);
     let img_src = GIFS_URL + img_src_name + ".gif";
     const can_be_mega_y = pokemon_id == 6 || pokemon_id == 150; 
+    const can_be_shadow = (is_selected && jb_pkm.find(e => e.id == pokemon_id).shadow);
     const primal = mega && (pokemon_id == 382 || pokemon_id == 383);
     const form_text = GetFormText(pokemon_id, form);
 
@@ -838,6 +839,15 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal",
             + pokemon_name
             + ((mega && can_be_mega_y) ? ((mega_y) ? " Y " : " X ") : "")
             + "</p>");
+    if (is_selected && !mega && !mega_y) {
+        const shadow_icon = $("<img src='imgs/flame.svg' class='shadow-icon filter-" + (can_be_shadow ? 'shadow' : 'noshadow') + "'></img>");
+        shadow_icon.on('click', function(e) { 
+            const pkm = jb_pkm.find(e => e.id == pokemon_id);
+            pkm.shadow = !can_be_shadow;
+            pkm.shadow_released = !can_be_shadow;
+        })
+        pokemon_name_p.append(shadow_icon);
+    }
     pokemon_container_div.append(pokemon_name_p);
 
     // pokemon types
