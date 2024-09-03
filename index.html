@@ -332,8 +332,34 @@
             <table class=table-bg id=pokemongo-table>
                 <thead>
                     <tr class=table-header>
-                        <th>Fast<br>Move</th>
-                        <th>Charged<br>Move</th>
+                        <th style="position: relative">
+                            <button class="plus-button tooltip" id="pokemongo-add-any" onclick="ShowMoveInput(this, 'any')">+
+                                <div class="tooltiptext">
+                                    <div class="tooltip-title">Add a new Move</div>
+                                    <p><i>New move will only persist for your own session, and will be reset as soon as the page is closed/refreshed.</i></p>
+                                </div>
+                            </button>
+                            <span style="position: relative">
+                                Fast<br>Move
+                                <button class="plus-button tooltip" id="pokemongo-add-fast" onclick="ShowMoveInput(this, 'fast')">+
+                                    <div class="tooltiptext">
+                                        <div class="tooltip-title">Add a new Fast Move</div>
+                                        <p><i>New move will only persist for your own session, and will be reset as soon as the page is closed/refreshed.</i></p>
+                                    </div>
+                                </button>
+                            </span>
+                        </th>
+                        <th>
+                            <span style="position: relative">
+                                Charged<br>Move
+                                <button class="plus-button tooltip" id="pokemongo-add-charged" onclick="ShowMoveInput(this, 'charged')">+
+                                    <div class="tooltiptext">
+                                        <div class="tooltip-title">Add a new Charged Move</div>
+                                        <p><i>New move will only persist for your own session, and will be reset as soon as the page is closed/refreshed.</i></p>
+                                    </div>
+                                </button>
+                            </span>
+                        </th>
                         <th>DPS</th>
                         <th>DPS<br>(Shadow)</th>
                         <th>TDO</th>

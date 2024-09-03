@@ -25,9 +25,11 @@ body {
     #pokemongo-table thead tr > *:nth-child(1) {
         font-size: 0;
     }
-    #pokemongo-table thead tr > *:nth-child(1):after {
+    #pokemongo-table thead tr > *:nth-child(1):before {
         content: "Moveset";
         font-size: 18px;
+        display: inline-block;
+        padding: 0.25em 0;
     }
 
     #pokemongo-table thead tr > *:nth-child(2), #pokemongo-table thead tr > *:nth-child(2n+3) {
@@ -70,6 +72,25 @@ body {
     }
     #pokemongo-table thead th {
         width: 100% !important;
+    }
+
+    #pokemongo-add-fast, #pokemongo-add-charged {
+        display: none;
+    }
+
+    #pokemongo-add-any {
+        display: inline-block;
+        position: static;
+        margin-left: 5px;
+    }
+
+    #move-search {
+        font-size: 24px;
+    }
+
+    .move-input-popup > #suggestions {
+        font-size: 18px;
+        font-weight: normal;
     }
 }
 
@@ -150,20 +171,11 @@ body {
     text-align: left;
 }
 #poke-search {
-    width: auto;
-    margin-left: 4%;
-}
-#suggestions-c {
-    width: auto;
-    margin-left: 4%;
-    z-index: 10;
-}
-#suggestions {
-    position: static;
     width: 40%;
 }
-#input[type="text"] {
-    width: 40%;
+
+#pokedex {
+    height: auto;
 }
 
 @media screen and (max-width:600px) { 

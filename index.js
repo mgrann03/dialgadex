@@ -1008,6 +1008,68 @@ function LoadPokemongoCP(stats) {
 }
 
 /**
+ * Creates and displays an input field to easily enter a new move for addition
+ * to the currently displayed Pokemon's moveset.
+ */
+function ShowMoveInput(caller, moveType) {
+    let input_popup = $("<input id='move-search' autocomplete=off></input>");
+    $(caller).parent().append(input_popup);
+
+    let moveList = [];
+    if (moveType == "fast" || moveType == "any")
+        jb_fm.forEach(e => moveList.push(e.name));
+    if (moveType == "charged" || moveType == "any")
+        jb_cm.forEach(e => moveList.push(e.name));
+    moveList = moveList.sort();
+
+    const moveSearch = new autoComplete({
+        selector: "#move-search",
+        data: {
+            src: moveList
+        },
+        resultsList: {
+            id: "suggestions",
+            maxResults: 5
+        },
+        resultItem: {
+            highlight: true
+        }
+    })
+    $(moveSearch.wrapper).addClass("move-input-popup");
+    moveSearch.input.addEventListener("render", function(e) {
+        if (moveSearch.cursor == -1) { moveSearch.goTo(0); }
+    });
+    moveSearch.input.addEventListener("selection", function(e) {
+        const newMove = e.detail.selection.value;
+
+        if (moveType == "fast" || (moveType == "any" && jb_fm.map(e => e.name).includes(newMove))) {
+            if (!current_jb_pkm_obj.elite_fm) 
+                current_jb_pkm_obj.elite_fm = [];
+            current_jb_pkm_obj.elite_fm.push(newMove);
+        }
+        else if (moveType == "charged" || (moveType == "any" && jb_cm.map(e => e.name).includes(newMove))) {
+            if (!current_jb_pkm_obj.elite_cm) 
+                current_jb_pkm_obj.elite_cm = [];
+            current_jb_pkm_obj.elite_cm.push(newMove);
+        }
+
+        $(moveSearch.wrapper).remove();
+        moveSearch.wrapper = undefined;
+        moveSearch.unInit();
+        input_popup.remove();
+        UpdatePokemonStatsAndURL();
+    });
+    
+    input_popup.focus();
+    $(input_popup).on('focusout', function() {
+        $(moveSearch.wrapper).remove();
+        moveSearch.wrapper = undefined;
+        moveSearch.unInit();
+        input_popup.remove();
+    });
+}
+
+/**
  * Updates the text for pokemon max cp to match the level and IVs being used to
  * calculate it.
  */

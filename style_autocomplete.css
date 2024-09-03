@@ -21,6 +21,32 @@
     z-index: 1;
 }
 
+#move-search {
+    font-size: 2em;
+    width: 15ch;
+}
+
+.plus-button {
+    position: absolute;
+    width: 1.5em;
+    height: 1.5em;
+    right: -2em;
+    padding: 0;
+    font-weight: bold;
+}
+
+.move-input-popup:has(#move-search) {
+    position: absolute;
+    z-index: 5;
+    top: 0;
+}
+
+#pokemongo-add-any {
+    display: none;
+}
+
+
+
 .autoComplete_wrapper {
     position: relative;
 }
