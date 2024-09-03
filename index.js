@@ -845,7 +845,9 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal",
     const pokemon_types_div = $("<div class=pokemon-types></div>");
     for (type of types) {
         pokemon_types_div.append($("<img src=imgs/types/"
-                + type.toLowerCase() + ".gif></img>"));
+                + type.toLowerCase() + ".gif" 
+                + " onclick='LoadStrongestAndUpdateURL(\"" + type
+                + "\")'></img>"));
     }
     pokemon_container_div.append(pokemon_types_div);
 
