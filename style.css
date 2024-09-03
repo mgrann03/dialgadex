@@ -403,41 +403,6 @@ span.poke-form-name {
     font-weight: bold;
 }
 
-#input[type="text"] {
-    width: 25%;
-    margin: 0 auto;
-    padding-left: 0;
-    padding-right: 0;
-    font-size: 100%;
-    text-align: center;
-    border: none;
-}
-
-#suggestions-c {
-    position: relative;
-    width: 25%;
-    height: 0px;
-    margin: 0 auto;
-}
-
-#suggestions {
-    position: absolute;
-    width: 100%;
-    background: rgba(255,255,255,0.95);
-    border-top: 1px solid var(--col-off);
-    text-align: left;
-    z-index: 1;
-}
-
-#suggestions p {
-    margin: 0.5em;
-    cursor: pointer;
-}
-
-.selected-suggestion {
-    background-color: var(--col-so-off);
-}
-
 #pokedex {
     height: 400px;
 }

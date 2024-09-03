@@ -91,16 +91,12 @@ function Main() {
 
     $(document).click(function(event) { OnDocumentClick(event); });
 
-    $("#input").bind("keydown", OnInputKeyDown);
-    $("#input").bind("keyup", OnInputKeyUp);
-    $("#input").bind("focus", OnInputFocus);
-    $("#input").bind("blur", OnInputBlur);
-
-    $("#input").focus();
-
     // jb
     HttpGetAsync(JB_URL + "pokemon_names.json",
-        function(response) { jb_names = JSON.parse(response); });
+        function(response) { 
+            jb_names = JSON.parse(response); 
+            InitializePokemonSearch();
+        });
     HttpGetAsync(JB_URL + "mega_pokemon.json",
         function(response) { jb_mega = JSON.parse(response); });
     HttpGetAsync(JB_URL + "pogo_pkm.json",
@@ -488,195 +484,6 @@ function SetTierMethod(method = "jenks") {
 }
 
 /**
- * Callback function for KeyDown event in search input box.
- */
-function OnInputKeyDown(e) {
-
-    let selected_suggestion_changed = false;
-
-    switch (e.keyCode) {
-
-        case 9: // tab
-            e.preventDefault();
-            break;
-
-        case 13: // enter
-            e.preventDefault();
-            if (selected_suggestion_i > -1) {
-                const selected_text = $("#suggestions").children()
-                        .eq(selected_suggestion_i)[0].textContent;
-                const name =
-                    selected_text.slice(selected_text.indexOf(" "));
-                LoadPokemonAndUpdateURL(Clean(name));
-            } else {
-                LoadPokemonAndUpdateURL(Clean($("#input").val()));
-            }
-            break;
-
-        case 38: // arrow up
-            e.preventDefault();
-            selected_suggestion_i--;
-            selected_suggestion_changed = true;
-            break;
-
-        case 40: // arrow down
-            e.preventDefault();
-            selected_suggestion_i++;
-            selected_suggestion_changed = true;
-            break;
-    }
-
-    if (selected_suggestion_changed)
-        UpdateSelectedSuggestion();
-}
-
-/**
- * Callback function for KeyUp event in search input box.
- */
-function OnInputKeyUp(e) {
-
-    if (e.keyCode == 38 || e.keyCode == 40)
-        return;
-
-    UpdateInputSuggestions();
-}
-
-/**
- * Callback function for Focus event in search input box.
- */
-function OnInputFocus(e) {
-
-    UpdateInputSuggestions();
-}
-
-/**
- * Callback function for Blur event in search input box.
- * The Blur event fires when an element has lost focus.
- */
-function OnInputBlur(e) {
-
-    let suggestions = $("#suggestions");
-
-    // empties suggestions
-    suggestions.empty();
-
-    // sets borders
-    suggestions.css("border", "none");
-    suggestions.css("border-top", "1px solid var(--col-off)");
-}
-
-/**
- * Updates the search input suggestions.
- */
-function UpdateInputSuggestions() {
-
-    // checks whether json object is available
-    if (!jb_names)
-        return;
-
-    selected_suggestion_i = -1;
-
-    const input = $("#input").val();
-    const clean_input = input.toLowerCase();
-    const input_len = clean_input.length;
-    let suggestions = $("#suggestions");
-
-    suggestions.empty();
-
-    if (input_len > 0) {
-
-        const jb_names_key = Object.keys(jb_names);
-        for (key of jb_names_key) {
-
-            const entry = jb_names[key];
-
-            if (entry.id > jb_max_id)
-                continue;
-
-            // whether input starts with a pokemon id
-            const same_id = (String(entry.id).startsWith(clean_input));
-
-            // whether input starts with a pokemon '#' + id
-            const hash_id = "#" + String(entry.id);
-            const same_hash_id = (hash_id.startsWith(clean_input));
-
-            // whether input starts with a pokemon name
-            const same_name =
-                (entry.name.toLowerCase().startsWith(clean_input));
-
-            // if the input matches any possible start...
-            if (same_id || same_hash_id || same_name ) {
-
-                // index of suggestion currently being added
-                const sug_i = suggestions.children().length;
-
-                let sug_p = $("<p></p>");
-                sug_p.mouseover(function () {
-                    selected_suggestion_i = sug_i;
-                    UpdateSelectedSuggestion();
-                });
-                sug_p.mousedown(function () {
-                    LoadPokemonAndUpdateURL(entry.id);
-                });
-            
-                if (same_id) {
-                    sug_p.html("#<b>" + clean_input + "</b>"
-                            + String(entry.id).slice(input_len)
-                            + " " + entry.name);
-
-                } else if (same_hash_id) {
-                    sug_p.html("<b>" + clean_input + "</b>"
-                            + hash_id.slice(input_len) + " " + entry.name);
-
-                } else if (same_name) {
-                    sug_p.html("#" + entry.id + " <b>" + input + "</b>"
-                            + entry.name.slice(input_len));
-                }
-
-                suggestions.append(sug_p);
-                if (suggestions.children().length >= 10)
-                    break;
-            }
-        }
-
-        // sets borders
-        if (suggestions.children().length > 0) {
-            suggestions.css("border", "1px solid var(--col-off)");
-        } else {
-            suggestions.css("border", "none");
-            suggestions.css("border-top", "1px solid var(--col-off)");
-        }
-
-    } else {
-
-        // sets borders
-        suggestions.css("border", "none");
-        suggestions.css("border-top", "1px solid var(--col-off)");
-    }
-}
-
-/**
- * Updates which suggestion is currently selected according to
- * the global variable 'selected_suggestion_i'.
- */
-function UpdateSelectedSuggestion() {
-
-    const suggestions = $("#suggestions").children();
-
-    if (selected_suggestion_i < -1)
-        selected_suggestion_i = -1;
-    if (selected_suggestion_i >= suggestions.length)
-        selected_suggestion_i = suggestions.length - 1;
-
-    for (let i = 0; i < suggestions.length; i++) {
-        if (i == selected_suggestion_i)
-            suggestions.eq(i).addClass("selected-suggestion");
-        else
-            suggestions.eq(i).removeClass("selected-suggestion");
-    }
-}
-
-/**
  * Checks whether the current url contains search parameters that dictate
  * what to do. If it finds something, it does it.
  */
@@ -835,8 +642,8 @@ function LoadPokemon(clean_input, form = "def", mega = false,
     $("#input-def").val(ivs.def);
     $("#input-hp").val(ivs.hp);
 
-    // empties the input
-    $("#input").val("");
+    // empties the search box
+    $("#poke-search-box").val("");
 
     // empties the pokemon containers
     $("#main-container").empty();
@@ -1662,6 +1469,64 @@ function GetMovesetsAvgY(types, atk, fms, cms, enemy_effectiveness, enemy_def = 
     avg_y /= num_movesets;
     return avg_y;
 }
+
+/**
+ * Sets up autocomplete for the Pokemon Search Box
+ */
+function InitializePokemonSearch() {
+    const search_values = Object.values(jb_names).map(e => "#" + e.id + " " + e.name);
+
+    const pokemonSearch = new autoComplete({
+        selector: "#poke-search-box",
+        data: {
+            src: search_values,
+            filter: (list) => {
+                const inputValue = pokemonSearch.input.value.toLowerCase();
+                const results = list.filter((item) => {
+                    const itemValue = item.value.toLowerCase();
+            
+                    if (itemValue.startsWith(inputValue)) { // Searching "#"+...
+                        return item.value;
+                    }
+                    if (itemValue.startsWith("#" + inputValue)) { // Searching number directly
+                        return item.value;
+                    }
+                    const nameSearch = itemValue.match(/#\d+ (\w+)/)[1];
+                    if (nameSearch && nameSearch.startsWith(inputValue)) { // Searching name directly
+                        return item.value;
+                    }
+                });
+            
+                return results;
+            },
+        },
+        resultsList: {
+            id: "suggestions",
+            maxResults: 10
+        },
+        resultItem: {
+            highlight: true
+        },
+        events: {
+            input: {
+                focus() {
+                    const inputValue = pokemonSearch.input.value;
+
+                    if (inputValue.length) pokemonSearch.start();
+                },
+            },
+        },
+    });
+
+    pokemonSearch.input.addEventListener("render", function(e) {
+        if (pokemonSearch.cursor == -1) { pokemonSearch.goTo(0); }
+    });
+    pokemonSearch.input.addEventListener("selection", function(e) {
+        const selID = e.detail.selection.value.match(/(#\d+ )\w+/)[1];
+        LoadPokemonAndUpdateURL(Clean(selID));
+    });
+}
+
 
 /**
  * Processes the counters in the 'counters' and 'mega_counters' arrays

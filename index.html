@@ -11,12 +11,14 @@
     <link rel="stylesheet" href="style_switch.css">
     <link rel="stylesheet" href="style_togglebutton.css">
     <link rel="stylesheet" href="style_tooltips.css">
+    <link rel="stylesheet" href="style_autocomplete.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="style_mobile.css" media="screen and (max-width:900px)">
-    <script src=jquery-3.6.0.min.js></script>
-    <script src=pokemon_utils.js></script>
-    <script src=jenks.js></script>
-    <script src=index.js></script>
+    <script src="jquery-3.6.0.min.js"></script>
+    <script src="autoComplete.js"></script>
+    <script src="pokemon_utils.js"></script>
+    <script src="jenks.js"></script>
+    <script src="index.js"></script>
 </head>
 
 <body class="darkmode">
@@ -201,9 +203,8 @@
         <div id=strongest-button-c><p id=strongest-button class="small-text off">or see the <a id=strongest-link href=#>strongest list</a></p></div>
         <p id=search-label class="center small-text off no-top-m">search a Pokémon name or id...</p>
         <form id=poke-search autocomplete=off>
-            <input id=input type=text>
+            <input id=poke-search-box type=text>
         </form>
-        <div id=suggestions-c><div id=suggestions class=small-text></div></div>
     </div>
 
     <br><br>

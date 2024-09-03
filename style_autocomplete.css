@@ -1,0 +1,79 @@
+#poke-search {
+    width: 25%;
+    margin: 0 auto;
+}
+
+#poke-search-box {
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+    font-size: 100%;
+    text-align: center;
+    border: 0;
+    border-bottom: 1px solid var(--col-off);
+}
+
+#suggestions {
+    width: 100%;
+    background: rgba(255,255,255,0.95);
+    margin-top: 0;
+    text-align: left;
+    z-index: 1;
+}
+
+.autoComplete_wrapper {
+    position: relative;
+}
+
+.autoComplete_wrapper > ul {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    padding: 0;
+    z-index: 1000;
+    outline: none;
+    border: 1px solid var(--col-off);
+}
+
+.autoComplete_wrapper > ul > li {
+    padding: 3px 10px;
+    list-style: none;
+    text-align: left;
+    transition: all 0.1s ease-in-out;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all 0.2s ease;
+}
+
+.autoComplete_wrapper > ul > li::selection {
+    color: rgba(#ffffff, 0);
+    background-color: rgba(#ffffff, 0);
+}
+
+.autoComplete_wrapper > ul > li:hover {
+    cursor: pointer;
+    background-color: rgba(123, 123, 123, 0.1);
+}
+
+.autoComplete_wrapper > ul > li mark {
+    background-color: transparent;
+    color: #5d84b1;
+    font-weight: bold;
+}
+
+.autoComplete_wrapper > ul > li mark::selection {
+    color: rgba(#ffffff, 0);
+    background-color: rgba(#ffffff, 0);
+}
+
+.autoComplete_wrapper > ul > li[aria-selected="true"] {
+    background-color: rgba(123, 123, 123, 0.1);
+}
+
+@media only screen and (max-width: 600px) {
+    .autoComplete_wrapper > input {
+        width: 18rem;
+    }
+}
