@@ -41,6 +41,10 @@
     top: 0;
 }
 
+.move-input-popup > #suggestions {
+    font-weight: normal;
+}
+
 #pokemongo-add-any {
     display: none;
 }
@@ -95,7 +99,7 @@
 }
 
 .autoComplete_wrapper > ul > li[aria-selected="true"] {
-    background-color: rgba(123, 123, 123, 0.1);
+    background-color: rgba(123, 123, 123, 0.4);
 }
 
 @media only screen and (max-width: 600px) {

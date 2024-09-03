@@ -1032,7 +1032,20 @@ function ShowMoveInput(caller, moveType) {
             maxResults: 5
         },
         resultItem: {
-            highlight: true
+            highlight: true,
+            element: (item, data) => {
+                let moveType = 'any-type';
+                let move = jb_fm.find(e => e.name == data.value);
+                if (!move) move = jb_cm.find(e => e.name == data.value);
+                if (move) moveType = move.type;
+
+                const moveTag = $('<span></span>');
+                moveTag.html($(item).html());
+                $(item).html('');
+                moveTag.addClass('type-text');
+                moveTag.addClass('bg-' + moveType);
+                $(item).append(moveTag);
+            }
         }
     })
     $(moveSearch.wrapper).addClass("move-input-popup");
