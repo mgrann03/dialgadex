@@ -235,7 +235,7 @@ span.strongest-name {
     text-decoration: underline;
 }
 
-span.poke-form-name {
+span.poke-form-name, .poke-number {
     text-decoration: none;
     font-weight: normal;
     font-size: 80%;

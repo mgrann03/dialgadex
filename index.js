@@ -95,7 +95,6 @@ function Main() {
     HttpGetAsync(JB_URL + "pokemon_names.json",
         function(response) { 
             jb_names = JSON.parse(response); 
-            InitializePokemonSearch();
         });
     HttpGetAsync(JB_URL + "mega_pokemon.json",
         function(response) { jb_mega = JSON.parse(response); });
@@ -247,6 +246,8 @@ function IncreaseLoadingVal() {
             $("#loading-bar").css("display", "none");
         }, 100);
         CheckURLAndAct();
+
+        InitializePokemonSearch();
     }
 }
 
@@ -1561,7 +1562,7 @@ function GetMovesetsAvgY(types, atk, fms, cms, enemy_effectiveness, enemy_def = 
  * Sets up autocomplete for the Pokemon Search Box
  */
 function InitializePokemonSearch() {
-    const search_values = Object.values(jb_names).map(e => "#" + e.id + " " + e.name);
+    const search_values = Object.values(jb_names).filter(e => e.id <= jb_max_id).map(e => e.name);
 
     const pokemonSearch = new autoComplete({
         selector: "#poke-search-box",
@@ -1569,30 +1570,68 @@ function InitializePokemonSearch() {
             src: search_values,
             filter: (list) => {
                 const inputValue = pokemonSearch.input.value.toLowerCase();
-                const results = list.filter((item) => {
-                    const itemValue = item.value.toLowerCase();
-            
-                    if (itemValue.startsWith(inputValue)) { // Searching "#"+...
-                        return item.value;
-                    }
-                    if (itemValue.startsWith("#" + inputValue)) { // Searching number directly
-                        return item.value;
-                    }
-                    const nameSearch = itemValue.match(/#\d+ (\w+)/)[1];
-                    if (nameSearch && nameSearch.startsWith(inputValue)) { // Searching name directly
-                        return item.value;
-                    }
+                return list.sort((a, b) => {
+                    if (a.value.toLowerCase().startsWith(inputValue)) 
+                        return b.value.toLowerCase().startsWith(inputValue) ? 0 : -1;
+                    else if (b.value.toLowerCase().startsWith(inputValue))
+                        return 1;
+
+                    return 0;
                 });
-            
-                return results;
-            },
+            }
+        },
+        searchEngine: (query, record) => {
+            const sanQuery = String(query).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[\u2018-\u2019]/g, "'").normalize("NFC");
+            const sanRecord = String(record).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[\u2018-\u2019]/g, "'").normalize("NFC");
+
+            const idSearch = sanQuery.match(/#?(\d+).*/);
+            if (idSearch && idSearch.length >= 2) {
+                const pokemon_id = search_values.indexOf(record) + 1;
+                if (pokemon_id.toString().startsWith(idSearch[1]) && pokemon_id) {
+                    return record;
+                }
+            }
+            else {
+                let match = sanRecord.indexOf(sanQuery);
+                if (~match) {
+                    const matchPart = record.substring(match, match + query.length);
+                    return record.replace(matchPart, "<mark>" + matchPart + "</mark>");
+                }
+            }
         },
         resultsList: {
             id: "suggestions",
+            tag: "table",
             maxResults: 10
         },
         resultItem: {
-            highlight: true
+            highlight: true,
+            tag: "tr",
+            element: (item, data) => {
+                // Wrap existing text
+                $(item).html("<td class='poke-search-name'>" + $(item).html() + "</td>");
+
+                const pokemon_id = search_values.indexOf(data.value) + 1;
+                
+                // Add Icon
+                const coords = GetPokemonIconCoords(pokemon_id);
+                $(item).prepend("<td class=pokemon-icon style='background-image:url("
+                    + ICONS_URL + ");background-position:" + coords.x + "px "
+                    + coords.y + "px'></td>");
+                
+                // Add Number in front of Icon
+                $(item).prepend($("<td class='poke-number'>#" + pokemon_id + "</td>"));
+
+                // Add types
+                const types = jb_pkm.find(e => e.id == pokemon_id).types;
+                //const pokemon_types_div = $("<td class='pokemon-types pokemon-types-inline'></td>");
+                for (type of types) {
+                    $(item).append($("<td><img src='imgs/types/"
+                        + type.toLowerCase() 
+                        + ".gif'></img></td>"));
+                }
+                if (types.length == 1) $(item).append("<td></td>");
+            }
         },
         events: {
             input: {
@@ -1609,8 +1648,8 @@ function InitializePokemonSearch() {
         if (pokemonSearch.cursor == -1) { pokemonSearch.goTo(0); }
     });
     pokemonSearch.input.addEventListener("selection", function(e) {
-        const selID = e.detail.selection.value.match(/(#\d+ )\w+/)[1];
-        LoadPokemonAndUpdateURL(Clean(selID));
+        const selName = e.detail.selection.value;
+        LoadPokemonAndUpdateURL(search_values.indexOf(selName) + 1);
     });
 }
 
