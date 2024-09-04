@@ -800,7 +800,8 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal",
             mega, mega_y);
     let img_src = GIFS_URL + img_src_name + ".gif";
     const can_be_mega_y = pokemon_id == 6 || pokemon_id == 150; 
-    const can_be_shadow = (is_selected && jb_pkm.find(e => e.id == pokemon_id).shadow);
+    const poke_obj = jb_pkm.find(e => e.id == pokemon_id && e.form == form);
+    const can_be_shadow = poke_obj.shadow && poke_obj.shadow_released;
     const primal = mega && (pokemon_id == 382 || pokemon_id == 383);
     const form_text = GetFormText(pokemon_id, form);
 
@@ -843,9 +844,8 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal",
     if (is_selected && !mega && !mega_y) {
         const shadow_icon = $("<img src='imgs/flame.svg' class='shadow-icon filter-" + (can_be_shadow ? 'shadow' : 'noshadow') + "'></img>");
         shadow_icon.on('click', function(e) { 
-            const pkm = jb_pkm.find(e => e.id == pokemon_id);
-            pkm.shadow = !can_be_shadow;
-            pkm.shadow_released = !can_be_shadow;
+            poke_obj.shadow = !can_be_shadow;
+            poke_obj.shadow_released = !can_be_shadow;
         })
         pokemon_name_p.append(shadow_icon);
     }
