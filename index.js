@@ -627,7 +627,8 @@ function LoadPokemon(clean_input, form = "def", mega = false,
     // sets the default level
     if (level == null) {
         level = settings_default_level;
-        if (jb_pkm.find(e=>e.id == pokemon_id).class == undefined && settings_xl_budget)
+        const poke_obj = jb_pkm.find(e=>e.id == pokemon_id);
+        if (poke_obj !== undefined && poke_obj.class == undefined && settings_xl_budget)
             level = 50;
     }
     
@@ -801,7 +802,7 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal",
     let img_src = GIFS_URL + img_src_name + ".gif";
     const can_be_mega_y = pokemon_id == 6 || pokemon_id == 150; 
     const poke_obj = jb_pkm.find(e => e.id == pokemon_id && e.form == form);
-    const can_be_shadow = poke_obj.shadow && poke_obj.shadow_released;
+    const can_be_shadow = poke_obj !== undefined && poke_obj.shadow && poke_obj.shadow_released;
     const primal = mega && (pokemon_id == 382 || pokemon_id == 383);
     const form_text = GetFormText(pokemon_id, form);
 
@@ -841,7 +842,7 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal",
             + pokemon_name
             + ((mega && can_be_mega_y) ? ((mega_y) ? " Y " : " X ") : "")
             + "</p>");
-    if (is_selected && !mega && !mega_y) {
+    if (is_selected && poke_obj !== undefined && !mega && !mega_y) {
         const shadow_icon = $("<img src='imgs/flame.svg' class='shadow-icon filter-" + (can_be_shadow ? 'shadow' : 'noshadow') + "'></img>");
         shadow_icon.on('click', function(e) { 
             poke_obj.shadow = !can_be_shadow;
