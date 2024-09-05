@@ -1,5 +1,5 @@
 #poke-search {
-    width: 33%;
+    width: 50%;
     margin: 0 auto;
 }
 
@@ -51,6 +51,7 @@
 
 #suggestions .poke-number {
     margin-right: 5px;
+    text-align: left;
 }
 
 

@@ -101,6 +101,7 @@ function Main() {
     HttpGetAsync(JB_URL + "pogo_pkm.json",
         function(response) {
             jb_pkm = JSON.parse(response);
+            jb_pkm = deduplicate(jb_pkm);
             jb_max_id = jb_pkm.at(-1).id;
         });
     HttpGetAsync(JB_URL + "pogo_fm.json",
@@ -249,6 +250,18 @@ function IncreaseLoadingVal() {
 
         InitializePokemonSearch();
     }
+}
+
+/**
+ * Removes duplicate objects (matching JSON strings)
+ */
+function deduplicate(arr) {
+    let seen = new Set();
+    
+    return arr.filter((item) => {
+        let k = JSON.stringify(item);
+        return seen.has(k) ? false : seen.add(k);
+    });
 }
 
 /**
@@ -1563,7 +1576,9 @@ function GetMovesetsAvgY(types, atk, fms, cms, enemy_effectiveness, enemy_def = 
  * Sets up autocomplete for the Pokemon Search Box
  */
 function InitializePokemonSearch() {
-    const search_values = Object.values(jb_names).filter(e => e.id <= jb_max_id).map(e => e.name);
+    let search_values = jb_pkm.filter((item) => {
+        return GetPokemonForms(item.id).includes(item.form);
+    });
 
     const pokemonSearch = new autoComplete({
         selector: "#poke-search-box",
@@ -1572,9 +1587,9 @@ function InitializePokemonSearch() {
             filter: (list) => {
                 const inputValue = pokemonSearch.input.value.toLowerCase();
                 return list.sort((a, b) => {
-                    if (a.value.toLowerCase().startsWith(inputValue)) 
-                        return b.value.toLowerCase().startsWith(inputValue) ? 0 : -1;
-                    else if (b.value.toLowerCase().startsWith(inputValue))
+                    if (a.value.name.toLowerCase().startsWith(inputValue)) 
+                        return b.value.name.toLowerCase().startsWith(inputValue) ? 0 : -1;
+                    else if (b.value.name.toLowerCase().startsWith(inputValue))
                         return 1;
 
                     return 0;
@@ -1582,21 +1597,34 @@ function InitializePokemonSearch() {
             }
         },
         searchEngine: (query, record) => {
-            const sanQuery = String(query).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[\u2018-\u2019]/g, "'").normalize("NFC");
-            const sanRecord = String(record).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[\u2018-\u2019]/g, "'").normalize("NFC");
+            const sanitize = (str) => String(str).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[\u2018-\u2019]/g, "'").normalize("NFC");
+
+            const sanQuery = sanitize(query);
+            const pokeName = record.name + ((record.form !== "Normal") ? " (" + GetFormText(record.id, record.form).replace(/\s+Forme?/,"") + ")" : "");
 
             const idSearch = sanQuery.match(/#?(\d+).*/);
             if (idSearch && idSearch.length >= 2) {
-                const pokemon_id = search_values.indexOf(record) + 1;
+                const pokemon_id = record.id;
                 if (pokemon_id.toString().startsWith(idSearch[1]) && pokemon_id) {
-                    return record;
+                    return {match_type: 'id', match_value: pokemon_id.toString().replace(idSearch[1], "<mark>" + idSearch[1] + "</mark>")};
                 }
             }
-            else {
-                let match = sanRecord.indexOf(sanQuery);
+            else { // string search
+                const sanPokeName = sanitize(record.name);
+                let match = sanPokeName.indexOf(sanQuery);
                 if (~match) {
-                    const matchPart = record.substring(match, match + query.length);
-                    return record.replace(matchPart, "<mark>" + matchPart + "</mark>");
+                    const matchPart = record.name.substring(match, match + query.length);
+                    return {match_type: 'name', match_value: record.name.replace(matchPart, "<mark>" + matchPart + "</mark>")};
+                }
+
+                if (record.form !== "Normal") {
+                    const formName = GetFormText(record.id, record.form).replace(/\s+Forme?/,"");
+                    const sanPokeForm = sanitize(formName);
+                    match = sanPokeForm.indexOf(sanQuery);
+                    if (~match) {
+                        const matchPart = formName.substring(match, match + query.length);
+                        return {match_type: 'form', match_value: formName.replace(matchPart, "<mark>" + matchPart + "</mark>")};
+                    }
                 }
             }
         },
@@ -1609,29 +1637,39 @@ function InitializePokemonSearch() {
             highlight: true,
             tag: "tr",
             element: (item, data) => {
-                // Wrap existing text
-                $(item).html("<td class='poke-search-name'>" + $(item).html() + "</td>");
+                // Clear existing text
+                $(item).html('');
 
-                const pokemon_id = search_values.indexOf(data.value) + 1;
+                // Add Number
+                const idTD = $("<td class='poke-number'></td>");
+                idTD.html("#" + ((data.match.match_type == "id") ? data.match.match_value : data.value.id));
+                $(item).append(idTD);
                 
                 // Add Icon
-                const coords = GetPokemonIconCoords(pokemon_id);
-                $(item).prepend("<td class=pokemon-icon style='background-image:url("
+                const coords = GetPokemonIconCoords(data.value.id, data.value.form);
+                $(item).append("<td class=pokemon-icon style='background-image:url("
                     + ICONS_URL + ");background-position:" + coords.x + "px "
                     + coords.y + "px'></td>");
-                
-                // Add Number in front of Icon
-                $(item).prepend($("<td class='poke-number'>#" + pokemon_id + "</td>"));
 
+                // Add Name
+                const nameTD = $("<td class='poke-search-name'></td>");
+                nameTD.html((data.match.match_type == "name") ? data.match.match_value : data.value.name);
+                $(item).append(nameTD);
+
+                // Add Form
+                if (data.value.form !== "Normal") {
+                    const formSpan = $("<span class='poke-form-name'></span>");
+                    formSpan.html(" (" + ((data.match.match_type == "form") ? data.match.match_value : GetFormText(data.value.id, data.value.form).replace(/\s+Forme?/,"")) + ")");
+                    nameTD.append(formSpan);
+                }
+                
                 // Add types
-                const types = jb_pkm.find(e => e.id == pokemon_id).types;
-                //const pokemon_types_div = $("<td class='pokemon-types pokemon-types-inline'></td>");
-                for (type of types) {
+                for (type of data.value.types) {
                     $(item).append($("<td><img src='imgs/types/"
                         + type.toLowerCase() 
                         + ".gif'></img></td>"));
                 }
-                if (types.length == 1) $(item).append("<td></td>");
+                if (data.value.types.length == 1) $(item).append("<td></td>");
             }
         },
         events: {
@@ -1649,8 +1687,7 @@ function InitializePokemonSearch() {
         if (pokemonSearch.cursor == -1) { pokemonSearch.goTo(0); }
     });
     pokemonSearch.input.addEventListener("selection", function(e) {
-        const selName = e.detail.selection.value;
-        LoadPokemonAndUpdateURL(search_values.indexOf(selName) + 1);
+        LoadPokemonAndUpdateURL(e.detail.selection.value.id, e.detail.selection.value.form);
     });
 }
 
