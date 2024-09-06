@@ -564,6 +564,8 @@ function GetPokemonForms(pokemon_id) {
             return [ "Normal", "Female" ];
         case 925: // Maushold
             return [ "Family_of_four", "Family_of_three" ]
+        case 964: // Palafin
+            return [ "Zero", "Hero" ]
         default:
             return [ "Normal" ];
     }
@@ -818,7 +820,16 @@ function GetFormText(pokemon_id, form) {
         case "Hangry":
             return "Hangry Mode";
         case "Hero":
-            return "Hero of Many Battles";
+            switch (pokemon_id) {
+                case 888: // Zacian
+                case 889: // Zamazenta
+                    return "Hero of Many Battles";
+                case 964: // Palafin
+                    return "Hero";
+            }
+            break;
+        case "Zero":
+            return "Zero";
         case "Crowned_sword":
             return "Crowned Sword";
         case "Crowned_shield":
@@ -852,336 +863,335 @@ function GetPokemonIconCoords(pokemon_id, form, mega, mega_y) {
 
     const NUM_COLS = 12, W = 40, H = 30;
 
-    col = 0, row = 0;
+    let offsetID = pokemon_id;
+    // offset reference: https://github.com/smogon/sprites/blob/master/ps-pokemon.sheet.mjs
 
     if (mega) {
+        const megaOffset = 1320;
+        const megaLookup = [
+            3, // Venusaur
+            6, // Charizard X
+            6, // Charizard Y
+            9, // Blastoise
+            15, // Beedrill
+            18, // Pidgeot
+            65, // Alakazam
+            80, // Slowbro
+            94, // Gengar
+            115, // Kangaskhan
+            127, // Pinsir
+            130, // Gyarados
+            142, // Aerodactyl
+            150, // Mewtwo X
+            150, // Mewtwo Y
+            181, // Ampharos
+            208, // Steelix
+            212, // Scizor
+            214, // Heracross
+            229, // Houndoom
+            248, // Tyranitar
+            254, // Sceptile
+            257, // Blaziken
+            260, // Swampert
+            282, // Gardevoir
+            302, // Sableye
+            303, // Mawile
+            306, // Aggron
+            308, // Medicham
+            310, // Manectric
+            319, // Sharpedo
+            323, // Camerupt
+            334, // Altaria
+            354, // Banette
+            359, // Absol
+            362, // Glalie
+            373, // Salamence
+            376, // Metagross
+            380, // Latias
+            381, // Latios
+            382, // Kyogre
+            383, // Groudon
+            384, // Rayquaza
+            428, // Lopunny
+            445, // Garchomp
+            448, // Lucario
+            460, // Abomasnow
+            475, // Gallade
+            531, // Audino
+            719, // Diancie
+        ];
 
-        switch (pokemon_id) {
-        case 3: // Venusaur
-            col = 0, row = 105;
-            break;
-        case 6: // Charizard
-            col = (mega_y) ? 2 : 1, row = 105;
-            break;
-        case 9: // Blastoise
-            col = 3, row = 105;
-            break;
-        case 15: // Beedrill
-            col = 4, row = 105;
-            break;
-        case 18: // Pidgeot
-            col = 5, row = 105;
-            break;
-        case 65: // Alakazam
-            col = 6, row = 105;
-            break;
-        case 80: // Slowbro
-            col = 7, row = 105;
-            break;
-        case 94: // Gengar
-            col = 8, row = 105;
-            break;
-        case 115: // Kangaskhan
-            col = 9, row = 105;
-            break;
-        case 127: // Pinsir
-            col = 10, row = 105;
-            break;
-        case 130: // Gyarados
-            col = 11, row = 105;
-            break;
-        case 142: // Aerodactyl
-            col = 0, row = 106;
-            break;
-        case 150: // Mewtwo
-            col = (mega_y) ? 2 : 1, row = 106;
-            break;
-        case 181: // Ampharos
-            col = 3, row = 106;
-            break;
-        case 208: // Steelix
-            col = 4, row = 106;
-            break;
-        case 212: // Scizor
-            col = 5, row = 106;
-            break;
-        case 214: // Heracross
-            col = 6, row = 106;
-            break;
-        case 229: // Houndoom
-            col = 7, row = 106;
-            break;
-        case 248: // Tyranitar
-            col = 8, row = 106;
-            break;
-        case 254: // Sceptile
-            col = 9, row = 106;
-            break;
-        case 257: // Blaziken
-            col = 10, row = 106;
-            break;
-        case 260: // Swampert
-            col = 11, row = 106;
-            break;
-        case 282: // Gardevoir
-            col = 0, row = 107;
-            break;
-        case 302: // Sableye
-            col = 1, row = 107;
-            break;
-        case 303: // Mawile
-            col = 2, row = 107;
-            break;
-        case 306: // Aggron
-            col = 3, row = 107;
-            break;
-        case 308: // Medicham
-            col = 4, row = 107;
-            break;
-        case 310: // Manectric
-            col = 5, row = 107;
-            break;
-        case 319: // Sharpedo
-            col = 6, row = 107;
-            break;
-        case 323: // Camerupt
-            col = 7, row = 107;
-            break;
-        case 334: // Altaria
-            col = 8, row = 107;
-            break;
-        case 354: // Banette
-            col = 9, row = 107;
-            break;
-        case 359: // Absol
-            col = 10, row = 107;
-            break;
-        case 362: // Glalie
-            col = 11, row = 107;
-            break;
-        case 373: // Salamence
-            col = 0, row = 108;
-            break;
-        case 376: // Metagross
-            col = 1, row = 108;
-            break;
-        case 380: // Latias
-            col = 2, row = 108;
-            break;
-        case 381: // Latios
-            col = 3, row = 108;
-            break;
-        case 382: // Kyogre
-            col = 4, row = 108;
-            break;
-        case 383: // Groudon
-            col = 5, row = 108;
-            break;
-        case 384: // Rayquaza
-            col = 6, row = 108;
-            break;
-        case 428: // Lopunny
-            col = 7, row = 108;
-            break;
-        case 445: // Garchomp
-            col = 8, row = 108;
-            break;
-        case 448: // Lucario
-            col = 9, row = 108;
-            break;
-        case 460: // Abomasnow
-            col = 10, row = 108;
-            break;
-        case 475: // Gallade
-            col = 11, row = 108;
-            break;
-        case 531: // Audino
-            col = 0, row = 109;
-            break;
-        case 719: // Diancie
-            col = 1, row = 109;
-            break;
-        }
+        offsetID = megaOffset + megaLookup.indexOf(pokemon_id);
+        if (mega_y) offsetID += 1;
+    }
+    else if (form == "Alola") {
+        const alolaOffset = 1151;
+        const alolaLookup = [
+            19, // Rattata
+            20, // Raticate
+            26, // Raichu
+            27, // Sandshrew
+            28, // Sandslash
+            37, // Vulpix
+            38, // Ninetales
+            50, // Diglett
+            51, // Dugtrio
+            52, // Meowth
+            53, // Persian
+            74, // Geodude
+            75, // Graveler
+            76, // Golem
+            88, // Grimer
+            89, // Muk
+            103, // Exeggutor
+            105, // Marowak
+        ];
 
-    } else if (pokemon_id == 26 && form == "Alola") { // Raichu
-        col = 1, row = 95;
+        offsetID = alolaOffset + alolaLookup.indexOf(pokemon_id);
+    }
+    else if (form == "Galarian") {
+        const galarOffset = 1198;
+        const galarLookup = [
+            52, // Meowth
+            77, // Ponyta
+            78, // Rapidash
+            83, // Farfetch'd
+            110, // Weezing
+            122, // Mr. Mime
+            222, // Corsola
+            263, // Zigzagoon
+            264, // Linoone
+            554, // Darumaka
+            555, // Darmanitan
+            555, // Darmanitan Zen
+            562, // Yamask
+            618, // Stunfisk
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, // 16 more
+            79, // Slowpoke
+            80, // Slowbro
+            null, // Zarude Dada
+            null, // Pikachu World
+            144, // Articuno
+            145, // Zapdos
+            146, // Moltres
+            199, // Slowking
+        ];
 
-    } else if (pokemon_id == 28 && form == "Alola") { // Sandslash
-        col = 3, row = 95;
+        offsetID = galarOffset + galarLookup.indexOf(pokemon_id);
+    } 
+    else if (form == "Hisuian") {
+        const hisuiOffset = 1238;
+        const hisuiLookup = [
+            58, // Growlithe
+            59, // Arcanine
+            100, // Voltorb
+            101, // Electrode
+            157, // Typhlosion
+            211, // Qwilfish
+            215, // Sneasel
+            503, // Samurott
+            549, // Lilligant
+            570, // Zorua
+            571, // Zoroark
+            628, // Braviary
+            705, // Sliggoo
+            706, // Goodra
+            713, // Avalugg
+            724, // Decidueye
+        ];
 
-    } else if (pokemon_id == 38 && form == "Alola") { // Ninetales
-        col = 5, row = 95;
+        offsetID = hisuiOffset + hisuiLookup.indexOf(pokemon_id);
+    } 
+    else if (pokemon_id == 201) { // Unown
+        const unownOffset = 1040;
 
-    } else if (pokemon_id == 51 && form == "Alola") { // Dugtrio
-        col = 7, row = 95;
+        if (form == "A") offsetID = pokemon_id;
+        else if (form == "Exclamation_point") offsetID = unownOffset;
+        else if (form == "Question_mark") offsetID = unownOffset + 1;
+        else offsetID = unownOffset + (form.charCodeAt(0) - "A".charCodeAt(0) + 1);
+    }
+    else if (pokemon_id == 351) { // Castform
+        const castformOffset = 1067;
+        const castformLookup = ['Rainy','Snowy','Sunny'];
 
-    } else if (pokemon_id == 59 && form == "Hisuian") { // Arcanine
-        col = 3, row = 102;
+        if (form == "Normal") offsetID = pokemon_id;
+        else offsetID = castformOffset + castformLookup.indexOf(form);
+    }
+    else if (pokemon_id == 386) { // Deoxys
+        const deoxysOffset = 1070;
+        const deoxysLookup = ['Attack','Defense','Speed'];
 
-    } else if (pokemon_id == 76 && form == "Alola") { // Golem
-        col = 0, row = 96;
+        if (form == "Normal") offsetID = pokemon_id;
+        else offsetID = deoxysOffset + deoxysLookup.indexOf(form);
+    }
+    else if (pokemon_id == 412 || pokemon_id == 413) { // Burmy/Wormadam
+        const burmyOffset = 1073;
+        const burmyLookup = ['Sandy','Trash'];
 
-    } else if (pokemon_id == 78 && form == "Galarian") { // Rapidash
-        col = 0, row = 99;
+        if (form == "Normal" || form == "Plant") offsetID = pokemon_id;
+        else offsetID = burmyOffset + burmyLookup.indexOf(form) 
+            + (pokemon_id == 413 ? burmyLookup.length : 0);
+    }
+    else if (pokemon_id == 421 && form == "Sunny" ) offsetID = 1077; // Cherrim
+    else if (form == "East_sea") {
+        if (pokemon_id == 422) offsetID = 1078; // Shellos
+        else if (pokemon_id == 423) offsetID = 1079; // Gastrodon
+    } 
+    else if (pokemon_id == 479) { // Rotom
+        const rotomOffset = 1080;
+        const rotomLookup = ['Fan','Frost','Heat','Mow','Wash'];
 
-    } else if (pokemon_id == 80 && form == "Galarian") { // Slowbro
-        col = 5, row = 101;
+        if (form == "Normal") offsetID = pokemon_id;
+        else offsetID = rotomOffset + rotomLookup.indexOf(form);
+    } 
+    else if (form == "Origin") {
+        if (pokemon_id == 483) offsetID = 1269; // Dialga
+        else if (pokemon_id == 484) offsetID = 1270; // Palkia
+        else if (pokemon_id == 487) offsetID = 1085; // Giratina
+    } 
+    else if (pokemon_id == 492 && form == "Sky") offsetID = 1086; // Shaymin
+    else if (pokemon_id == 550) { // Basculin
+        if (form == "Normal" || form == "Red_striped") offsetID = pokemon_id;
+        else if (form == "Blue_striped") offsetID = 1088;
+        else if (form == "White_striped") offsetID = 1271;
+    } 
+    else if (pokemon_id == 555) { // Darmanitan 
+        if (form == "Normal") offsetID = pokemon_id;
+        else if (form == "Zen") offsetID = 1089;
+        else if (form == "Galarian_standard") offsetID = 1208;
+        else if (form == "Galarian_zen") offsetID = 1209;
+    }
+    else if (pokemon_id == 585 || pokemon_id == 586) { // Deerling/Sawsbuck
+        const deerlingOffset = 1090;
+        const deerlingLookup = ['Autumn','Summer','Winter'];
 
-    } else if (pokemon_id == 89 && form == "Alola") { // Muk
-        col = 2, row = 96;
+        if (form == "Normal" || form == "Spring") offsetID = pokemon_id;
+        else offsetID = deerlingOffset + deerlingLookup.indexOf(form) 
+            + (pokemon_id == 586 ? deerlingLookup.length : 0);
+    }
+    else if (form == "Female") {
+        if (pokemon_id == 592) offsetID = 1096; // Frillish
+        else if (pokemon_id == 593) offsetID = 1097; // Jellicent
+        else if (pokemon_id == 668) offsetID = 1124; // Pyroar
+        else if (pokemon_id == 678) offsetID = 1147; // Meowstic
+        else if (pokemon_id == 876) offsetID = 1224; // Meowstic
+        else if (pokemon_id == 916) offsetID = 1260; // Oinkologne
+        // Basculegion
+    }
+    else if (form == "Therian") {
+        if (pokemon_id == 641) offsetID = 1098; // Tornadus
+        else if (pokemon_id == 642) offsetID = 1099; // Thundurus
+        else if (pokemon_id == 645) offsetID = 1100; // Landorus
+        else if (pokemon_id == 905) offsetID = 1255; // Enamorus
+    } 
+    else if (pokemon_id == 646) { // Kyurem
+        const kyuremOffset = 1101;
+        const kyuremLookup = ['White','Black'];
 
-    } else if (pokemon_id == 103 && form == "Alola") { // Exeggutor
-        col = 3, row = 96;
+        if (form == "Normal") offsetID = pokemon_id;
+        else offsetID = kyuremOffset + kyuremLookup.indexOf(form);
+    }
+    else if (pokemon_id == 647 && form == "Resolute") offsetID = 1103; // Keldeo
+    else if (pokemon_id == 648 && form == "Pirouette") offsetID = 1104 // Meloetta
+    else if (pokemon_id == 666) { // Vivillon
+        const vivillonOffset = 1105;
+        const vivillonLookup = ['Archipelago','Continental','Elegant','Fancy','Garden','High_plains','Icy_snow','Jungle','Marine','Modern','Monsoon','Ocean','Pokeball','Polar','River','Sandstorm','Savanna','Sun','Tundra'];
 
-    } else if (pokemon_id == 110 && form == "Galarian") { // Weezing
-        col = 2, row = 99;
+        if (form == "Normal" || form == "Meadow") offsetID = pokemon_id;
+        else offsetID = vivillonOffset + vivillonLookup.indexOf(form);
+    } 
+    else if (pokemon_id == 669 || pokemon_id == 670 || pokemon_id == 671) { // Flabebe/Floette/Florges
+        const flabebeOffset = 1125;
+        const florgesOffset = 1134;
+        const flabebeLookup = ['Blue','Orange','White','Yellow'];
+        const floetteOffset = 1129;
+        const floetteLookup = ['Blue','Eternal','Orange','White','Yellow'];
 
-    } else if (pokemon_id == 144 && form == "Galarian") { // Articuno
-        col = 8, row = 101;
-    } else if (pokemon_id == 145 && form == "Galarian") { // Zapdos
-        col = 9, row = 101;
-    } else if (pokemon_id == 146 && form == "Galarian") { // Moltres
-        col = 10, row = 101;
+        if (form == "Normal" || form == "Red") offsetID = pokemon_id;
+        else if (pokemon_id == 669) offsetID = flabebeOffset + flabebeLookup.indexOf(form);
+        else if (pokemon_id == 670) offsetID = floetteOffset + floetteLookup.indexOf(form);
+        else if (pokemon_id == 671) offsetID = florgesOffset + flabebeLookup.indexOf(form);
+    }
+    else if (pokemon_id == 676) { // Furfrou
+        const furfrouOffset = 1138;
+        const furfrouLookup = ['Dandy','Debutante','Diamond','Heart','Kabuki','La_reine','Matron','Pharaoh','Star'];
 
-    } else if (pokemon_id == 157 && form == "Hisuian") { // Typhlosion
-        col = 6, row = 102;
+        if (form == "Normal" || form == "Natural") offsetID = pokemon_id;
+        else offsetID = furfrouOffset + furfrouLookup.indexOf(form);
+    } 
+    // Aegislash Blade
+    // Xerneas Neutral
+    else if (pokemon_id == 720 && form == "Unbound") offsetID = 1150; // Hoopa
+    // Ash Greninja
+    else if (pokemon_id == 718) { // Zygarde
+        const zygardeOffset = 1170;
+        const zygardeLookup = ['Ten_percent','Complete'];
 
-    } else if (pokemon_id == 199 && form == "Galarian") { // Slowking
-        col = 11, row = 101;
+        if (form == "Normal" || form == "Fifty_percent") offsetID = pokemon_id;
+        else offsetID = zygardeOffset + zygardeLookup.indexOf(form);
+    }
+    else if (pokemon_id == 741) { // Oricorio
+        const oricorioOffset = 1172;
+        const oricorioLookup = ['Pompom','Pau','Sensu'];
 
-    } else if (pokemon_id == 211 && form == "Hisuian") { // Qwilfish
-        col = 7, row = 102;
+        if (form == "Normal" || form == "Baile") offsetID = pokemon_id;
+        else offsetID = oricorioOffset + oricorioLookup.indexOf(form);
+    }
+    else if (pokemon_id == 745) { // Lycanroc
+        if (form == 'Normal' || form == 'Midday') offsetID = pokemon_id;
+        else if (form == 'Midnight') offsetID = 1175;
+        else if (form == 'Dusk') offsetID = 1192;
+    }
+    else if (pokemon_id == 746 && form == "School") offsetID = 1176 // Wishiwashi
+    // Minior
+    else if (pokemon_id == 800) { // Necrozma
+        const necrozmaOffset = 1193;
+        const necrozmaLookup = ['Dawn_wings','Dusk_mane','Ultra'];
 
-    } else if (pokemon_id == 423 && form == "East_sea") { // Gastrodon
-        col = 11, row = 88;
+        if (form == "Normal") offsetID = pokemon_id;
+        else offsetID = necrozmaOffset + necrozmaLookup.indexOf(form);
+    }
+    else if (pokemon_id == 849 && form == "Low_key") offsetID = 1214; // Toxtricity
+    // Alcremie
+    else if (pokemon_id == 875 && form == "Noice") offsetID = 1223; // Eiscue
+    else if (pokemon_id == 877 && form == "Hangry") offsetID = 1225; // Morpeko
+    else if (pokemon_id == 888 && form == "Crowned_sword") offsetID = 1226 // Zacian
+    else if (pokemon_id == 889 && form == "Crowned_shield") offsetID = 1227 // Zamazenta
+    // Zarude Dada
+    else if (pokemon_id == 898) { // Calyrex
+        const calyrexOffset = 1236;
+        const calyrexLookup = ['Ice_rider','Shadow_rider'];
 
-    } else if (pokemon_id == 479 && form == "Heat") { // Rotom
-        col = 2, row = 89;
-    } else if (pokemon_id == 479 && form == "Wash") { // Rotom
-        col = 4, row = 89;
-    } else if (pokemon_id == 479 && form == "Frost") { // Rotom
-        col = 1, row = 89;
-    } else if (pokemon_id == 479 && form == "Fan") { // Rotom
-        col = 0, row = 89;
-    } else if (pokemon_id == 479 && form == "Mow") { // Rotom
-        col = 3, row = 89;
+        if (form == "Normal") offsetID = pokemon_id;
+        else offsetID = calyrexOffset + calyrexLookup.indexOf(form);
+    }
+    // Tauros
+    else if (pokemon_id == 194 && form == "Paldea") offsetID = 1259 // Wooper
+    else if (pokemon_id == 964 && form == "Hero") offsetID = 1261 // Palafin
+    else if (pokemon_id == 925 && form == "Family_of_four") offsetID = 1262 // Maushold
+    // Tatsugiri
+    // Squawkabilly
+    // Ursaloon Blood Moon
+    // Ogerpon
+    // Terapagos
+    else if (pokemon_id == 493 || pokemon_id == 773) { // Arceus/Silvally
+        const arceusOffset = 1278;
+        const arceusLookup = ['Bug','Dark','Dragon','Electric','Fairy','Fighting','Fire','Flying','Ghost','Grass','Ground','Ice','Poison','Psychic','Rock','Steel','Water'];
+        const silvallyOffset = 1299;
 
-    } else if (pokemon_id == 483 && form == "Origin") { // Dialga
-        col = 9, row = 104;
-    } else if (pokemon_id == 484 && form == "Origin") { // Palkia
-        col = 10, row = 104;
-    } else if (pokemon_id == 487 && form == "Origin") { // Giratina
-        col = 5, row = 89;
+        if (form == "Normal") offsetID = pokemon_id;
+        else if (pokemon_id == 493) offsetID = arceusOffset + arceusLookup.indexOf(form);
+        else if (pokemon_id == 773) offsetID = silvallyOffset + arceusLookup.indexOf(form);
+    } 
+    else if (pokemon_id == 649) { // Genesect
+        const genesectOffset = 1295;
+        const genesectLookup = ['Douse','Shock','Burn','Chill'];
 
-    } else if (pokemon_id == 492 && form == "Sky") { // Shaymin
-        col = 6, row = 89;
-
-    } else if (pokemon_id == 503 && form == "Hisuian") { // Samurott
-        col = 9, row = 102;
-
-    } else if (pokemon_id == 555 && form == "Zen") { // Darmanitan
-            col = 9, row = 89;
-    } else if (pokemon_id == 555 && form == "Galarian_standard") { // Darmanitan
-            col = 8, row = 99;
-    } else if (pokemon_id == 555 && form == "Galarian_zen") { // Darmanitan
-            col = 9, row = 99;
-
-    } else if (pokemon_id == 593 && form == "Female") { // Jellicent
-        col = 5, row = 90;
-
-    } else if (pokemon_id == 628 && form == "Hisuian") { // Braviary
-        col = 1, row = 103;
-
-    } else if (pokemon_id == 641 && form == "Therian") { // Tornadus
-        col = 6, row = 90;
-    } else if (pokemon_id == 642 && form == "Therian") { // Thundurus
-        col = 7, row = 90;
-    } else if (pokemon_id == 645 && form == "Therian") { // Landorus
-        col = 8, row = 90;
-
-    } else if (pokemon_id == 646 && form == "White") { // Kyurem
-        col = 10, row = 90;
-    } else if (pokemon_id == 646 && form == "Black") { // Kyurem
-        col = 9, row = 90;
-
-    } else if (pokemon_id == 647 && form == "Resolute") { // Keldeo
-        col = 11, row = 90;
-
-    } else if (pokemon_id == 648 && form == "Pirouette") { // Meloetta
-        col = 0, row = 91;
-
-    } else if (pokemon_id == 668 && form == "Female") { // Pyroar
-        col = 8, row = 92;
-
-    } else if (pokemon_id == 671 && form == "Yellow") { // Florges
-        col = 9, row = 93;
-    } else if (pokemon_id == 671 && form == "Orange") { // Florges
-        col = 7, row = 93;
-    } else if (pokemon_id == 671 && form == "Blue") { // Florges
-        col = 6, row = 93;
-    } else if (pokemon_id == 671 && form == "White") { // Florges
-        col = 8, row = 93;
-
-    } else if (pokemon_id == 713 && form == "Hisuian") { // Avalugg
-        col = 4, row = 103;
-
-    } else if (pokemon_id == 718 && form == "Ten_percent") { // Zygarde
-        col = 6, row = 96;
-    } else if (pokemon_id == 718 && form == "Complete") { // Zygarde
-        col = 7, row = 96;
-
-    } else if (pokemon_id == 720 && form == "Unbound") { // Hoopa
-        col = 10, row = 94;
-
-    } else if (pokemon_id == 724 && form == "Hisuian") { // Decidueye
-        col = 5, row = 103;
-
-    } else if (pokemon_id == 741 && form == "Pompom") { // Oricorio
-        col = 8, row = 96;
-    } else if (pokemon_id == 741 && form == "Pau") { // Oricorio
-        col = 9, row = 96;
-    } else if (pokemon_id == 741 && form == "Sensu") { // Oricorio
-        col = 10, row = 96;
-
-    } else if (pokemon_id == 745 && form == "Midnight") { // Lycanroc
-        col = 11, row = 96;
-    } else if (pokemon_id == 745 && form == "Dusk") { // Lycanroc
-        col = 4, row = 98;
-
-    } else if (pokemon_id == 746 && form == "School") { // Wishiwashi
-        col = 0, row = 97;
-
-    } else if (pokemon_id == 800 && form == "Dawn_wings") { // Necrozma
-        col = 6, row = 98;
-    } else if (pokemon_id == 800 && form == "Dusk_mane") { // Necrozma
-        col = 5, row = 98;
-
-    } else if (pokemon_id == 849 && form == "Low_key") { // Toxtricity
-        col = 2, row = 100;
-
-    } else if (pokemon_id == 876 && form == "Female") { // Indeedee
-        col = 0, row = 101;
-
-    } else if (pokemon_id == 888 && form == "Crowned_sword") { // Zacian
-        col = 2, row = 101;
-    } else if (pokemon_id == 889 && form == "Crowned_shield") { // Zamazenta
-        col = 3, row = 101;
-
-    } else if (pokemon_id == 890 && form == "Eternamax") { // Eternatus
-        col = 4, row = 111;
-
-    } else if (pokemon_id == 898 && form == "Ice_rider") { // Calyrex
-        col = 0, row = 102;
-    } else if (pokemon_id == 898 && form == "Shadow_rider") { // Calyrex
-        col = 1, row = 102;
-
-    } else if (pokemon_id == 905 && form == "Therian") { // Enamorus
-        col = 7, row = 103;
-
-    } else {
-        col = pokemon_id % NUM_COLS;
-        row = Math.floor(pokemon_id / NUM_COLS);
+        if (form == "Normal") offsetID = pokemon_id;
+        else offsetID = genesectOffset + genesectLookup.indexOf(form);
     }
 
+    const col = offsetID % NUM_COLS;
+    const row = Math.floor(offsetID / NUM_COLS);
     return {x: col * -W, y: row * -H};
 }

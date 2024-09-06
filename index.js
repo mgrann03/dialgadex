@@ -32,7 +32,7 @@ if ("maxTouchPoints" in navigator) {
     }
 }
 
-const JB_URL = "https://raw.githubusercontent.com/javi-b/pokemon-resources/main/";
+const JB_URL = "https://raw.githubusercontent.com/mgrann03/pokemon-resources/main/";
 const GIFS_URL = JB_URL + "graphics/ani/";
 const SHINY_GIFS_URL = JB_URL + "graphics/ani-shiny/";
 const POGO_PNGS_URL = JB_URL + "graphics/pogo-256/"
