@@ -1579,10 +1579,12 @@ function GetMovesetsAvgY(types, atk, fms, cms, enemy_effectiveness, enemy_def = 
  * Sets up autocomplete for the Pokemon Search Box
  */
 function InitializePokemonSearch() {
+    // Only use active forms
     let search_values = jb_pkm.filter((item) => {
         return GetPokemonForms(item.id).includes(item.form);
     });
 
+    // Add entries for megas
     search_values.filter(pkm => 'mega' in pkm).forEach(pkm => {
         pkm.mega.forEach((megaEvo, i) => {
             const megaMon = structuredClone(pkm);
@@ -1592,6 +1594,12 @@ function InitializePokemonSearch() {
                 megaMon.name = megaMon.name + " " + (i == 0 ? "X" : "Y");
             search_values.push(megaMon);
         });
+    });
+
+    // Add entries for mons completely missing from game data
+    const all_names = search_values.map(e => e.name);
+    Object.values(jb_names).filter(e => !all_names.includes(e.name) && e.id <= jb_max_id).forEach(e => {
+        search_values.push({id: e.id, name: e.name, form: 'Normal', types: []});
     });
 
     const pokemonSearch = new autoComplete({
