@@ -101,7 +101,9 @@ function Main() {
     HttpGetAsync(JB_URL + "pogo_pkm.json",
         function(response) {
             jb_pkm = JSON.parse(response);
-            jb_pkm = deduplicate(jb_pkm);
+            jb_pkm = DeDuplicate(jb_pkm, (item) => {
+                return JSON.stringify(item, ['id','name','form']);
+            });
             jb_max_id = jb_pkm.at(-1).id;
         });
     HttpGetAsync(JB_URL + "pogo_fm.json",
@@ -255,11 +257,11 @@ function IncreaseLoadingVal() {
 /**
  * Removes duplicate objects (matching JSON strings)
  */
-function deduplicate(arr) {
+function DeDuplicate(arr, keyGen = JSON.stringify) {
     let seen = new Set();
     
     return arr.filter((item) => {
-        let k = JSON.stringify(item);
+        let k = keyGen(item);
         return seen.has(k) ? false : seen.add(k);
     });
 }
