@@ -1583,6 +1583,17 @@ function InitializePokemonSearch() {
         return GetPokemonForms(item.id).includes(item.form);
     });
 
+    search_values.filter(pkm => 'mega' in pkm).forEach(pkm => {
+        pkm.mega.forEach((megaEvo, i) => {
+            const megaMon = structuredClone(pkm);
+            megaMon.megaID = i;
+            megaMon.name = (pkm.id == 382 || pkm.id == 383 ? "Primal" : "Mega") + " " + megaMon.name;
+            if (pkm.id == 6 || pkm.id == 150) // charizard and mewtwo
+                megaMon.name = megaMon.name + " " + (i == 0 ? "X" : "Y");
+            search_values.push(megaMon);
+        });
+    });
+
     const pokemonSearch = new autoComplete({
         selector: "#poke-search-box",
         data: {
@@ -1591,11 +1602,11 @@ function InitializePokemonSearch() {
                 const inputValue = pokemonSearch.input.value.toLowerCase();
                 return list.sort((a, b) => {
                     if (a.value.name.toLowerCase().startsWith(inputValue)) 
-                        return b.value.name.toLowerCase().startsWith(inputValue) ? 0 : -1;
+                        return b.value.name.toLowerCase().startsWith(inputValue) ? a.value.id - b.value.id : -1;
                     else if (b.value.name.toLowerCase().startsWith(inputValue))
                         return 1;
 
-                    return 0;
+                    return a.value.id - b.value.id;
                 });
             }
         },
@@ -1649,7 +1660,7 @@ function InitializePokemonSearch() {
                 $(item).append(idTD);
                 
                 // Add Icon
-                const coords = GetPokemonIconCoords(data.value.id, data.value.form);
+                const coords = GetPokemonIconCoords(data.value.id, data.value.form, data.value.megaID !== undefined, data.value.megaID == 1);
                 $(item).append("<td class=pokemon-icon style='background-image:url("
                     + ICONS_URL + ");background-position:" + coords.x + "px "
                     + coords.y + "px'></td>");
@@ -1690,7 +1701,7 @@ function InitializePokemonSearch() {
         if (pokemonSearch.cursor == -1) { pokemonSearch.goTo(0); }
     });
     pokemonSearch.input.addEventListener("selection", function(e) {
-        LoadPokemonAndUpdateURL(e.detail.selection.value.id, e.detail.selection.value.form);
+        LoadPokemonAndUpdateURL(e.detail.selection.value.id, e.detail.selection.value.form, e.detail.selection.value.megaID !== undefined, e.detail.selection.value.megaID == 1);
     });
 }
 
