@@ -107,6 +107,10 @@ button:focus {
     border: 1px hidden var(--col-main);
 }
 
+.container-selected { 
+    border: 1px solid var(--col-main);
+}
+
 .pokemon-img {
     cursor: pointer;
     display: none;
@@ -424,19 +428,33 @@ span.poke-form-name, .poke-number {
     width: 900px;
     margin: 0 auto;
     display: flex;
-    /*justify-content: center;*/
-    /*align-items: center;*/
+    justify-content: safe center;
+    align-items: stretch;
+    overflow-x: auto;
+    position: relative;
 }
 
-.additional-containers-overflow {
-    justify-content: flex-start;
-    overflow: auto;
-    border-left: 1px solid var(--col-main);
-    border-right: 1px solid var(--col-main);
+.scroll-portal {
+    position: sticky;
+    flex-basis: 0%;
+    z-index: 2;
+    flex-shrink: 0;
+    margin: 0;
 }
 
-#additional-containers > div {
+.scroll-portal-left {
+    background: linear-gradient(to right, var(--col-bg) 0%, rgba(70, 130, 180, 0.5) 50%, transparent 100%);
+    left: 0;
+}
+
+.scroll-portal-right {
+    background: linear-gradient(to right, transparent 0%, rgba(70, 130, 180, 0.5) 50%, var(--col-bg) 100%);
+    right: 0;
+}
+
+#additional-containers > div:not(.scroll-portal) {
     margin: 30px 15px 0px 15px;
+    scroll-margin: 0;
 }
 
 #pokemongo { display: none; }

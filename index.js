@@ -716,11 +716,13 @@ function LoadPokemon(clean_input, form = "def", mega = false,
             GetPokemonContainer(pokemon_id, form == f, f));
     }
 
-    // deals with additional containers overflow
-    if (additional_cs.children().length > 6)
-        additional_cs.addClass("additional-containers-overflow");
-    else
-        additional_cs.removeClass("additional-containers-overflow");
+    // Will Scroll
+    if (additional_cs.get(0).scrollWidth > additional_cs.get(0).clientWidth) {
+        additional_cs.prepend("<div class='scroll-portal scroll-portal-left'></div>");
+        additional_cs.append("<div class='scroll-portal scroll-portal-right'></div>");
+
+        $(".container-selected").get(0).scrollIntoView({block: "end", inline: "center"});
+    }
 
     // displays what should be displayed
     if ($("#strongest").css("display") != "none")
@@ -840,7 +842,7 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal",
     // img container div
     let img_container_div = $("<div class=img-container></div>");
     if (is_selected)
-        img_container_div.css("border", "1px solid var(--col-main)");
+        img_container_div.addClass('container-selected');
     img_container_div.append(
             $("<img class=loading src=imgs/loading.gif></img>"));
     img_container_div.append($("<img class=pokemon-img "
