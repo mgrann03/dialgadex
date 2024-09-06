@@ -1074,6 +1074,7 @@ function ShowMoveInput(caller, moveType) {
                 moveTag.addClass('type-text');
                 moveTag.addClass('bg-' + moveType);
                 $(item).append(moveTag);
+                $(item).addClass('move-search-result');
             }
         }
     })

@@ -26,6 +26,10 @@
     width: 15ch;
 }
 
+.move-search-result {
+    font-size: 1.5em;
+}
+
 .plus-button {
     position: absolute;
     width: 1.5em;
@@ -60,7 +64,7 @@
     position: relative;
 }
 
-.autoComplete_wrapper > table {
+.autoComplete_wrapper > table, .autoComplete_wrapper > ul {
     position: absolute;
     top: 100%;
     left: 0;
@@ -71,7 +75,7 @@
     border: 1px solid var(--col-off);
 }
 
-.autoComplete_wrapper > table > tr {
+.autoComplete_wrapper > table > tr, .autoComplete_wrapper > ul > li {
     list-style: none;
     text-align: left;
     transition: all 0.1s ease-in-out;
@@ -97,33 +101,27 @@
     text-align: left;
 }
 
-.autoComplete_wrapper > table > tr::selection {
+.autoComplete_wrapper > table > tr::selection, .autoComplete_wrapper > ul::selection {
     color: rgba(#ffffff, 0);
     background-color: rgba(#ffffff, 0);
 }
 
-.autoComplete_wrapper > table > tr:hover {
+.autoComplete_wrapper > table > tr:hover, .autoComplete_wrapper > ul:hover {
     cursor: pointer;
     background-color: rgba(123, 123, 123, 0.1);
 }
 
-.autoComplete_wrapper > table > tr mark {
+.autoComplete_wrapper mark {
     background-color: transparent;
     color: #5d84b1;
     font-weight: bold;
 }
 
-.autoComplete_wrapper > table > tr mark::selection {
+.autoComplete_wrapper mark::selection {
     color: rgba(#ffffff, 0);
     background-color: rgba(#ffffff, 0);
 }
 
-.autoComplete_wrapper > table > tr[aria-selected="true"] {
+.autoComplete_wrapper > table > tr[aria-selected="true"], .autoComplete_wrapper > ul > li[aria-selected="true"] {
     background-color: rgba(123, 123, 123, 0.4);
-}
-
-@media only screen and (max-width: 600px) {
-    .autoComplete_wrapper > input {
-        width: 18rem;
-    }
 }
