@@ -1071,7 +1071,7 @@ function ShowMoveInput(caller, moveType) {
                 if (move) moveType = move.type;
 
                 const moveTag = $('<span></span>');
-                moveTag.html($(item).html());
+                moveTag.html($(item).html().replaceAll(" Plus", "+"));
                 $(item).html('');
                 moveTag.addClass('type-text');
                 moveTag.addClass('bg-' + moveType);
@@ -1447,7 +1447,7 @@ function GetPokemonStrongestMovesetsAgainstEnemy(jb_pkm_obj, mega, mega_y, shado
     const atk = (shadow) ? (stats.atk * 6 / 5) : stats.atk;
     const def = (shadow) ? (stats.def * 5 / 6) : stats.def;
     const hp = stats.hp;
-    const moves = GetPokemongoMoves(jb_pkm_obj);
+    const moves = GetPokemongoMoves(jb_pkm_obj, shadow);
     if (moves.length != 4)
         return movesets;
     const fms = moves[0];
@@ -1990,24 +1990,40 @@ function LoadPokemongoTable(jb_pkm_obj, mega, mega_y, stats, max_stats = null) {
 
             const tr = $("<tr></tr>");
             const td_fm = $("<td><span class='type-text bg-"
-                    + ((fm == "Hidden Power") ? "any-type" : fm_type)
-                    + "'>" + fm + ((fm_is_elite) ? "*" : "")
-                    + "</span></td>");
-            const td_cm = $("<td><span class='type-text bg-" + cm_type
-                    + "'>" + cm + ((cm_is_elite) ? "*" : "")
-                    + "</span></td>");
-            const td_dps = $("<td>" + dps.toFixed(3) + "</td>");
-            const td_dps_sh = $("<td>"
-                    + ((can_be_shadow) ? dps_sh.toFixed(3) : "-")
-                    + "</td>");
-            const td_tdo = $("<td>" + tdo.toFixed(1) + "</td>");
-            const td_tdo_sh = $("<td>"
-                    + ((can_be_shadow) ? tdo_sh.toFixed(1) : "-")
-                    + "</td>");
-            const td_rat = $("<td>" + rat.toFixed(2) + "</td>");
-            const td_rat_sh = $("<td>"
-                    + ((can_be_shadow) ? rat_sh.toFixed(2) : "-")
-                    + "</td>");
+                + ((fm == "Hidden Power") ? "any-type" : fm_type)
+                + "'>" + fm + ((fm_is_elite) ? "*" : "")
+                + "</span></td>");
+            let td_cm = $("<td><span class='type-text bg-" + cm_type
+                + "'>" + cm.replaceAll(" Plus", "+") + ((cm_is_elite) ? "*" : "")
+                + "</span></td>");
+            let td_dps = $("<td>" + dps.toFixed(3) + "</td>");
+            let td_dps_sh = $("<td>"
+                + ((can_be_shadow) ? dps_sh.toFixed(3) : "-")
+                + "</td>");
+            let td_tdo = $("<td>" + tdo.toFixed(1) + "</td>");
+            let td_tdo_sh = $("<td>"
+                + ((can_be_shadow) ? tdo_sh.toFixed(1) : "-")
+                + "</td>");
+            let td_rat = $("<td>" + rat.toFixed(2) + "</td>");
+            let td_rat_sh = $("<td>"
+                + ((can_be_shadow) ? rat_sh.toFixed(2) : "-")
+                + "</td>");
+
+            if (jb_pkm_obj.form == "S" 
+                && (cm == 'Sacred Fire Plus' || cm == 'Sacred Fire Plus Plus'
+                    || cm == 'Aeroblast Plus' || cm == 'Aeroblast Plus Plus')) { // Apex
+
+                if (cm == 'Sacred Fire Plus' || cm == 'Aeroblast Plus') { // Shadow Only
+                    td_dps.text("-");
+                    td_tdo.text("-");
+                    td_rat.text("-");
+                }
+                else if (cm == 'Sacred Fire Plus Plus' || cm == 'Aeroblast Plus Plus') { // Purified Only
+                    td_dps_sh.text("-");
+                    td_tdo_sh.text("-");
+                    td_rat_sh.text("-");
+                }
+            }
 
             tr.append(td_fm);
             tr.append(td_cm);
@@ -2052,7 +2068,7 @@ function LoadPokemongoTable(jb_pkm_obj, mega, mega_y, stats, max_stats = null) {
     loading_pogo_moves = true;
     // appends the first fast move chunk
     AppendFMChunk(0, function() {
-        SortPokemongoTable(6);
+        SortPokemongoTable(6, 7);
         loading_pogo_moves = false;
     });
 }
@@ -2061,7 +2077,7 @@ function LoadPokemongoTable(jb_pkm_obj, mega, mega_y, stats, max_stats = null) {
  * Gets array of four arrays. The specified Pokemon's fast moves, elite fast
  * moves, charged moves and elite charged moves.
  */
-function GetPokemongoMoves(jb_pkm_obj) {
+function GetPokemongoMoves(jb_pkm_obj, shadow) {
 
     if (!jb_pkm_obj.fm && !jb_pkm_obj.cm)
         return [];
@@ -2083,6 +2099,26 @@ function GetPokemongoMoves(jb_pkm_obj) {
                     fm.push("Hidden Power " + type);
                 if (elite_fm.includes("Hidden Power"))
                     elite_fm.push("Hidden Power " + type)
+            }
+        }
+    }
+
+    // Remove Impossible move from Apex Forms
+    if (jb_pkm_obj.form == "S" && shadow !== undefined) {
+        if (shadow) {
+            if (jb_pkm_obj.id == 249) { // Shadow Apex Lugia
+                elite_cm.splice(elite_cm.indexOf('Aeroblast Plus Plus'), 1);
+            }
+            if (jb_pkm_obj.id == 250) { // Shadow Apex Ho-Oh
+                elite_cm.splice(elite_cm.indexOf('Sacred Fire Plus Plus'), 1);
+            }
+        }
+        else {
+            if (jb_pkm_obj.id == 249) { // Purified Apex Lugia
+                elite_cm.splice(elite_cm.indexOf('Aeroblast Plus'), 1);
+            }
+            if (jb_pkm_obj.id == 250) { // Purified Apex Ho-Oh
+                elite_cm.splice(elite_cm.indexOf('Sacred Fire Plus'), 1);
             }
         }
     }
@@ -2230,7 +2266,7 @@ function GetTDO(dps, hp, def, y = null) {
  * Sorts the pokemon go moves combinations table rows according to the
  * values from a specific column.
  */
-function SortPokemongoTable(column_i) {
+function SortPokemongoTable(column_i, sec_column_j) {
 
     let table = $("#pokemongo-table")[0];
 
@@ -2253,7 +2289,7 @@ function SortPokemongoTable(column_i) {
 
     // sorts rows
     let rows_array = Array.from(table.tBodies[0].rows);
-    rows_array = MergeSortPokemongoTable(rows_array, column_i);
+    rows_array = MergeSortPokemongoTable(rows_array, column_i, sec_column_j);
     for (let i = 0; i < rows_array.length; i++)
         table.tBodies[0].append(rows_array[i]);
 }
@@ -2262,16 +2298,16 @@ function SortPokemongoTable(column_i) {
  * Applies the merge sort algorithm to the pokemon go table rows.
  * Sorts according to the values from a specific column.
  */
-function MergeSortPokemongoTable(rows, column_i) {
+function MergeSortPokemongoTable(rows, column_i, sec_column_j) {
 
     if (rows.length <= 1)
         return rows;
 
     const n = (rows.length / 2);
-    let a = MergeSortPokemongoTable(rows.slice(0, n), column_i);
-    let b = MergeSortPokemongoTable(rows.slice(n), column_i);
+    let a = MergeSortPokemongoTable(rows.slice(0, n), column_i, sec_column_j);
+    let b = MergeSortPokemongoTable(rows.slice(n), column_i, sec_column_j);
 
-    return MergeRows(a, b, column_i);
+    return MergeRows(a, b, column_i, sec_column_j);
 }
 
 /**
@@ -2279,12 +2315,17 @@ function MergeSortPokemongoTable(rows, column_i) {
  * Sorts and merges two arrays of rows according to the values
  * from a specific column. Returns the single resulting array.
  */
-function MergeRows(a, b, column_i) {
+function MergeRows(a, b, column_i, sec_column_j) {
 
     function GetRowValue(row) {
-        return parseFloat(
+        const col_i_val = parseFloat(
                 row.getElementsByTagName("TD")[column_i]
                 .innerHTML.toLowerCase());
+        if (!isNaN(col_i_val)) return col_i_val;
+        
+        return parseFloat(
+            row.getElementsByTagName("TD")[sec_column_j]
+            .innerHTML.toLowerCase());
     }
 
     let c = [];
@@ -3069,7 +3110,7 @@ function GetPokemonStrongestMovesets(jb_pkm_obj, mega, mega_y, shadow,
     const def = (shadow) ? (stats.def * 5 / 6) : stats.def;
     const hp = stats.hp;
 
-    const moves = GetPokemongoMoves(jb_pkm_obj);
+    const moves = GetPokemongoMoves(jb_pkm_obj, shadow);
     if (moves.length != 4)
         return types_movesets;
 
@@ -3265,7 +3306,7 @@ function GetPokemonStrongestMoveset(jb_pkm_obj, mega, mega_y, shadow,
     const def = (shadow) ? (stats.def * 5 / 6) : stats.def;
     const hp = stats.hp;
 
-    const moves = GetPokemongoMoves(jb_pkm_obj);
+    const moves = GetPokemongoMoves(jb_pkm_obj, shadow);
     if (moves.length != 4)
         return moveset;
 
@@ -3423,7 +3464,7 @@ function SetStrongestTableFromArray(str_pokemons, num_rows = null,
                 + p.fm + ((p.fm_is_elite) ? "*" : "") + "</span></td>";
             const td_cm =
                 "<td><span class='type-text bg-" + p.cm_type + "'>"
-                + p.cm + ((p.cm_is_elite) ? "*" : "") + "</span></td>";
+                + p.cm.replaceAll(" Plus", "+") + ((p.cm_is_elite) ? "*" : "") + "</span></td>";
             const td_rat = "<td>" + settings_metric + " <b>"
                 + p.rat.toFixed(2) + "</b></td>";
             const td_pct = ((show_pct) ? "<td>" 

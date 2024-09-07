@@ -447,6 +447,9 @@ function GetPokemonForms(pokemon_id) {
             return ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
                 "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y",
                 "Z", "Exclamation_point", "Question_mark"];
+        case 249: // Lugia
+        case 250: // Ho-Oh
+            return ["Normal", "S"];
         case 351: // Castform
             return [ "Normal", "Sunny", "Rainy", "Snowy" ];
         case 386: // Deoxys
@@ -848,6 +851,8 @@ function GetFormText(pokemon_id, form) {
             return "Family of Four";
         case "Family_of_three":
             return "Family of Three";
+        case "S":
+            return "Apex";
     }
 
     return "";
