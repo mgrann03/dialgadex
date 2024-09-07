@@ -1146,7 +1146,7 @@ function GetPokemonIconCoords(pokemon_id, form, mega, mega_y) {
     // Minior
     else if (pokemon_id == 800) { // Necrozma
         const necrozmaOffset = 1193;
-        const necrozmaLookup = ['Dawn_wings','Dusk_mane','Ultra'];
+        const necrozmaLookup = ['Dusk_mane','Dawn_wings','Ultra'];
 
         if (form == "Normal") offsetID = pokemon_id;
         else offsetID = necrozmaOffset + necrozmaLookup.indexOf(form);
