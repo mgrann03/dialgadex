@@ -322,6 +322,12 @@ span.poke-form-name, .poke-number {
     font-weight: bold;
 }
 
+.settings-subtitle {
+    border-bottom: 1px solid var(--col-off);
+    margin: 5px 0px 2px 0px;
+    font-weight: bold;
+}
+
 #note {
     position: fixed;
     width: 250px;

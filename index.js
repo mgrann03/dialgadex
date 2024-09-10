@@ -56,6 +56,7 @@ METRICS.add("TDO");
 METRICS.add("Custom");
 let settings_metric = "EER";
 let settings_metric_exp = 0.225;
+let settings_party_size = 1;
 let settings_default_level = 40;
 let settings_xl_budget = false;
 let settings_pve_turns = true;
@@ -122,6 +123,10 @@ function Main() {
     $("#metric-ter").click(function() { SetMetric("TER"); });
     $("#metric-dps").click(function() { SetMetric("DPS"); });
     $("#metric-tdo").click(function() { SetMetric("TDO"); });
+    $("#pp-1").click(function() { SetPartySize(1); });
+    $("#pp-2").click(function() { SetPartySize(2); });
+    $("#pp-3").click(function() { SetPartySize(3); });
+    $("#pp-4").click(function() { SetPartySize(4); });
     $("#lvl-40").click(function() { SetDefaultLevel(40, false); });
     $("#lvl-50").click(function() { SetDefaultLevel(50, false); });
     $("#lvl-xl-budget").click(function() { SetDefaultLevel(40, true); });
@@ -374,6 +379,28 @@ function SetMetric(metric) {
     // sets pokemongo table header
     $("#table-metric-header").html(settings_metric);
     $("#table-metric-header-sh").html(settings_metric + "<br>(Shadow)");
+
+    // reload page
+    CheckURLAndAct();
+}
+
+/**
+ * Sets the size of party for party power and updates the page accordingly.
+ */
+function SetPartySize(party_size) {
+    party_size = parseInt(party_size);
+    party_size = Math.max(1, Math.min(party_size, 4));
+
+    // sets global variable
+    settings_party_size = party_size;
+
+    // sets settings options selected class
+    $("#pp-1").removeClass("settings-opt-sel");
+    $("#pp-2").removeClass("settings-opt-sel");
+    $("#pp-3").removeClass("settings-opt-sel");
+    $("#pp-4").removeClass("settings-opt-sel");
+    
+    $("#pp-" + party_size.toString()).addClass("settings-opt-sel");
 
     // reload page
     CheckURLAndAct();
@@ -2158,10 +2185,15 @@ function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
     const fm_dps = fm_dmg / ProcessDuration(fm_obj.duration);
     const fm_eps = fm_obj.energy_delta / ProcessDuration(fm_obj.duration);
 
+    const tof = hp / y;
+    const f_to_c_ratio = (tof * -cm_obj.energy_delta + ProcessDuration(cm_obj.duration) * (x - 0.5 * hp)) / 
+        (tof * fm_obj.energy_delta - ProcessDuration(fm_obj.duration) * (x - 0.5 * hp));
+    const pp_boost = GetPartyBoost(f_to_c_ratio);
+
     // charged move variables
     const cm_dmg_mult = cm_mult * ((types.includes(cm_obj.type)) ? 1.2 : 1);
     const cm_dmg = 0.5 * cm_obj.power * (atk / enemy_def) * cm_dmg_mult + 0.5;
-    const cm_dps = cm_dmg / ProcessDuration(cm_obj.duration);
+    const cm_dps = cm_dmg * (1 + pp_boost) / ProcessDuration(cm_obj.duration);
     let cm_eps = -cm_obj.energy_delta / ProcessDuration(cm_obj.duration);
     // penalty to one-bar charged moves in old raid system (they use more energy (cm_eps))
     if (!settings_pve_turns && cm_obj.energy_delta == -100) {
@@ -2184,6 +2216,29 @@ function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
         dps = fm_dps;
 
     return ((dps < 0) ? 0 : dps);
+}
+
+/* Returns % extra damage on charged move from party power 
+ * Clamped between +0-100%
+*/
+function GetPartyBoost(f_to_c_ratio) {
+    if (settings_party_size == 1) return 0;
+
+    let f_moves_per_boost;
+
+    switch (settings_party_size) {
+        case 2:
+            f_moves_per_boost = 18;
+        break;
+        case 3:
+            f_moves_per_boost = 9;
+        break;
+        case 4:
+            f_moves_per_boost = 6;
+        break;
+    }
+
+    return Math.max(0, Math.min(f_to_c_ratio / f_moves_per_boost, 1));
 }
 
 /**
@@ -2601,6 +2656,12 @@ function LoadStrongest(type = "Any") {
         SetTableOfStrongestOfEachType(search_unreleased, search_mega,
                 search_shadow, search_legendary, search_elite, search_mixed);
     }
+
+    // Display relevant footnotes
+    $("#footnote-elite").css('display', search_elite ? 'block' : 'none');
+    $("#footnote-mixed-moveset").css('display', search_mixed ? 'block' : 'none');
+    $("#footnote-versus").css('display', search_versus ? 'block' : 'none');
+    $("#footnote-party-power").css('display', settings_party_size > 1 ? 'block' : 'none');
 }
 
 /**
