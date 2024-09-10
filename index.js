@@ -2165,7 +2165,7 @@ function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
     let cm_eps = -cm_obj.energy_delta / (GetDuration(cm_obj) / 1000);
     // penalty to one-bar charged moves (they use more energy (cm_eps))
     if (cm_obj.energy_delta == -100) {
-        const dws = cm_obj.damage_window_start / 1000; // dws in seconds
+        const dws = (settings_pve_turns ? 0 : cm_obj.damage_window_start / 1000); // dws in seconds
         cm_eps = (-cm_obj.energy_delta + 0.5 * fm_obj.energy_delta
                 + 0.5 * y * dws) / (GetDuration(cm_obj) / 1000);
     }
