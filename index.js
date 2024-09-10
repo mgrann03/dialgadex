@@ -2240,11 +2240,11 @@ function GetSpecificY(types, atk, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
     // this isn't part of the formula
     // this multiplier attempts to tweak the specified y
     // to match the default (900 / def)
-    const y_mult = 200;
+    const y_mult = 0.5;
 
     // specific y
     const y = y_mult * (lambda * fm_dmg + cm_dmg)
-        / (lambda * (GetDuration(fm_obj) + 2) + GetDuration(cm_obj) + 2);
+        / (lambda * (GetDuration(fm_obj)/1000 + 2) + GetDuration(cm_obj)/1000 + 2);
 
     return ((y < 0) ? 0 : y);
 }
