@@ -2161,8 +2161,8 @@ function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
     // charged move variables
     const cm_dmg_mult = cm_mult * ((types.includes(cm_obj.type)) ? 1.2 : 1);
     const cm_dmg = 0.5 * cm_obj.power * (atk / enemy_def) * cm_dmg_mult + 0.5;
-    const cm_dps = cm_dmg / ProcessDuration(cm_obj);
-    let cm_eps = -cm_obj.energy_delta / ProcessDuration(cm_obj);
+    const cm_dps = cm_dmg / ProcessDuration(cm_obj.duration);
+    let cm_eps = -cm_obj.energy_delta / ProcessDuration(cm_obj.duration);
     // penalty to one-bar charged moves in old raid system (they use more energy (cm_eps))
     if (!settings_pve_turns && cm_obj.energy_delta == -100) {
         const dws = (settings_pve_turns ? 0 : cm_obj.damage_window_start / 1000); // dws in seconds
@@ -2177,7 +2177,7 @@ function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
             * (0.5 - x / hp) * y;
 
     // charged move is strictly better, and can be used indefinitely
-    if (cm_dps > fm_dps && -cm_obj.energy_delta < y * ProcessDuration(cm_obj) * 0.5) 
+    if (cm_dps > fm_dps && -cm_obj.energy_delta < y * ProcessDuration(cm_obj.duration) * 0.5) 
         dps = cm_dps;
     // fast move is strictly better
     if (fm_dps > dps)
