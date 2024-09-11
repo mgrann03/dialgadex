@@ -57,7 +57,7 @@ METRICS.add("Custom");
 let settings_metric = "EER";
 let settings_metric_exp = 0.225;
 let settings_party_size = 1;
-let settings_default_level = 40;
+let settings_default_level = [40];
 let settings_xl_budget = false;
 let settings_pve_turns = true;
 let settings_strongest_count = 20;
@@ -127,9 +127,10 @@ function Main() {
     $("#pp-2").click(function() { SetPartySize(2); });
     $("#pp-3").click(function() { SetPartySize(3); });
     $("#pp-4").click(function() { SetPartySize(4); });
-    $("#lvl-40").click(function() { SetDefaultLevel(40, false); });
-    $("#lvl-50").click(function() { SetDefaultLevel(50, false); });
-    $("#lvl-xl-budget").click(function() { SetDefaultLevel(40, true); });
+    $("#lvl-40").click(function() { SetDefaultLevel([40], false); });
+    $("#lvl-50").click(function() { SetDefaultLevel([50], false); });
+    $("#lvl-xl-budget").click(function() { SetDefaultLevel([40], true); });
+    $("#lvl-both").click(function() { SetDefaultLevel([40, 50], false); });
     $("#tof-exp").change(function() { SetMetric("Custom"); });
 
     $("#chk-rescale").change(function() { CheckURLAndAct(); });
@@ -410,10 +411,6 @@ function SetPartySize(party_size) {
  * Sets the default level setting and, if necessary, updates the page accordingly.
  */
 function SetDefaultLevel(level, xl_budget = false) {
-
-    if (level != 40 && level != 50)
-        return;
-
     // sets global variables
     settings_default_level = level;
     settings_xl_budget = xl_budget;
@@ -422,17 +419,16 @@ function SetDefaultLevel(level, xl_budget = false) {
     $("#lvl-40").removeClass("settings-opt-sel");
     $("#lvl-50").removeClass("settings-opt-sel");
     $("#lvl-xl-budget").removeClass("settings-opt-sel");
-    switch (level) {
-        case 40:
-            if (xl_budget) 
-                $("#lvl-xl-budget").addClass("settings-opt-sel");
-            else
-                $("#lvl-40").addClass("settings-opt-sel");
-            break;
-        case 50:
-            $("#lvl-50").addClass("settings-opt-sel");
-            break;
-    }
+    $("#lvl-both").removeClass("settings-opt-sel");
+
+    if (xl_budget) 
+        $("#lvl-xl-budget").addClass("settings-opt-sel");
+    else if (level.length > 1 && level[0] == 40 && level[1] == 50)
+        $("#lvl-both").addClass("settings-opt-sel");
+    else if (level[0] == 40)
+        $("#lvl-40").addClass("settings-opt-sel");
+    else if (level[0] == 50)
+        $("#lvl-50").addClass("settings-opt-sel");
 
     // reload page
     CheckURLAndAct();
@@ -668,7 +664,7 @@ function LoadPokemon(clean_input, form = "def", mega = false,
 
     // sets the default level
     if (level == null) {
-        level = settings_default_level;
+        level = settings_default_level[0];
         const poke_obj = jb_pkm.find(e=>e.id == pokemon_id);
         if (poke_obj !== undefined && poke_obj.class == undefined && settings_xl_budget)
             level = 50;
@@ -965,9 +961,7 @@ function LoadPokemongo(pokemon_id, form, mega, mega_y, level, ivs) {
 function GetPokemonStats(jb_pkm_obj, mega, mega_y, level = null, ivs = null) {
 
     if (!level) {
-        level = settings_default_level;
-        if (settings_xl_budget && !jb_pkm_obj.class)
-            level = 50;
+        level = settings_default_level[0];
     }
     if (!ivs)
         ivs = { atk: 15, def: 15, hp: 15 };
@@ -2811,12 +2805,14 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
      * The array is sorted every time so that it is always the weakest
      * pokemon in it that gets replaced.
      */
-    function CheckIfStronger(jb_pkm_obj, mega, mega_y, shadow) {
+    function CheckIfStronger(jb_pkm_obj, mega, mega_y, shadow, level) {
 
         // Consider max 5 best movesets per pokemon
         let moveset_count = (search_suboptimal) ? 5 : 1; 
         const types_movesets = GetPokemonStrongestMovesets(jb_pkm_obj,
-                mega, mega_y, shadow, search_elite, moveset_count, type, search_mixed, versus);
+                mega, mega_y, shadow, 
+                search_elite, moveset_count, type, search_mixed, 
+                versus, level);
         
         if (!types_movesets.has(type))
             return;
@@ -2846,7 +2842,8 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
                     name: jb_pkm_obj.name, form: jb_pkm_obj.form,
                     mega: mega, mega_y: mega_y, shadow: shadow, class: jb_pkm_obj.class,
                     fm: moveset.fm, fm_is_elite: moveset.fm_is_elite, fm_type: moveset.fm_type,
-                    cm: moveset.cm, cm_is_elite: moveset.cm_is_elite, cm_type: moveset.cm_type
+                    cm: moveset.cm, cm_is_elite: moveset.cm_is_elite, cm_type: moveset.cm_type,
+                    level: level
                 };
 
                 if (str_pokemons.length < num_rows)
@@ -2864,56 +2861,61 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
     }
 
     // searches for pokemons...
+    for (lvl of settings_default_level) {
+        for (let id = 1; id <= jb_max_id; id++) {
 
-    for (let id = 1; id <= jb_max_id; id++) {
+            const forms = GetPokemonForms(id);
+            const def_form = forms[0];
 
-        const forms = GetPokemonForms(id);
-        const def_form = forms[0];
+            let jb_pkm_obj = jb_pkm.find(entry =>
+                    entry.id == id && entry.form == def_form);
 
-        let jb_pkm_obj = jb_pkm.find(entry =>
-                entry.id == id && entry.form == def_form);
+            let search_level = lvl
+            if (settings_xl_budget && jb_pkm_obj !== undefined && !jb_pkm_obj.class)
+                search_level = 50;
 
-        // checks whether pokemon should be skipped
-        // (not released or legendary when not allowed)
-        if (!jb_pkm_obj || !search_unreleased && !jb_pkm_obj.released
-                || !search_legendary && jb_pkm_obj.class) {
-            continue;
-        }
-
-        const can_be_shadow = jb_pkm_obj.shadow;
-        const can_be_mega = jb_pkm_obj.mega;
-
-        // default form
-        CheckIfStronger(jb_pkm_obj, false, false, false);
-
-        // shadow (except not released when it shouldn't)
-        if (search_shadow && can_be_shadow
-                && !(!search_unreleased && !jb_pkm_obj.shadow_released)) {
-            CheckIfStronger(jb_pkm_obj, false, false, true);
-        }
-
-        // mega(s)
-        if (search_mega && can_be_mega) {
-            CheckIfStronger(jb_pkm_obj, true, false, false);
-            if (id == 6 || id == 150) // charizard and mewtwo
-                CheckIfStronger(jb_pkm_obj, true, true, false);
-        }
-
-        // other forms
-        for (let form_i = 1; form_i < forms.length; form_i++) {
-
-            jb_pkm_obj = jb_pkm.find(entry =>
-                    entry.id == id && entry.form == forms[form_i]);
-
-            // checks whether pokemon should be skipped (form not released)
-            if (!jb_pkm_obj || !search_unreleased && !jb_pkm_obj.released)
+            // checks whether pokemon should be skipped
+            // (not released or legendary when not allowed)
+            if (!jb_pkm_obj || !search_unreleased && !jb_pkm_obj.released
+                    || !search_legendary && jb_pkm_obj.class) {
                 continue;
+            }
 
-            CheckIfStronger(jb_pkm_obj, false, false, false);
-            // other forms and shadow (except not released when it shouldn't)
+            const can_be_shadow = jb_pkm_obj.shadow;
+            const can_be_mega = jb_pkm_obj.mega;
+
+            // default form
+            CheckIfStronger(jb_pkm_obj, false, false, false, search_level);
+
+            // shadow (except not released when it shouldn't)
             if (search_shadow && can_be_shadow
                     && !(!search_unreleased && !jb_pkm_obj.shadow_released)) {
-                CheckIfStronger(jb_pkm_obj, false, false, true);
+                CheckIfStronger(jb_pkm_obj, false, false, true, search_level);
+            }
+
+            // mega(s)
+            if (search_mega && can_be_mega) {
+                CheckIfStronger(jb_pkm_obj, true, false, false, search_level);
+                if (id == 6 || id == 150) // charizard and mewtwo
+                    CheckIfStronger(jb_pkm_obj, true, true, false, search_level);
+            }
+
+            // other forms
+            for (let form_i = 1; form_i < forms.length; form_i++) {
+
+                jb_pkm_obj = jb_pkm.find(entry =>
+                        entry.id == id && entry.form == forms[form_i]);
+
+                // checks whether pokemon should be skipped (form not released)
+                if (!jb_pkm_obj || !search_unreleased && !jb_pkm_obj.released)
+                    continue;
+
+                CheckIfStronger(jb_pkm_obj, false, false, false, search_level);
+                // other forms and shadow (except not released when it shouldn't)
+                if (search_shadow && can_be_shadow
+                        && !(!search_unreleased && !jb_pkm_obj.shadow_released)) {
+                    CheckIfStronger(jb_pkm_obj, false, false, true, search_level);
+                }
             }
         }
     }
@@ -2959,7 +2961,7 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
         let rat_order = 0;
 
         for (let str_pok of str_pokemons) {
-            const pok_uniq_id = str_pok.id + "-" + str_pok.form + "-" + str_pok.mega + "-" + str_pok.mega_y + "-" + str_pok.shadow;
+            const pok_uniq_id = str_pok.id + "-" + str_pok.form + "-" + str_pok.mega + "-" + str_pok.mega_y + "-" + str_pok.shadow + "-" + str_pok.level;
             if (!str_pokemons_optimal.has(pok_uniq_id)) {
                 // array was already sorted, so first instance of mon is strongest
                 str_pokemons_optimal.set(pok_uniq_id, [rat_order, str_pok.rat]);
@@ -3150,8 +3152,10 @@ function BuildTiers(str_pokemons, top_compare) {
  * their rating is calculated as if they are not very effective but the selected
  * type is neutral.
  */
-function GetPokemonStrongestMovesets(jb_pkm_obj, mega, mega_y, shadow,
-        search_elite, moveset_count, search_type = null, search_mixed = false, versus = false) {
+function GetPokemonStrongestMovesets(jb_pkm_obj, 
+        mega, mega_y, shadow,
+        search_elite, moveset_count, search_type = null, search_mixed = false, 
+        versus = false, level = null) {
 
     let types_movesets = new Map();
 
@@ -3171,7 +3175,7 @@ function GetPokemonStrongestMovesets(jb_pkm_obj, mega, mega_y, shadow,
 
     const types = GetPokemonTypes(jb_pkm_obj, mega, mega_y);
 
-    const stats = GetPokemonStats(jb_pkm_obj, mega, mega_y);
+    const stats = GetPokemonStats(jb_pkm_obj, mega, mega_y, level);
     const atk = (shadow) ? (stats.atk * 6 / 5) : stats.atk;
     const def = (shadow) ? (stats.def * 5 / 6) : stats.def;
     const hp = stats.hp;
@@ -3475,7 +3479,7 @@ function SetStrongestTableFromArray(str_pokemons, num_rows = null,
 
             // re-style any rows for mons we've seen before 
             if (highlight_suboptimal) {
-                const pok_uniq_id = p.id + "-" + p.form + "-" + p.mega + "-" + p.mega_y + "-" + p.shadow;
+                const pok_uniq_id = p.id + "-" + p.form + "-" + p.mega + "-" + p.mega_y + "-" + p.shadow + "-" + p.level;
                 if (encountered_mons.has(pok_uniq_id)) {
                     tr.addClass("suboptimal");
                 }
@@ -3518,7 +3522,7 @@ function SetStrongestTableFromArray(str_pokemons, num_rows = null,
                 + name
                 + ((p.mega && can_be_mega_y)
                     ? ((p.mega_y) ? " Y" : " X") : "")
-                + ((!legendary && settings_xl_budget) ? "<sup class='xl'>XL</sup>" : "")
+                + ((p.level == 50) ? "<sup class='xl'>XL</sup>" : "")
                 +"</span>"
                 + ((form_text.length > 0)
                     ? "<span class=poke-form-name> (" + form_text + ")</span>" 
