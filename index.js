@@ -181,7 +181,7 @@ function Main() {
     });
 
     $("#strongest-link").click(function() {
-        LoadStrongestAndUpdateURL();
+        LoadStrongestAndUpdateURL("Any", false);
         return false;
     });
 
@@ -578,7 +578,7 @@ function CheckURLAndAct() {
     if (params.has("strongest")) {
 
         // preserve versus param
-         $("#chk-versus").prop("checked", params.has("v") == true);
+        $("#chk-versus").prop("checked", params.has("v") == true);
 
         // if url has 't' param...
         if (params.has("t")) {
@@ -899,7 +899,7 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal",
         pokemon_types_div.append($("<img src=imgs/types/"
                 + type.toLowerCase() + ".gif" 
                 + " onclick='LoadStrongestAndUpdateURL(\"" + type
-                + "\")'></img>"));
+                + "\", false)'></img>"));
     }
     pokemon_container_div.append(pokemon_types_div);
 
@@ -1196,7 +1196,7 @@ function LoadPokemongoEffectiveness(jb_pkm_obj, mega, mega_y) {
     for (let type of effectiveness_0391) {
         effectiveness_0391_html += "<a class='type-text bg-" + type
                 + "' onclick='LoadStrongestAndUpdateURL(\"" + type
-                + "\")'>" + type + "</a> ";
+                + "\", false)'>" + type + "</a> ";
     }
     $("#effectiveness-0391").html(effectiveness_0391_html);
 
@@ -1204,7 +1204,7 @@ function LoadPokemongoEffectiveness(jb_pkm_obj, mega, mega_y) {
     for (let type of effectiveness_0625) {
         effectiveness_0625_html += "<a class='type-text bg-" + type
                 + "' onclick='LoadStrongestAndUpdateURL(\"" + type
-                + "\")'>" + type + "</a> ";
+                + "\", false)'>" + type + "</a> ";
     }
     $("#effectiveness-0625").html(effectiveness_0625_html);
 
@@ -1212,7 +1212,7 @@ function LoadPokemongoEffectiveness(jb_pkm_obj, mega, mega_y) {
     for (let type of effectiveness_160) {
         effectiveness_160_html += "<a class='type-text bg-" + type
                 + "' onclick='LoadStrongestAndUpdateURL(\"" + type
-                + "\")'>" + type + "</a> ";
+                + "\", false)'>" + type + "</a> ";
     }
     $("#effectiveness-160").html(effectiveness_160_html);
 
@@ -1220,7 +1220,7 @@ function LoadPokemongoEffectiveness(jb_pkm_obj, mega, mega_y) {
     for (let type of effectiveness_256) {
         effectiveness_256_html += "<a class='type-text bg-" + type
                 + "' onclick='LoadStrongestAndUpdateURL(\"" + type
-                + "\")'>" + type + "</a> ";
+                + "\", false)'>" + type + "</a> ";
     }
     $("#effectiveness-256").html(effectiveness_256_html);
 }
@@ -2545,7 +2545,7 @@ function ShowCounters() {
 /**
  * Calls the 'LoadStrongest' function and updates the url accordingly.
  */
-function LoadStrongestAndUpdateURL(type = "Any") {
+function LoadStrongestAndUpdateURL(type = "Any", versus = null) {
 
     if (!finished_loading)
         return false;
@@ -2553,7 +2553,12 @@ function LoadStrongestAndUpdateURL(type = "Any") {
     LoadStrongest(type);
 
     let url = "?strongest&t=" + type;
-    if ($("#chk-versus").prop("checked")) url += '&v';
+    if (versus === null) {
+        if ($("#chk-versus").prop("checked")) 
+            url += '&v';
+    }
+    else
+        $("#chk-versus").prop("checked", versus);
 
     window.history.pushState({}, "", url);
 }
