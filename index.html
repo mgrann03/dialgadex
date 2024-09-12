@@ -262,7 +262,7 @@
                     <td><abbr title="Level of this specific Pokémon">Level</abbr></td>
                     <td>→</td>
                     <td><label>
-                        <input id=input-lvl type=number min=1 max=51 step=0.5 value=40></label></td>
+                        <input id=input-lvl type=number min=1 max=51 step=0.5 value=40>
                     </label></td>
                     <td></td>
                     <td>
@@ -318,26 +318,38 @@
             <div class="small-text" id="counters">
             <div id="counters-outline">
                 <div class=center id=counters-popup></div>
-                <div class="center">
-                    <p id=counters-filters>
+                <div id=counters-filters>
+                    <label class="switch">
                         <input type=checkbox value=unreleased unchecked>
-                            Unreleased
-                        </input>
-                        <input type=checkbox value=mega checked disabled>
-                            Mega and Primal
-                        </input>
+                        <span class="slider"></span>
+                        <span class="labeltext tooltip">Unreleased
+                            <span class="tooltiptext">Include Pokemon found in the Game Master but not yet available in game</span></span>
+                    </label>
+                    <label class="switch">
+                        <input type=checkbox value=mega checked>
+                        <span class="slider"></span>
+                        <span class="labeltext">Mega or Primal</span>
+                    </label>
+                    <label class="switch">
                         <input type=checkbox value=shadow checked>
-                            Shadow
-                        </input>
+                        <span class="slider"></span>
+                        <span class="labeltext">Shadow</span>
+                    </label>
+                    <label class="switch">
                         <input type=checkbox value=legendary checked>
-                            Legendary, Mythical and Ultrabeast
-                        </input>
+                        <span class="slider"></span>
+                        <span class="labeltext">Legendary, Mythical and Ultrabeast</span>
+                    </label>
+                    <label class="switch">
                         <input type=checkbox value=elite checked>
-                            Elite moves
-                        </input>
-                    </p>
+                        <span class="slider"></span>
+                        <span class="labeltext tooltip">Elite moves
+                            <span class="tooltiptext"><p>Allow moves with limited availability</p>
+                            <p>(Requires Special event or Elite TMs)</p></span>
+                        </span>
+                    </label>
                 </div>
-                <table><tr id=counters-tr></tr></table>
+                <table id=counters-table><tr id=counters-tr></tr></table>
                 <p class="center off no-top-m" id=counters-disclaimer></p>
             </div>
             </div>
@@ -481,7 +493,7 @@
                     <li id=footnote-versus>"Versus" rankings are calculated using appropriate effectiveness multiplier for attacking damage.
                         <!--<br />Versus rankings also assume incoming damage is of the chosen type, and apply relevant defensive multipliers.-->
                     </li>
-                    <li id=footnote-party-power>Party power rankings are in beta and require further validation to ensure the calculation is accurate.
+                    <li id=footnote-party-power>Party power rankings are in beta and require further validation to ensure the calculation is accurate.</li>
                 </ul></td>
             </tr></tfoot>
         </table>

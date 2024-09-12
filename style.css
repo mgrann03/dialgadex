@@ -575,28 +575,93 @@ span.poke-form-name, .poke-number {
     background: var(--col-alt-bg);
 }
 
-#counters table {
-    margin-left: auto;
-    width: 85%;
+#counters-table {
+    margin: auto;
+    width: 90%;
     table-layout: fixed;
     white-space: nowrap;
 }
 
 #counters td {
+    position: relative;
+    height: 0;
 }
 
 #counters img {
+    position: relative;
+    left: 50%;
     transform: translateX(-50%);
+    margin: 0;
 }
 
 #counters a {
     cursor: pointer;
 }
 
-.counter-rat-pct {
-    position: relative;
-    background-color: var(--col-so-off);
+#counters .align-base {
+    height: 100%;
+    min-height: 130px;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+    align-items: stretch;
+}
+
+#counters .align-base > * {
+    flex: 0;
+}
+
+#counters .align-base > .fill-space {
+    flex-basis: 100%;
+    flex-grow: 1;
+}
+
+.counter-ratings {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
     z-index: 1;
+}
+
+.counter-ratings table {
+    width: min-content;
+    margin: auto;
+    border-collapse: separate; 
+    border-spacing: 0 2px;
+}
+
+.counter-ratings tr.counters-rat-row {
+    background-color: var(--col-so-off);
+}
+
+.counter-ratings tr.rat-selected td {
+    border-top: 1px solid var(--col-off);
+    border-bottom: 1px solid var(--col-off);
+}
+
+.counter-ratings tr.rat-selected td:first-child {
+    border-left: 1px solid var(--col-off);
+}
+
+.counter-ratings tr.rat-selected td:last-child {
+    border-right: 1px solid var(--col-off);
+}
+
+.counter-ratings td {
+    text-align: right;
+    padding: 0;
+}
+
+.counter-ratings td.rat-info {
+    width: 0;
+}
+
+#counters-filters {    
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    margin: 1em;
 }
 
 #counters-popup {

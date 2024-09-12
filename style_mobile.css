@@ -91,6 +91,10 @@ body {
     .move-input-popup > #suggestions {
         font-size: 18px;
     }
+    
+    #counters-tr > *:nth-child(n+6) {
+        display: none;
+    }
 }
 
 /* % rating */

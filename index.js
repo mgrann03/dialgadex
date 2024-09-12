@@ -285,7 +285,7 @@ function OnDocumentClick(event)  {
 
     // if not clicking the counters rating pct or the counters popup...
     if (!$(target).closest("#counters-popup").length
-            && !$(target).closest(".counter-rat-pct").length) {
+            && !$(target).closest(".counters-rat-row").length) {
         // hides the counters popup if visible
         if ($("#counter-popup").css("display") != "none")
             ShowCountersPopup(this, false);
@@ -1271,12 +1271,10 @@ function LoadPokemongoCounters(enemy_jb_pkm_obj, enemy_mega, enemy_mega_y) {
     let search_elite =
         $("#counters input[value='elite']:checkbox").is(":checked");
 
-    const num_counters = 6;
-    const num_mega_counters = 5;
+    const num_counters = 50;
 
     // array of counters pokemon and movesets found so far
     let counters = [];
-    let mega_counters = [];
 
     /**
      * Checks if any of the movesets of a specific pokemon is stronger than any
@@ -1299,10 +1297,8 @@ function LoadPokemongoCounters(enemy_jb_pkm_obj, enemy_mega, enemy_mega_y) {
 
             let is_strong_enough = false;
 
-            let not_full = ((mega)
-                    ? mega_counters.length < num_mega_counters
-                    : counters.length < num_counters);
-            let weakest = ((mega) ? mega_counters[0] : counters[0]);
+            let not_full = counters.length < num_counters;
+            let weakest = counters[0];
 
             if (not_full) { // if array isn't full...
                 if (moveset.rat > 0)
@@ -1327,25 +1323,15 @@ function LoadPokemongoCounters(enemy_jb_pkm_obj, enemy_mega, enemy_mega_y) {
                     deaths: moveset.deaths
                 };
 
-                if (mega) {
-                    if (mega_counters.length < num_mega_counters)
-                        mega_counters.push(counter);
-                    else
-                        mega_counters[0] = counter;
-                    // sorts array
-                    mega_counters.sort(function compareFn(a , b) {
-                        return ((a.rat > b.rat) || - (a.rat < b.rat));
-                    });
-                } else {
-                    if (counters.length < num_counters)
-                        counters.push(counter);
-                    else
-                        counters[0] = counter;
-                    // sorts array
-                    counters.sort(function compareFn(a , b) {
-                        return ((a.rat > b.rat) || - (a.rat < b.rat));
-                    });
-                }
+                
+                if (counters.length < num_counters)
+                    counters.push(counter);
+                else
+                    counters[0] = counter;
+                // sorts array
+                counters.sort(function compareFn(a , b) {
+                    return ((a.rat > b.rat) || - (a.rat < b.rat));
+                });
             }
         }
     }
@@ -1430,7 +1416,7 @@ function LoadPokemongoCounters(enemy_jb_pkm_obj, enemy_mega, enemy_mega_y) {
     // searches for the first chunk of pokemon
     setTimeout(function() {
         SearchOneChunkOfPokemon(0, function () {
-            ProcessAndSetCountersFromArrays(counters, mega_counters);
+            ProcessAndSetCountersFromArray(counters);
             loading_counters = false;
         });
     }, 0);
@@ -1738,39 +1724,35 @@ function InitializePokemonSearch() {
 
 
 /**
- * Processes the counters in the 'counters' and 'mega_counters' arrays
- * and sets them in the page.
+ * Processes the counters in the 'counters' array and sets them in the page.
+ * Maximum 'max_counters' unique pokemon are displayed.
+ * Maximum 'max_per_counter' movesets are displayed for each pokemon, but
+ * movesets past the 'extra_moveset_cutoff' (ratio to top counter) are hidden.
  * 
- * The arrays contain the counters sorted in ascending order.
+ * The array contains the counters sorted in ascending order.
  */
-function ProcessAndSetCountersFromArrays(counters, mega_counters) {
+function ProcessAndSetCountersFromArray(counters, 
+    max_counters = 10, max_per_counter = 3, extra_moveset_cutoff = 0.7) {
 
     // reverses counters arrays to be in descending order
     counters.reverse();
-    mega_counters.reverse();
 
     // simplifies counters arrays into maps where each pokemon species is a key
     let counters_s = new Map();
     for (let counter of counters) {
-        if (!counters_s.has(counter.id))
-            counters_s.set(counter.id, [])
-        counters_s.get(counter.id).push(counter);
-    }
-    let mega_counters_s = new Map();
-    for (let counter of mega_counters) {
-        if (!mega_counters_s.has(counter.id))
-            mega_counters_s.set(counter.id, [])
-        mega_counters_s.get(counter.id).push(counter);
+        const pok_uniq_id = GetUniqueIdentifier(counter, false);
+
+        if (!counters_s.has(pok_uniq_id))
+            counters_s.set(pok_uniq_id, [])
+        counters_s.get(pok_uniq_id).push(counter);
     }
 
     // converts simplified maps into one array containing arrays of counters
     // for each pokemon species
-    const all_counters =
-        Array.from(mega_counters_s.values()).concat(Array.from(counters_s.values()));
+    const all_counters = Array.from(counters_s.values()).slice(0, max_counters);
 
     // gets strongest rat
-    const top_rat = ((mega_counters[0].rat > counters[0].rat)
-            ? mega_counters[0].rat : counters[0].rat);
+    const top_rat = counters[0].rat;
 
     // sets counters in the page
 
@@ -1781,31 +1763,45 @@ function ProcessAndSetCountersFromArrays(counters, mega_counters) {
         let counter_0 = all_counters[i][0];
 
         // sets counter's rating percentage span
-        let rat_pcts_span = $("<span class='counter-rat-pct'></span>");
-        for (let counter of all_counters[i]) {
+        const table_ratings = $("<table></table>");
+        for (let j = 0; j < all_counters[i].length && j < max_per_counter; j++) {
+            let counter = all_counters[i][j];
+
             let rat_pct = 100 * counter.rat / top_rat;
-            let rat_pct_a = $("<a></a>");
-            rat_pct_a.html("<b>" + rat_pct.toFixed(0) + "%</b>"
-                + ((counter.mega)?" (M)":"")
-                + ((counter.shadow)?" (Sh)":"") + "<br>");
+
+            if (j > 0 && rat_pct < extra_moveset_cutoff * 100)
+                continue;
+
+            const rat_pct_td = $("<td></td>");
+            rat_pct_td.append("<b>" + rat_pct.toFixed(0) + "</b><span style='font-size: 0.9em'>%</span>");
+
+            const rat_info_td = $("<td class=counters-rat-info></td>");
+            rat_info_td.html(((counter.mega)?"&nbsp;(M)":"")
+                + ((counter.shadow)?"&nbsp;(Sh)":""));
+            if (rat_info_td.html() == "") rat_info_td.css("width", "25%");
+            
+            const rat_tr = $("<tr class=counters-rat-row></tr>");
+            rat_tr.append(rat_pct_td);
+            rat_tr.append(rat_info_td);
+
             if (has_touch_screen) {
-                rat_pct_a.click(function() {
+                rat_tr.click(function() {
                     ShowCountersPopup(this, true, counter);
                 });
             } else {
-                rat_pct_a.mouseenter(function() {
+                rat_tr.mouseenter(function() {
                     ShowCountersPopup(this, true, counter);
                 });
-                rat_pct_a.mouseleave(function() {
+                rat_tr.mouseleave(function() {
                     ShowCountersPopup(this, false);
                 });
-                rat_pct_a.click(function() {
+                rat_tr.click(function() {
                     LoadPokemonAndUpdateURL(counter.id, counter.form,
                         counter.mega, counter.mega_y);
                     window.scrollTo(0, 0);
                 });
             }
-            rat_pcts_span.append(rat_pct_a);
+            table_ratings.append(rat_tr);
         }
 
         // sets counter's image
@@ -1814,12 +1810,21 @@ function ProcessAndSetCountersFromArrays(counters, mega_counters) {
                 counter_0.form, counter_0.mega, counter_0.mega_y);
         let img_src = GIFS_URL + img_src_name + ".gif";
         img.attr("src", img_src);
-        let td = $("<td></td>");
+        const td = $("<td></td>");
+
+        const div_align_baseline = $("<div class='align-base'></div>");
+        div_align_baseline.append("<div class='fill-space'></div>");
+        const div_img_wrapper = $("<div></div");
+        div_img_wrapper.append($("<img class=loading src=imgs/loading.gif></img>"));
+        div_img_wrapper.append(img);
+        div_align_baseline.append(div_img_wrapper);
+
+        const div_align_ratings = $("<div class='counter-ratings'></div>");
+        div_align_ratings.append(table_ratings);
 
         // sets table cell and appends it to the row
-        td.append(rat_pcts_span);
-        td.append($("<img class=loading src=imgs/loading.gif></img>"));
-        td.append(img);
+        td.append(div_align_ratings);
+        td.append(div_align_baseline);
         $("#counters-tr").append(td);
     }
 }
@@ -1837,10 +1842,8 @@ function ShowCountersPopup(hover_element, show, counter = null) {
 
         // sets hover element's border for touch screens
         if (has_touch_screen) {
-            let rat_pcts = $(".counter-rat-pct > a");
-            for (rat_pct of rat_pcts)
-                $(rat_pct).css("border", "none");
-            $(hover_element).css("border", "1px solid var(--col-off)");
+            $(".counters-rat-row").removeClass("rat-selected");
+            $(hover_element).addClass("rat-selected");
         }
 
         // sets the popup's position
@@ -1892,6 +1895,7 @@ function ShowCountersPopup(hover_element, show, counter = null) {
         $("#counters-popup").css("display", "inline");
 
     } else {
+        $(".counters-rat-row").removeClass("rat-selected");
         // hides the popup
         $("#counters-popup").css("display", "none");
     }
@@ -2304,6 +2308,23 @@ function ProcessDuration(duration) {
 }
 
 /**
+ * Builds a unique string based on a pokemon for uses like hashing.
+ * 
+ * Expects either a member of jb_pkm or a moveset entry returned from 
+ * a "Strongest Movesets" function.
+ * 
+ * If unique_shadow is false, shadows will hash to the same as their pure form.
+ */
+function GetUniqueIdentifier(pkm_obj, unique_shadow = true) {
+    return pkm_obj.id + "-" + 
+        pkm_obj.form + "-" + 
+        pkm_obj.mega + "-" + 
+        pkm_obj.mega_y + "-" + 
+        (unique_shadow ? pkm_obj.shadow + "-" : "") + 
+        (pkm_obj.level !== undefined ? pkm_obj.level : settings_default_level[0]);
+}
+
+/**
  * Gets the TDO of a pokemon using its DPS, HP, DEF and y if known.
  *
  * Formula credit to https://gamepress.gg .
@@ -2415,7 +2436,7 @@ function HideLoading(element) {
 
     const loading = $(element).parent().children(".loading");
     loading.css("display", "none");
-    $(element).css("display", "initial");
+    $(element).css("display", "inherit");
 }
 
 /**
@@ -2966,7 +2987,7 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
         let rat_order = 0;
 
         for (let str_pok of str_pokemons) {
-            const pok_uniq_id = str_pok.id + "-" + str_pok.form + "-" + str_pok.mega + "-" + str_pok.mega_y + "-" + str_pok.shadow + "-" + str_pok.level;
+            const pok_uniq_id = GetUniqueIdentifier(str_pok);
             if (!str_pokemons_optimal.has(pok_uniq_id)) {
                 // array was already sorted, so first instance of mon is strongest
                 str_pokemons_optimal.set(pok_uniq_id, [rat_order, str_pok.rat]);
@@ -3484,7 +3505,7 @@ function SetStrongestTableFromArray(str_pokemons, num_rows = null,
 
             // re-style any rows for mons we've seen before 
             if (highlight_suboptimal) {
-                const pok_uniq_id = p.id + "-" + p.form + "-" + p.mega + "-" + p.mega_y + "-" + p.shadow + "-" + p.level;
+                const pok_uniq_id = GetUniqueIdentifier(p);
                 if (encountered_mons.has(pok_uniq_id)) {
                     tr.addClass("suboptimal");
                 }
