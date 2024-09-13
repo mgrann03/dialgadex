@@ -1454,21 +1454,25 @@ function GetPokemonStrongestMovesetsAgainstEnemy(jb_pkm_obj, mega, mega_y, shado
     const atk = (shadow) ? (stats.atk * 6 / 5) : stats.atk;
     const def = (shadow) ? (stats.def * 5 / 6) : stats.def;
     const hp = stats.hp;
-    const moves = GetPokemongoMoves(jb_pkm_obj, shadow);
-    if (moves.length != 4)
+    const moves = GetPokemongoMoves(jb_pkm_obj);
+    if (moves.length != 6)
         return movesets;
     const fms = moves[0];
     const cms = moves[1];
     const elite_fms = moves[2];
     const elite_cms = moves[3];
+    const pure_only_cms = moves[4];
+    const shadow_only_cms = moves[5];
     const all_fms = fms.concat(elite_fms);
-    const all_cms = cms.concat(elite_cms);
+    let all_cms = cms.concat(elite_cms);
+    if (shadow === true) all_cms = all_cms.concat(shadow_only_cms);
+    else if (shadow === false) all_cms = all_cms.concat(pure_only_cms);
 
     // enemy data
     let avg_y = null;
     const enemy_stats = GetPokemonStats(enemy_jb_pkm_obj, enemy_mega, enemy_mega_y);
     const enemy_moves = GetPokemongoMoves(enemy_jb_pkm_obj);
-    if (enemy_moves.length == 4) {
+    if (enemy_moves.length == 6) {
         const enemy_fms = enemy_moves[0];
         const enemy_cms = enemy_moves[1];
         const enemy_elite_fms = enemy_moves[2];
@@ -1932,16 +1936,19 @@ function LoadPokemongoTable(jb_pkm_obj, mega, mega_y, stats, max_stats = null) {
     $("#pokemongo-table tbody tr").remove();
 
     const moves = GetPokemongoMoves(jb_pkm_obj);
-    if (moves.length != 4)
+    if (moves.length != 6)
         return;
 
     const fms = moves[0];
     const cms = moves[1];
     const elite_fms = moves[2];
     const elite_cms = moves[3];
+    const pure_only_cms = moves[4];
+    const shadow_only_cms = moves[5];
 
     const all_fms = fms.concat(elite_fms);
-    const all_cms = cms.concat(elite_cms);
+    let all_cms = cms.concat(elite_cms).concat(pure_only_cms)
+    if (can_be_shadow) all_cms = all_cms.concat(shadow_only_cms);
 
     // variables used to calculate average rating percentages against max stats
     let rat_pcts_vs_max = 0;
@@ -2034,20 +2041,15 @@ function LoadPokemongoTable(jb_pkm_obj, mega, mega_y, stats, max_stats = null) {
                 + ((can_be_shadow) ? rat_sh.toFixed(2) : "-")
                 + "</td>");
 
-            if (jb_pkm_obj.form == "S" 
-                && (cm == 'Sacred Fire Plus' || cm == 'Sacred Fire Plus Plus'
-                    || cm == 'Aeroblast Plus' || cm == 'Aeroblast Plus Plus')) { // Apex
-
-                if (cm == 'Sacred Fire Plus' || cm == 'Aeroblast Plus') { // Shadow Only
-                    td_dps.text("-");
-                    td_tdo.text("-");
-                    td_rat.text("-");
-                }
-                else if (cm == 'Sacred Fire Plus Plus' || cm == 'Aeroblast Plus Plus') { // Purified Only
-                    td_dps_sh.text("-");
-                    td_tdo_sh.text("-");
-                    td_rat_sh.text("-");
-                }
+            if (shadow_only_cms.includes(cm)) {
+                td_dps.text("-");
+                td_tdo.text("-");
+                td_rat.text("-");
+            }
+            else if (pure_only_cms.includes(cm)) {
+                td_dps_sh.text("-");
+                td_tdo_sh.text("-");
+                td_rat_sh.text("-");
             }
 
             tr.append(td_fm);
@@ -2099,10 +2101,12 @@ function LoadPokemongoTable(jb_pkm_obj, mega, mega_y, stats, max_stats = null) {
 }
 
 /**
- * Gets array of four arrays. The specified Pokemon's fast moves, elite fast
- * moves, charged moves and elite charged moves.
+ * Gets array of six arrays. The specified Pokemon's 
+ * fast moves, elite fast moves, 
+ * charged moves, elite charged moves,
+ * pure-only charged moves, and shadow-only charged moves.
  */
-function GetPokemongoMoves(jb_pkm_obj, shadow) {
+function GetPokemongoMoves(jb_pkm_obj) {
 
     if (!jb_pkm_obj.fm && !jb_pkm_obj.cm)
         return [];
@@ -2128,27 +2132,26 @@ function GetPokemongoMoves(jb_pkm_obj, shadow) {
         }
     }
 
-    // Remove Impossible move from Apex Forms
-    if (jb_pkm_obj.form == "S" && shadow !== undefined) {
-        if (shadow) {
-            if (jb_pkm_obj.id == 249) { // Shadow Apex Lugia
-                elite_cm.splice(elite_cm.indexOf('Aeroblast Plus Plus'), 1);
-            }
-            if (jb_pkm_obj.id == 250) { // Shadow Apex Ho-Oh
-                elite_cm.splice(elite_cm.indexOf('Sacred Fire Plus Plus'), 1);
-            }
+    let shadow_only_cm = [];
+    let pure_only_cm = [];
+    if (jb_pkm_obj.shadow_released) {
+        //shadow_only_cm.push('Frustration'); // Ignore Frustration because BAD
+        pure_only_cm.push('Return');
+    }
+
+    // Add moves to Apex Forms
+    if (jb_pkm_obj.form == "S") {
+        if (jb_pkm_obj.id == 249) { // Apex Lugia
+            shadow_only_cm.push('Aeroblast Plus');
+            pure_only_cm.push('Aeroblast Plus Plus');
         }
-        else {
-            if (jb_pkm_obj.id == 249) { // Purified Apex Lugia
-                elite_cm.splice(elite_cm.indexOf('Aeroblast Plus'), 1);
-            }
-            if (jb_pkm_obj.id == 250) { // Purified Apex Ho-Oh
-                elite_cm.splice(elite_cm.indexOf('Sacred Fire Plus'), 1);
-            }
+        if (jb_pkm_obj.id == 250) { // Apex Ho-Oh
+            shadow_only_cm.push('Sacred Fire Plus');
+            pure_only_cm.push('Sacred Fire Plus Plus');
         }
     }
 
-    return [fm, cm, elite_fm, elite_cm];
+    return [fm, cm, elite_fm, elite_cm, pure_only_cm, shadow_only_cm];
 }
 
 /**
@@ -3206,17 +3209,21 @@ function GetPokemonStrongestMovesets(jb_pkm_obj,
     const def = (shadow) ? (stats.def * 5 / 6) : stats.def;
     const hp = stats.hp;
 
-    const moves = GetPokemongoMoves(jb_pkm_obj, shadow);
-    if (moves.length != 4)
+    const moves = GetPokemongoMoves(jb_pkm_obj);
+    if (moves.length != 6)
         return types_movesets;
 
     const fms = moves[0];
     const cms = moves[1];
     const elite_fms = moves[2];
     const elite_cms = moves[3];
+    const pure_only_cms = moves[4];
+    const shadow_only_cms = moves[5];
 
     const all_fms = fms.concat(elite_fms);
-    const all_cms = cms.concat(elite_cms);
+    let all_cms = cms.concat(elite_cms);
+    if (shadow === true) all_cms = all_cms.concat(shadow_only_cms);
+    else if (shadow === false) all_cms = all_cms.concat(pure_only_cms);
 
     let atk_mult_map;
     if (versus) {
@@ -3410,9 +3417,13 @@ function GetPokemonStrongestMoveset(jb_pkm_obj, mega, mega_y, shadow,
     const cms = moves[1];
     const elite_fms = moves[2];
     const elite_cms = moves[3];
+    const pure_only_cms = moves[4];
+    const shadow_only_cms = moves[5];
 
     const all_fms = fms.concat(elite_fms);
-    const all_cms = cms.concat(elite_cms);
+    let all_cms = cms.concat(elite_cms);
+    if (shadow === true) all_cms = all_cms.concat(shadow_only_cms);
+    else if (shadow === false) all_cms = all_cms.concat(pure_only_cms);
 
     // searches for the moveset
 
