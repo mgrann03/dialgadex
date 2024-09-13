@@ -1469,7 +1469,8 @@ function GetPokemonStrongestMovesetsAgainstEnemy(jb_pkm_obj, mega, mega_y, shado
     else if (shadow === false) all_cms = all_cms.concat(pure_only_cms);
 
     // enemy data
-    let avg_y = null;
+    //let avg_y = null;
+    let enemy_moveset_ys = null;
     const enemy_stats = GetPokemonStats(enemy_jb_pkm_obj, enemy_mega, enemy_mega_y);
     const enemy_moves = GetPokemongoMoves(enemy_jb_pkm_obj);
     if (enemy_moves.length == 6) {
@@ -1479,12 +1480,13 @@ function GetPokemonStrongestMovesetsAgainstEnemy(jb_pkm_obj, mega, mega_y, shado
         const enemy_elite_cms = []; //enemy_moves[3];
         const enemy_all_fms = enemy_fms.concat(enemy_elite_fms);
         const enemy_all_cms = enemy_cms.concat(enemy_elite_cms);
-        avg_y = GetMovesetsAvgY(enemy_types, enemy_stats.atk,
-                enemy_all_fms, enemy_all_cms, effectiveness, def);
+        //avg_y = GetMovesetsAvgY(enemy_types, enemy_stats.atk,
+        //        enemy_all_fms, enemy_all_cms, effectiveness, def);
+        enemy_moveset_ys = GetMovesetYs(enemy_types, enemy_stats.atk,
+            enemy_all_fms, enemy_all_cms, effectiveness, def);
     }
 
     // searches for the movesets
-
     for (fm of all_fms) {
 
         const fm_is_elite = elite_fms.includes(fm);
@@ -1512,36 +1514,34 @@ function GetPokemonStrongestMovesetsAgainstEnemy(jb_pkm_obj, mega, mega_y, shado
                 continue;
             const cm_mult =
                 GetEffectivenessMultOfType(enemy_effectiveness, cm_obj.type);
+            
+            let all_ratings = [];
+            for (enemy_y of enemy_moveset_ys) {
+                // calculates the data
+                const dps = GetDPS(types, atk, def, hp, fm_obj, cm_obj,
+                    fm_mult, cm_mult, enemy_stats.def, enemy_y);
+                const tdo = GetTDO(dps, hp, def, enemy_y);
+                // metrics from Reddit user u/Elastic_Space
+                const rat = Math.pow(dps, 1-settings_metric_exp) * Math.pow(tdo, settings_metric_exp);
+                all_ratings.push(rat);
+            }
 
-            // calculates the data
-            const dps = GetDPS(types, atk, def, hp, fm_obj, cm_obj,
-                fm_mult, cm_mult, enemy_stats.def, avg_y);
-            const tdo = GetTDO(dps, hp, def, avg_y);
-            // metrics from Reddit user u/Elastic_Space
-            const rat = Math.pow(dps, 1-settings_metric_exp) * Math.pow(tdo, settings_metric_exp);
-
+            const avg_rating = (all_ratings.length > 0 ? all_ratings.reduce((a, b) => a+b, 0) / all_ratings.length : 0);
+            const moveset = {
+                rat: avg_rating,
+                fm: fm, fm_is_elite: fm_is_elite, fm_type: fm_obj.type,
+                cm: cm, cm_is_elite: cm_is_elite, cm_type: cm_obj.type
+            };
             // if the array of movesets isn't full
             // or the current moveset is stronger than the weakest in the array,
             // pushes the current moveset to the array
             if (movesets.length < num_movesets) {
-                const moveset = {
-                    rat: rat,
-                    fm: fm, fm_is_elite: fm_is_elite, fm_type: fm_obj.type,
-                    cm: cm, cm_is_elite: cm_is_elite, cm_type: cm_obj.type,
-                    deaths: 300 * avg_y / hp
-                };
                 movesets.push(moveset);
                 // sorts array
                 movesets.sort(function compareFn(a , b) {
                     return ((a.rat > b.rat) || - (a.rat < b.rat));
                 });
-            } else if (rat > movesets[0].rat) {
-                const moveset = {
-                    rat: rat,
-                    fm: fm, fm_is_elite: fm_is_elite, fm_type: fm_obj.type,
-                    cm: cm, cm_is_elite: cm_is_elite, cm_type: cm_obj.type,
-                    deaths: 300 * avg_y / hp
-                };
+            } else if (avg_rating > movesets[0].rat) {
                 movesets[0] = moveset;
                 // sorts array
                 movesets.sort(function compareFn(a , b) {
@@ -1559,9 +1559,22 @@ function GetPokemonStrongestMovesetsAgainstEnemy(jb_pkm_obj, mega, mega_y, shado
  * a specific enemy.
  */
 function GetMovesetsAvgY(types, atk, fms, cms, enemy_effectiveness, enemy_def = null) {
+    const all_ys = GetMovesetYs(types, atk, fms, cms, enemy_effectiveness, enemy_def);
 
-    let avg_y = 0;
-    let num_movesets = 0;
+    if (all_ys.length == 0) {
+        return null;
+    }
+
+    return all_ys.reduce((a, b) => a+b, 0) / all_ys.length;
+}
+
+/**
+ * Gets the y (dps) of all the movesets of a specific pokemon attacking
+ * a specific enemy.
+ */
+function GetMovesetYs(types, atk, fms, cms, enemy_effectiveness, enemy_def = null) {
+
+    let all_ys = [];
 
     for (let fm of fms) {
 
@@ -1579,13 +1592,11 @@ function GetMovesetsAvgY(types, atk, fms, cms, enemy_effectiveness, enemy_def = 
                 continue;
             const cm_mult = GetEffectivenessMultOfType(enemy_effectiveness, cm_obj.type);
 
-            avg_y += GetSpecificY(types, atk, fm_obj, cm_obj, fm_mult, cm_mult, enemy_def);
-            num_movesets++;
+            all_ys.push(GetSpecificY(types, atk, fm_obj, cm_obj, fm_mult, cm_mult, enemy_def));
         }
     }
 
-    avg_y /= num_movesets;
-    return avg_y;
+    return all_ys;
 }
 
 /**
