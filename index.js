@@ -1475,8 +1475,8 @@ function GetPokemonStrongestMovesetsAgainstEnemy(jb_pkm_obj, mega, mega_y, shado
     if (enemy_moves.length == 6) {
         const enemy_fms = enemy_moves[0];
         const enemy_cms = enemy_moves[1];
-        const enemy_elite_fms = enemy_moves[2];
-        const enemy_elite_cms = enemy_moves[3];
+        const enemy_elite_fms = []; //enemy_moves[2]; enemies don't use elite moves
+        const enemy_elite_cms = []; //enemy_moves[3];
         const enemy_all_fms = enemy_fms.concat(enemy_elite_fms);
         const enemy_all_cms = enemy_cms.concat(enemy_elite_cms);
         avg_y = GetMovesetsAvgY(enemy_types, enemy_stats.atk,
