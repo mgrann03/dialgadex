@@ -2199,6 +2199,8 @@ function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
     if (!fm_obj || !cm_obj)
         return 0;
 
+    if (!enemy_def)
+        enemy_def = 160;
     if (!y)
         y = estimated_y_numerator / def;
     if (!in_cm_dmg)
@@ -3360,10 +3362,10 @@ function GetPokemonStrongestMovesets(jb_pkm_obj,
                     const defense_mult = 1; //GetEffectivenessMultOfType(def_mult_map, search_type);
 
                     const y_est = estimated_y_numerator/def*defense_mult;
-                    const cm_pow_est = estimated_cm_power*defense_mult;
+                    const in_cm_est = estimated_cm_power*defense_mult/def;
                     dps = GetDPS(types, atk, def, hp, 
                         fm_obj, cm_obj,
-                        fm_mult, cm_mult, null, y_est, cm_pow_est);
+                        fm_mult, cm_mult, null, y_est, in_cm_est);
                     tdo = GetTDO(dps, hp, def, y_est);
 
                     if (rescale && settings_metric != 'DPS' && settings_metric != 'TDO') {
