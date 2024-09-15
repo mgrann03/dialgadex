@@ -2223,7 +2223,8 @@ function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
     // charged move variables
     const cm_dmg_mult = cm_mult * ((types.includes(cm_obj.type)) ? 1.2 : 1);
     const cm_dmg = 0.5 * cm_obj.power * (atk / enemy_def) * cm_dmg_mult + 0.5;
-    const cm_dps = cm_dmg * (1 + pp_boost) / ProcessDuration(cm_obj.duration);
+    const cm_dps = cm_dmg / ProcessDuration(cm_obj.duration);
+    const cm_dps_adj = cm_dps * (1 + pp_boost);
     let cm_eps = -cm_obj.energy_delta / ProcessDuration(cm_obj.duration);
     // penalty to one-bar charged moves in old raid system (they use more energy (cm_eps))
     if (!settings_pve_turns && cm_obj.energy_delta == -100) {
@@ -2237,13 +2238,14 @@ function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
         return fm_dps;
 
     // simple cycle DPS
-    const dps0 = (fm_dps * cm_eps + cm_dps * fm_eps) / (cm_eps + fm_eps);
+    const dps0 = (fm_dps * cm_eps + cm_dps_adj * fm_eps) / (cm_eps + fm_eps);
     // comprehensive DPS
-    let dps = dps0 + ((cm_dps - fm_dps) / (cm_eps + fm_eps))
+    let dps = dps0 + ((cm_dps_adj - fm_dps) / (cm_eps + fm_eps))
             * (0.5 - x / hp) * y;
 
     // charged move is strictly better, and can be used indefinitely
-    if (cm_dps > fm_dps && -cm_obj.energy_delta < y * ProcessDuration(cm_obj.duration) * 0.5) 
+    // (don't allow party power)
+    if (cm_dps > dps && -cm_obj.energy_delta < y * ProcessDuration(cm_obj.duration) * 0.5) 
         dps = cm_dps;
 
     return ((dps < 0) ? 0 : dps);
