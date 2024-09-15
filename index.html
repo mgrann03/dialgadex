@@ -96,15 +96,6 @@
                             <p><i>Rating&nbsp;= DPS&nbsp;*&nbsp;TOF^exp&nbsp;= DPS^(1-exp)&nbsp;*&nbsp;TDO^exp</i></p></span>
                         <input id=tof-exp class="settings-num" value="0.225" style="width: 7ch">
                     </div>
-                    <div id=settings-party><span class="tooltip">Party Power →
-                        <span class="tooltiptext">
-                            <p>Size of party when computing party power boosts</p>
-                            <p><i>Boosts charged damage based on the ratio of fast to charged moves</i></p></span></span>
-                        <span id=pp-1 class="settings-opt settings-opt-sel unselectable">1</span>
-                        <span id=pp-2 class="settings-opt unselectable">2</span>
-                        <span id=pp-3 class="settings-opt unselectable">3</span>
-                        <span id=pp-4 class="settings-opt unselectable">4</span>
-                    </div>
                     <div id=settings-lvl><span class="tooltip">Level →
                         <span class="tooltiptext">Level to use when computing Pokemon stats</span></span>
                         <span id=lvl-40 class="settings-opt settings-opt-sel unselectable">40</span>
@@ -135,6 +126,26 @@
                             <p><i>Rounds all attack timers to 0.5s.</i></p></span>
                         <label class="switch">
                             <input id=chk-pve-turns type=checkbox value=pve-turns checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class=settings-subtitle><i>Beta</i> Features</div>
+                    <div id=settings-party><span class="tooltip">Party Power →
+                        <span class="tooltiptext">
+                            <p>Size of party when computing party power boosts</p>
+                            <p><i>Boosts charged damage based on the ratio of fast to charged moves</i></p></span></span>
+                        <span id=pp-1 class="settings-opt settings-opt-sel unselectable">1</span>
+                        <span id=pp-2 class="settings-opt unselectable">2</span>
+                        <span id=pp-3 class="settings-opt unselectable">3</span>
+                        <span id=pp-4 class="settings-opt unselectable">4</span>
+                    </div>
+                    <div id=settings-newdps><span class="tooltip">New DPS Calculation
+                        <span class="tooltiptext">
+                            <p>Uses a higher value for incoming damage estimates.</p>
+                            <p>Uses a new calculation for incoming damage from a specific target mon.</p>
+                            <p>Uses a new estimate for wasted energy upon death.</p></span>
+                        <label class="switch">
+                            <input id=chk-newdps type=checkbox value=newdps checked>
                             <span class="slider"></span>
                         </label>
                     </div>

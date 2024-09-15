@@ -56,13 +56,24 @@ METRICS.add("TDO");
 METRICS.add("Custom");
 let settings_metric = "EER";
 let settings_metric_exp = 0.225;
-let settings_party_size = 1;
 let settings_default_level = [40];
 let settings_xl_budget = false;
 let settings_pve_turns = true;
 let settings_strongest_count = 20;
 let settings_compare = "budget";
 let settings_tiermethod = "jenks";
+
+// BETA
+let settings_party_size = 1;
+let settings_newdps = true;
+
+// magic numbers for incoming damage calc
+
+// estimated incoming average DPS (usually ~900)
+// tuned to a more recent estimate of ~1970 for T4-T5 eligible mons
+let estimated_y_numerator = 1970; 
+// estimated incoming charged move power
+const estimated_cm_power = 10800;
 
 // global variables
 
@@ -136,6 +147,11 @@ function Main() {
     $("#chk-rescale").change(function() { CheckURLAndAct(); });
     $("#chk-pve-turns").change(function() { 
         settings_pve_turns = this.checked;
+        CheckURLAndAct(); 
+    });
+    $("#chk-newdps").change(function() { 
+        settings_newdps = this.checked;
+        estimated_y_numerator = (settings_newdps ? 1970 : 900);
         CheckURLAndAct(); 
     });
     
@@ -1519,8 +1535,8 @@ function GetPokemonStrongestMovesetsAgainstEnemy(jb_pkm_obj, mega, mega_y, shado
             for (enemy_y of enemy_moveset_ys) {
                 // calculates the data
                 const dps = GetDPS(types, atk, def, hp, fm_obj, cm_obj,
-                    fm_mult, cm_mult, enemy_stats.def, enemy_y);
-                const tdo = GetTDO(dps, hp, def, enemy_y);
+                    fm_mult, cm_mult, enemy_stats.def, enemy_y.y, enemy_y.cm_dmg);
+                const tdo = GetTDO(dps, hp, def, enemy_y.y);
                 // metrics from Reddit user u/Elastic_Space
                 const rat = Math.pow(dps, 1-settings_metric_exp) * Math.pow(tdo, settings_metric_exp);
                 all_ratings.push(rat);
@@ -1565,7 +1581,7 @@ function GetMovesetsAvgY(types, atk, fms, cms, enemy_effectiveness, enemy_def = 
         return null;
     }
 
-    return all_ys.reduce((a, b) => a+b, 0) / all_ys.length;
+    return all_ys.reduce((a, b) => a+b.y, 0) / all_ys.length;
 }
 
 /**
@@ -2007,7 +2023,7 @@ function LoadPokemongoTable(jb_pkm_obj, mega, mega_y, stats, max_stats = null) {
             // calculates the data
 
             const dps = GetDPS(types, atk, def, hp, fm_obj, cm_obj);
-            const dps_sh = GetDPS(types, atk_sh, def_sh, hp,fm_obj,cm_obj);
+            const dps_sh = GetDPS(types, atk_sh, def_sh, hp, fm_obj, cm_obj);
             const tdo = GetTDO(dps, hp, def);
             const tdo_sh = GetTDO(dps_sh, hp, def_sh);
             // metrics from Reddit user u/Elastic_Space
@@ -2178,17 +2194,19 @@ function GetPokemongoMoves(jb_pkm_obj) {
  * Also can receive the enemy defense stat and the y - enemy's DPS - if known.
  */
 function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
-        enemy_def = null, y = null) {
+        enemy_def = 160, y = null, in_cm_dmg = null) {
 
     if (!fm_obj || !cm_obj)
         return 0;
 
-    // misc variables
-    if (!enemy_def)
-        enemy_def = 160;
-    const x = 0.5 * -cm_obj.energy_delta + 0.5 * fm_obj.energy_delta;
     if (!y)
-        y = 900 / def;
+        y = estimated_y_numerator / def;
+    if (!in_cm_dmg)
+        in_cm_dmg = estimated_cm_power / def;
+
+    let x = 0.5 * -cm_obj.energy_delta + 0.5 * fm_obj.energy_delta;
+    if (settings_newdps)
+        x = x + 0.5 * in_cm_dmg; // Assume waste of all energy from 1 incoming CM
 
     // fast move variables
     const fm_dmg_mult = fm_mult
@@ -2213,6 +2231,10 @@ function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
         cm_eps = (-cm_obj.energy_delta + 0.5 * fm_obj.energy_delta
             + 0.5 * y * dws) / ProcessDuration(cm_obj.duration);
     }
+    
+    // fast move is strictly better
+    if (fm_dps > cm_dps)
+        return fm_dps;
 
     // simple cycle DPS
     const dps0 = (fm_dps * cm_eps + cm_dps * fm_eps) / (cm_eps + fm_eps);
@@ -2223,9 +2245,6 @@ function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
     // charged move is strictly better, and can be used indefinitely
     if (cm_dps > fm_dps && -cm_obj.energy_delta < y * ProcessDuration(cm_obj.duration) * 0.5) 
         dps = cm_dps;
-    // fast move is strictly better
-    if (fm_dps > dps)
-        dps = fm_dps;
 
     return ((dps < 0) ? 0 : dps);
 }
@@ -2262,17 +2281,21 @@ function GetPartyBoost(f_to_c_ratio) {
  * 
  * Formula credit to https://gamepress.gg .
  * https://gamepress.gg/pokemongo/how-calculate-comprehensive-dps
+ * 
+ * More tweaks: 
+ * Use altered timings between moves
+ * Better estimate of ratio between charged and fast moves
  */
 function GetSpecificY(types, atk, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
-        enemy_def = null) {
+        enemy_def = 160, total_incoming_dps = 50) {
 
     if (!fm_obj || !cm_obj)
         return 0;
 
-    // misc variables
-    if (!enemy_def)
-        enemy_def = 160;
-    const x = 0.5 * -cm_obj.energy_delta + 0.5 * fm_obj.energy_delta;
+    const CHARGED_MOVE_CHANCE = 0.5;
+    const ENERGY_PER_HP = 0.5;
+    const FM_DELAY = 1.75; // Random between 1.5 and 2.0
+    const CM_DELAY = 0.5;
 
     // fast move variables
     const fm_dmg_mult = fm_mult
@@ -2282,29 +2305,43 @@ function GetSpecificY(types, atk, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
     // charged move variables
     const cm_dmg_mult = cm_mult * ((types.includes(cm_obj.type)) ? 1.2 : 1);
     const cm_dmg = 0.5 * cm_obj.power * (atk / enemy_def) * cm_dmg_mult + 0.5;
-    let lambda = 1;
-    switch (cm_obj.energy_delta) {
-        case -100:
-            lambda = 3;
-            break;
-        case -50:
-            lambda = 1.5;
-            break;
-        case -33:
-            lambda = 1;
-            break;
+
+    let fms_per_cm = 1;
+    let fm_dur = ProcessDuration(fm_obj.duration);
+    let cm_dur = ProcessDuration(cm_obj.duration);
+    if (settings_newdps) {
+        const eps_for_damage = ENERGY_PER_HP * total_incoming_dps;
+        fm_dur = fm_dur + FM_DELAY;
+        cm_dur = cm_dur + CM_DELAY;
+
+        let fms_per_cm = (-cm_obj.energy_delta - eps_for_damage * cm_dur) /
+            (fm_obj.energy_delta + eps_for_damage * fm_dur);
+        if (fms_per_cm < 0) fms_per_cm = 0;
+        fms_per_cm += 1 / CHARGED_MOVE_CHANCE - 1;
+    }
+    else {
+        switch (cm_obj.energy_delta) {
+            case -100:
+                fms_per_cm = 3;
+                break;
+            case -50:
+                fms_per_cm = 1.5;
+                break;
+            case -33:
+                fms_per_cm = 1;
+                break;
+        }
+
+        fms_per_cm = fms_per_cm * 0.5; // used to be 'y_mult'
+        fm_dur += 2;
+        cm_dur += 2;
     }
 
-    // this isn't part of the formula
-    // this multiplier attempts to tweak the specified y
-    // to match the default (900 / def)
-    const y_mult = 0.5;
-
     // specific y
-    const y = y_mult * (lambda * fm_dmg + cm_dmg)
-        / (lambda * (ProcessDuration(fm_obj.duration) + 2) + ProcessDuration(cm_obj.duration) + 2);
+    const y = (fms_per_cm * fm_dmg + cm_dmg)
+        / (fms_per_cm * fm_dur + cm_dur);
 
-    return ((y < 0) ? 0 : y);
+    return {y: ((y < 0) ? 0 : y), cm_dmg: cm_dmg};
 }
 
 /**
@@ -2347,7 +2384,7 @@ function GetUniqueIdentifier(pkm_obj, unique_shadow = true) {
 function GetTDO(dps, hp, def, y = null) {
 
     if (!y)
-        y = 900 / def;
+        y = estimated_y_numerator / def;
     return (dps * (hp / y));
 }
 
@@ -3320,10 +3357,11 @@ function GetPokemonStrongestMovesets(jb_pkm_obj,
                     const def_mult_map = GetTypesEffectivenessAgainstTypes(def_types);
                     const defense_mult = 1; //GetEffectivenessMultOfType(def_mult_map, search_type);
 
-                    const y_est = 900/def*defense_mult;
+                    const y_est = estimated_y_numerator/def*defense_mult;
+                    const cm_pow_est = estimated_cm_power*defense_mult;
                     dps = GetDPS(types, atk, def, hp, 
                         fm_obj, cm_obj,
-                        fm_mult, cm_mult, null, y_est);
+                        fm_mult, cm_mult, null, y_est, cm_pow_est);
                     tdo = GetTDO(dps, hp, def, y_est);
 
                     if (rescale && settings_metric != 'DPS' && settings_metric != 'TDO') {
