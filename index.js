@@ -1894,23 +1894,24 @@ function ShowCountersPopup(hover_element, show, counter = null) {
         const primal = counter.mega && (counter.id == 382 || counter.id == 383);
         const form_text = GetFormText(counter.id, counter.form);
 
-        const name = "<b>"
+        const name = "<p class='counter-name'>"
             + ((primal) ? ("Primal ") : ((counter.mega) ? "Mega " : ""))
             + ((counter.shadow) ? "<span class=shadow-text>Shadow</span> " : "")
             + counter.name
             + ((counter.mega && can_be_mega_y) ? ((counter.mega_y) ? " Y" : " X") : "")
-            + "</b></a>"
             + ((form_text.length > 0)
-                ? " <span class=small-text>(" + form_text + ")</span>" 
-                : "")
+                ? " <span class=small-text>(" + form_text + ")</span>" : "")
+            + "</p>"
 
-        $("#counters-popup").html("<span>" + name
-            + "<br><span class='type-text bg-"
-            + ((counter.fm == "Hidden Power") ? "any-type" : counter.fm_type) + "'>"
-            + counter.fm + ((counter.fm_is_elite) ? "*" : "")
-            + "</span> <span class='type-text bg-" + counter.cm_type + "'>"
-            + counter.cm + ((counter.cm_is_elite) ? "*" : "")
-            + "</span></span>");
+        $("#counters-popup").html(name
+            + "<p class='counter-metric'>" + settings_metric + " " + counter.rat.toFixed(2) + "</p>"
+            + "<p class='counter-types'><span class='type-text bg-"
+                + ((counter.fm == "Hidden Power") ? "any-type" : counter.fm_type) + "'>"
+                + counter.fm + ((counter.fm_is_elite) ? "*" : "")
+            + "</span> "
+            + "<span class='type-text bg-" + counter.cm_type + "'>"
+                + counter.cm + ((counter.cm_is_elite) ? "*" : "") 
+            + "</span></p>");
 
         // sets popup's click callback for touch devices
         if (has_touch_screen) {

@@ -668,7 +668,7 @@ span.poke-form-name, .poke-number {
     display: none;
     position: absolute;
     width: 200px;
-    height: 3em;
+    height: min-content;
     padding: 0 0.25em;
     border: 1px solid var(--col-off);
     border-radius: var(--border-radius);
@@ -677,6 +677,15 @@ span.poke-form-name, .poke-number {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+#counters-popup p {
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+
+#counters-popup .counter-name {
+    font-weight: bold;
 }
 
 #counters-legend {
