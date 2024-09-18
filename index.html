@@ -122,8 +122,14 @@
                     </div>
                     <div id=settings-pve-turns class="tooltip">Turn-Based PvE
                         <span class="tooltiptext">
-                            <p>Uses turn-based battles in PvE with a fixed multiple for move durations.</p>
-                            <p><i>Rounds all attack timers to 0.5s.</i></p></span>
+                            <div class="tooltip-title">PvE using 0.5s "Turns"</div>
+                            <ul>
+                                <li>All attack durations are rounded to 0.5s</li>
+                                <li>Moves that change duration by 20%+ have a compensation
+                                modifier applied to their power</li>
+                                <li>Energy is consumed at start of charged move
+                                and can be gained while using the charged move</li>
+                            </ul></span>
                         <label class="switch">
                             <input id=chk-pve-turns type=checkbox value=pve-turns checked>
                             <span class="slider"></span>
