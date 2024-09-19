@@ -2375,7 +2375,7 @@ function ProcessPower(move_obj) {
     if (settings_pve_turns) {
         const newDuration = ProcessDuration(move_obj.duration);
         const modifier = (newDuration - move_obj.duration / 1000) / newDuration;
-        if (Math.abs(modifier) >= 0.2)
+        if (Math.abs(modifier) >= 0.199)
             return move_obj.power * (1 + modifier);
     }
     
