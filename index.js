@@ -2248,8 +2248,11 @@ function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
 
     // charged move is strictly better, and can be used indefinitely
     // (don't allow party power)
+    /* Though theoretically it has some basis, this is currently a bad estimate 
+     * any time it would actually be relevant. Disabling until I can improve it.
     if (cm_dps > dps && -cm_obj.energy_delta < y * ProcessDuration(cm_obj.duration) * 0.5) 
         dps = cm_dps;
+    */
 
     return ((dps < 0) ? 0 : dps);
 }
