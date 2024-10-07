@@ -70,10 +70,10 @@ let settings_newdps = true;
 // magic numbers for incoming damage calc
 
 // estimated incoming average DPS (usually ~900)
-// tuned to a more recent estimate of ~1970 for T4-T5 eligible mons
-let estimated_y_numerator = 1970; 
+// tuned to a more recent estimate of ~1520 for T4+ eligible mons
+let estimated_y_numerator = 1520; 
 // estimated incoming charged move power
-const estimated_cm_power = 10800;
+const estimated_cm_power = 11770;
 
 // global variables
 
@@ -2300,7 +2300,7 @@ function GetSpecificY(types, atk, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
     if (!fm_obj || !cm_obj)
         return 0;
 
-    const CHARGED_MOVE_CHANCE = 0.5;
+    const CHARGED_MOVE_CHANCE = 0.3;
     const ENERGY_PER_HP = 0.5;
     const FM_DELAY = 1.75; // Random between 1.5 and 2.0
     const CM_DELAY = 0.5;
@@ -2322,7 +2322,7 @@ function GetSpecificY(types, atk, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
         fm_dur = fm_dur + FM_DELAY;
         cm_dur = cm_dur + CM_DELAY;
 
-        let fms_per_cm = (-cm_obj.energy_delta - eps_for_damage * cm_dur) /
+        fms_per_cm = (-cm_obj.energy_delta - eps_for_damage * cm_dur) /
             (fm_obj.energy_delta + eps_for_damage * fm_dur);
         if (fms_per_cm < 0) fms_per_cm = 0;
         fms_per_cm += 1 / CHARGED_MOVE_CHANCE - 1;
