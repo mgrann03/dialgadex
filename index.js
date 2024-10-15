@@ -2037,7 +2037,7 @@ function LoadPokemongoTable(jb_pkm_obj, mega, mega_y, stats, max_stats = null) {
                     max_stats.hp, fm_obj, cm_obj);
                 const max_tdo = GetTDO(max_dps, max_stats.hp, max_stats.def);
                 // metrics from Reddit user u/Elastic_Space
-                const max_rat = Math.pow(dps, 1-settings_metric_exp) * Math.pow(tdo, settings_metric_exp);
+                const max_rat = Math.pow(max_dps, 1-settings_metric_exp) * Math.pow(max_tdo, settings_metric_exp);
 
                 rat_pcts_vs_max += rat / max_rat;
                 rat_sh_pcts_vs_max += rat_sh / max_rat;
