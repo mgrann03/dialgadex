@@ -2254,7 +2254,9 @@ function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
         dps = cm_dps;
     */
 
-    return ((dps < 0) ? 0 : dps);
+    return (fm_dps > dps ? fm_dps 
+        : (dps > 0 ? dps 
+            : 0));
 }
 
 /* Returns % extra damage on charged move from party power 
