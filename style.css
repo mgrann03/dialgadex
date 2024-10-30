@@ -558,7 +558,7 @@ span.poke-form-name, .poke-number {
     border-left: 1px solid var(--col-off);
 }
 
-#effectiveness table tr:nth-child(4) td:nth-child(1) {
+#effectiveness table tr:nth-child(5) td:nth-child(1) {
     border-bottom: 1px solid var(--col-off);
 }
 

@@ -1179,6 +1179,7 @@ function LoadPokemongoEffectiveness(jb_pkm_obj, mega, mega_y) {
             types = jb_pkm_obj.mega[0].types;
     }
 
+    let effectiveness_0244 = [];
     let effectiveness_0391 = [];
     let effectiveness_0625 = [];
     let effectiveness_160 = [];
@@ -1195,7 +1196,9 @@ function LoadPokemongoEffectiveness(jb_pkm_obj, mega, mega_y) {
             else if (type_effect[2].includes(type))
                 mult *= 1.60;
         }
-        if (Math.abs(mult - 0.391) < 0.001)
+        if (Math.abs(mult - 0.244) < 0.001)
+            effectiveness_0244.push(attacker_type);
+        else if (Math.abs(mult - 0.391) < 0.001)
             effectiveness_0391.push(attacker_type);
         else if (Math.abs(mult - 0.625) < 0.001)
             effectiveness_0625.push(attacker_type);
@@ -1207,6 +1210,14 @@ function LoadPokemongoEffectiveness(jb_pkm_obj, mega, mega_y) {
 
     $("#effectiveness-title").html("Types effectiveness against<br><b>"
             + jb_pkm_obj.name + "</b>");
+
+    let effectiveness_0244_html = "";
+    for (let type of effectiveness_0244) {
+        effectiveness_0244_html += "<a class='type-text bg-" + type
+                + "' onclick='LoadStrongestAndUpdateURL(\"" + type
+                + "\", false)'>" + type + "</a> ";
+    }
+    $("#effectiveness-0244").html(effectiveness_0244_html);
 
     let effectiveness_0391_html = "";
     for (let type of effectiveness_0391) {
