@@ -2909,7 +2909,7 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
         search_suboptimal, search_mixed, type = null, versus = false) {
 
     // over-create list, then filter down later
-    const num_rows = 200; //settings_strongest_count;
+    const num_rows = 500; //settings_strongest_count;
 
     // array of strongest pokemon and moveset found so far
     let str_pokemons = [];
@@ -3160,14 +3160,25 @@ function BuildTiers(str_pokemons, top_compare) {
     // Using Jenks Natural Breaks to compute reasonable tier breaks
     // (Minimize internal tier variance, while maximizing variance between tiers)
     else if (settings_tiermethod == "jenks") {
-        const n = Math.min(100, str_pokemons.length); // only consider top 100
+        let n = str_pokemons.findIndex(e => e.rat <= top_compare * 0.5) - 1; // consider everything up to 50% of comparison mon
+        if (n<0)
+            n = str_pokemons.length;
 
         let tier_breaks = jenks_wrapper(str_pokemons.map(e => e.rat).slice(0, n), 5); // truncate to only those above breakpoint
         let compare_tier = tier_breaks.findIndex(e => e < top_compare);
-        if (compare_tier == -1) compare_tier = 5; //not found
-        if (compare_tier >= 2) { // need more tiers
-            tier_breaks = jenks_wrapper(str_pokemons.map(e => e.rat).slice(0, n), 5 + compare_tier); // truncate to only those above breakpoint
-            //compare_tier = tier_breaks.findIndex(e => e < top_compare);
+
+        let extra_tiers = Math.max(compare_tier, Math.floor((best_mon - top_compare)/top_compare/0.1));
+        if (str_pokemons[0].name == "Rayquaza" && str_pokemons[0].mega)
+            extra_tiers++;
+        if (extra_tiers >= 2) { // need more tiers
+            if (compare_tier != -1)
+                n = str_pokemons.findIndex(e => e.rat <= tier_breaks[Math.min(compare_tier+2,4)]);
+            if (str_pokemons[n].rat > top_compare * 0.75) // force at least consider up to 75% of comparison mon
+                n = str_pokemons.findIndex(e => e.rat <= top_compare * 0.75);
+            if (n<0)
+                n = str_pokemons.length;
+            tier_breaks = jenks_wrapper(str_pokemons.map(e => e.rat).slice(0, n), 5 + extra_tiers); // truncate to only those above breakpoint
+            compare_tier = tier_breaks.findIndex(e => e < top_compare);
         }
 
         let this_tier_idx = 0;
@@ -3179,13 +3190,19 @@ function BuildTiers(str_pokemons, top_compare) {
             }
             
             if (this_tier <= 0) {
-                if (str_pok.rat == best_mon && str_pok.name == "Rayquaza" && str_pok.mega)
+                if (this_tier_idx == 0 && str_pokemons[0].name == "Rayquaza" && str_pokemons[0].mega &&
+                        str_pok.name == "Rayquaza" && str_pok.mega) {
                     str_pok.tier = "MRay";
-                else
-                    str_pok.tier = "S".repeat(1 - this_tier);
+                }
+                else {
+                    let num_s = 1 - this_tier;
+                    if (str_pok.rat > 1.15 * tier_breaks[this_tier_idx])
+                        num_s += Math.floor((str_pok.rat - tier_breaks[this_tier_idx])/tier_breaks[this_tier_idx]/0.15);
+                    str_pok.tier = "S".repeat(num_s);
+                }
             }
             else {
-                str_pok.tier = String.fromCharCode("A".charCodeAt(0) + this_tier + (this_tier == 5 ? 0 : -1));
+                str_pok.tier = String.fromCharCode("A".charCodeAt(0) + this_tier + (this_tier >= 5 ? 5-this_tier : -1));
             }
         }
     }
