@@ -3148,8 +3148,8 @@ function BuildTiers(str_pokemons, top_compare) {
             }
             else {
                 let tier_cnt = Math.floor((S_breakpoint + 0.00001 - str_pok.pct)/letter_tier_size);
-                if (settings_tiermethod == "ESpace" && tier_cnt >=1) // Shift to an "A" breakpoint of 85.0
-                    tier_cnt--;
+                //if (settings_tiermethod == "ESpace" && tier_cnt >=1) // Shift to an "A" breakpoint of 85.0
+                //    tier_cnt--;
                 if (tier_cnt >= 4) // Everything past D -> F
                     tier_cnt = 5;
                 str_pok.tier = String.fromCharCode("A".charCodeAt(0) + tier_cnt);
