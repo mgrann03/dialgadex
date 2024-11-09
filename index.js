@@ -54,19 +54,65 @@ METRICS.add("TER");
 METRICS.add("DPS");
 METRICS.add("TDO");
 METRICS.add("Custom");
-let settings_metric = "EER";
-let settings_metric_exp = 0.225;
-let settings_default_level = [40];
-let settings_xl_budget = false;
-let settings_pve_turns = true;
-let settings_strongest_count = 20;
-let settings_compare = "budget";
-let settings_tiermethod = "jenks";
 
-// BETA
-let settings_party_size = 1;
-let settings_newdps = true;
+// Define default settings
+const defaultSettings = {
+    metric: "EER",
+    metric_exp: 0.225,
+    default_level: [40],
+    xl_budget: false,
+    pve_turns: true,
+    strongest_count: 20,
+    compare: "budget",
+    tiermethod: "jenks",
+    
+    // BETA
+    party_size: 1,
+    newdps: true,
+};
+const settingsVersion = btoa(JSON.stringify(defaultSettings));
 
+// Load and save functions for localStorage
+function loadSettings() {
+    const savedSettings = localStorage.getItem('userSettings');
+    if (savedSettings) {
+        try {
+            const parsedSettings = JSON.parse(savedSettings);
+            return parsedSettings.version === settingsVersion
+                ? parsedSettings
+                : migrateSettings(parsedSettings);
+        } catch (error) {
+            console.error('Failed to parse user settings:', error);
+        }
+    }
+    return { ...defaultSettings };
+}
+
+function saveSettings(settings) {
+    localStorage.setItem('userSettings', JSON.stringify(settings));
+}
+
+// Migration function (if needed)
+function migrateSettings(oldSettings) {
+    const newSettings = { ...defaultSettings, ...oldSettings, version: settingsVersion };
+    saveSettings(newSettings);
+    return newSettings;
+}
+
+// Proxy or plain object
+const settings = (typeof Proxy !== 'undefined')
+    ? new Proxy(loadSettings(), {
+        get(target, prop) {
+            return target[prop] !== undefined ? target[prop] : defaultSettings[prop];
+        },
+        set(target, prop, value) {
+            target[prop] = value;
+            saveSettings(target); // Persist to localStorage
+            return true;
+        }
+    })
+    : { ...defaultSettings }; // Fallback to a plain object (non-persistent)
+    
 // magic numbers for incoming damage calc
 
 // estimated incoming average DPS (usually ~900)
@@ -146,12 +192,12 @@ function Main() {
 
     $("#chk-rescale").change(function() { CheckURLAndAct(); });
     $("#chk-pve-turns").change(function() { 
-        settings_pve_turns = this.checked;
+        settings.pve_turns = this.checked;
         CheckURLAndAct(); 
     });
     $("#chk-newdps").change(function() { 
-        settings_newdps = this.checked;
-        estimated_y_numerator = (settings_newdps ? 1970 : 900);
+        settings.newdps = this.checked;
+        estimated_y_numerator = (settings.newdps ? 1970 : 900);
         CheckURLAndAct(); 
     });
     
@@ -337,25 +383,25 @@ function SetMetric(metric) {
         return;
     
     // sets global variable
-    settings_metric = metric;
+    settings.metric = metric;
 
     if (metric == "Custom") {
-        settings_metric_exp = parseFloat($("#tof-exp").val());
-        switch (settings_metric_exp) {
+        settings.metric_exp = parseFloat($("#tof-exp").val());
+        switch (settings.metric_exp) {
             case 0.25:
-                settings_metric = "ER";
+                settings.metric = "ER";
                 break;
             case 0.225:
-                settings_metric = "EER";
+                settings.metric = "EER";
                 break;
             case 0.15:
-                settings_metric = "TER";
+                settings.metric = "TER";
                 break;
             case 0.0:
-                settings_metric = "DPS";
+                settings.metric = "DPS";
                 break;
             case 1.0:
-                settings_metric = "TDO";
+                settings.metric = "TDO";
                 break;
         }
     }
@@ -365,37 +411,37 @@ function SetMetric(metric) {
     $("#metric-ter").removeClass("settings-opt-sel");
     $("#metric-dps").removeClass("settings-opt-sel");
     $("#metric-tdo").removeClass("settings-opt-sel");
-    switch (settings_metric) {
+    switch (settings.metric) {
         case "ER":
             $("#metric-er").addClass("settings-opt-sel");
-            settings_metric_exp = 0.25;
+            settings.metric_exp = 0.25;
             break;
         case "EER":
             $("#metric-eer").addClass("settings-opt-sel");
-            settings_metric_exp = 0.225;
+            settings.metric_exp = 0.225;
             break;
         case "TER":
             $("#metric-ter").addClass("settings-opt-sel");
-            settings_metric_exp = 0.15;
+            settings.metric_exp = 0.15;
             break;
         case "DPS":
             $("#metric-dps").addClass("settings-opt-sel");
-            settings_metric_exp = 0.00;
+            settings.metric_exp = 0.00;
             break;
         case "TDO":
             $("#metric-tdo").addClass("settings-opt-sel");
-            settings_metric_exp = 1.00;
+            settings.metric_exp = 1.00;
             break;
         case "Custom":
-            settings_metric_exp = parseFloat($("#tof-exp").val());
+            settings.metric_exp = parseFloat($("#tof-exp").val());
             break;
     }
     
-    $("#tof-exp").val(settings_metric_exp.toFixed(3));
+    $("#tof-exp").val(settings.metric_exp.toFixed(3));
 
     // sets pokemongo table header
-    $("#table-metric-header").html(settings_metric);
-    $("#table-metric-header-sh").html(settings_metric + "<br>(Shadow)");
+    $("#table-metric-header").html(settings.metric);
+    $("#table-metric-header-sh").html(settings.metric + "<br>(Shadow)");
 
     // reload page
     CheckURLAndAct();
@@ -409,7 +455,7 @@ function SetPartySize(party_size) {
     party_size = Math.max(1, Math.min(party_size, 4));
 
     // sets global variable
-    settings_party_size = party_size;
+    settings.party_size = party_size;
 
     // sets settings options selected class
     $("#pp-1").removeClass("settings-opt-sel");
@@ -428,8 +474,8 @@ function SetPartySize(party_size) {
  */
 function SetDefaultLevel(level, xl_budget = false) {
     // sets global variables
-    settings_default_level = level;
-    settings_xl_budget = xl_budget;
+    settings.default_level = level;
+    settings.xl_budget = xl_budget;
 
     // sets settings options selected class
     $("#lvl-40").removeClass("settings-opt-sel");
@@ -474,7 +520,7 @@ function SetStrongestCount(count) {
     }
 
     // sets global variable
-    settings_strongest_count = count;
+    settings.strongest_count = count;
 
     // reload page
     CheckURLAndAct();
@@ -485,7 +531,7 @@ function SetStrongestCount(count) {
  */
 function SetCompare(compareTo = "top") {
     // sets global variable
-    settings_compare = compareTo;
+    settings.compare = compareTo;
 
     $("#cmp-top").removeClass("settings-opt-sel");
     $("#cmp-budget").removeClass("settings-opt-sel");
@@ -512,7 +558,7 @@ function SetCompare(compareTo = "top") {
  */
 function SetTierMethod(method = "jenks") {
     // sets global variable
-    settings_tiermethod = method;
+    settings.tiermethod = method;
 
     $("#tier-jenks").removeClass("settings-opt-sel");
     $("#tier-broad").removeClass("settings-opt-sel");
@@ -680,9 +726,9 @@ function LoadPokemon(clean_input, form = "def", mega = false,
 
     // sets the default level
     if (level == null) {
-        level = settings_default_level[0];
+        level = settings.default_level[0];
         const poke_obj = jb_pkm.find(e=>e.id == pokemon_id);
-        if (poke_obj !== undefined && poke_obj.class == undefined && settings_xl_budget)
+        if (poke_obj !== undefined && poke_obj.class == undefined && settings.xl_budget)
             level = 50;
     }
     
@@ -977,7 +1023,7 @@ function LoadPokemongo(pokemon_id, form, mega, mega_y, level, ivs) {
 function GetPokemonStats(jb_pkm_obj, mega, mega_y, level = null, ivs = null) {
 
     if (!level) {
-        level = settings_default_level[0];
+        level = settings.default_level[0];
     }
     if (!ivs)
         ivs = { atk: 15, def: 15, hp: 15 };
@@ -1549,7 +1595,7 @@ function GetPokemonStrongestMovesetsAgainstEnemy(jb_pkm_obj, mega, mega_y, shado
                     fm_mult, cm_mult, enemy_stats.def, enemy_y.y, enemy_y.cm_dmg);
                 const tdo = GetTDO(dps, hp, def, enemy_y.y);
                 // metrics from Reddit user u/Elastic_Space
-                const rat = Math.pow(dps, 1-settings_metric_exp) * Math.pow(tdo, settings_metric_exp);
+                const rat = Math.pow(dps, 1-settings.metric_exp) * Math.pow(tdo, settings.metric_exp);
                 all_ratings.push(rat);
             }
 
@@ -1915,7 +1961,7 @@ function ShowCountersPopup(hover_element, show, counter = null) {
             + "</p>"
 
         $("#counters-popup").html(name
-            + "<p class='counter-metric'>" + settings_metric + " " + counter.rat.toFixed(2) + "</p>"
+            + "<p class='counter-metric'>" + settings.metric + " " + counter.rat.toFixed(2) + "</p>"
             + "<p class='counter-types'><span class='type-text bg-"
                 + ((counter.fm == "Hidden Power") ? "any-type" : counter.fm_type) + "'>"
                 + counter.fm + ((counter.fm_is_elite) ? "*" : "")
@@ -2039,8 +2085,8 @@ function LoadPokemongoTable(jb_pkm_obj, mega, mega_y, stats, max_stats = null) {
             const tdo = GetTDO(dps, hp, def);
             const tdo_sh = GetTDO(dps_sh, hp, def_sh);
             // metrics from Reddit user u/Elastic_Space
-            const rat = Math.pow(dps, 1-settings_metric_exp) * Math.pow(tdo, settings_metric_exp);
-            const rat_sh = Math.pow(dps_sh, 1-settings_metric_exp) * Math.pow(tdo_sh, settings_metric_exp);
+            const rat = Math.pow(dps, 1-settings.metric_exp) * Math.pow(tdo, settings.metric_exp);
+            const rat_sh = Math.pow(dps_sh, 1-settings.metric_exp) * Math.pow(tdo_sh, settings.metric_exp);
 
             // calculates average rating percentages against max stats
             if (max_stats) {
@@ -2048,7 +2094,7 @@ function LoadPokemongoTable(jb_pkm_obj, mega, mega_y, stats, max_stats = null) {
                     max_stats.hp, fm_obj, cm_obj);
                 const max_tdo = GetTDO(max_dps, max_stats.hp, max_stats.def);
                 // metrics from Reddit user u/Elastic_Space
-                const max_rat = Math.pow(max_dps, 1-settings_metric_exp) * Math.pow(max_tdo, settings_metric_exp);
+                const max_rat = Math.pow(max_dps, 1-settings.metric_exp) * Math.pow(max_tdo, settings.metric_exp);
 
                 rat_pcts_vs_max += rat / max_rat;
                 rat_sh_pcts_vs_max += rat_sh / max_rat;
@@ -2109,7 +2155,7 @@ function LoadPokemongoTable(jb_pkm_obj, mega, mega_y, stats, max_stats = null) {
             let pct_str = avg_rat_pct_vs_max.toFixed(2) + "%";
             if (isNaN(avg_rat_pct_vs_max))
                 pct_str = "??";
-            $("#rat-pct-vs-max").html(" → " + settings_metric + " " + pct_str);
+            $("#rat-pct-vs-max").html(" → " + settings.metric + " " + pct_str);
         }
 
         // if can be shadow, calculates average rating percentage of shadow stats
@@ -2119,7 +2165,7 @@ function LoadPokemongoTable(jb_pkm_obj, mega, mega_y, stats, max_stats = null) {
             let pct_str = avg_rat_sh_pct_vs_max.toFixed(2) + "%";
             if (isNaN(avg_rat_sh_pct_vs_max))
                 pct_str = "??";
-            $("#sh-rat-pct-vs-max").html("<br> → Shadow " + settings_metric
+            $("#sh-rat-pct-vs-max").html("<br> → Shadow " + settings.metric
                     + " " + pct_str);
         }
 
@@ -2219,7 +2265,7 @@ function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
         in_cm_dmg = estimated_cm_power / def;
 
     let x = 0.5 * -cm_obj.energy_delta + 0.5 * fm_obj.energy_delta;
-    if (settings_newdps)
+    if (settings.newdps)
         x = x + 0.5 * in_cm_dmg; // Assume waste of all energy from 1 incoming CM
 
     // fast move variables
@@ -2242,7 +2288,7 @@ function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
     let cm_eps = -cm_obj.energy_delta / ProcessDuration(cm_obj.duration);
     // penalty to one-bar charged moves in old raid system (they use more energy (cm_eps))
     if (cm_obj.energy_delta == -100) {
-        const dws = (settings_pve_turns ? 0 : cm_obj.damage_window_start / 1000); // dws in seconds
+        const dws = (settings.pve_turns ? 0 : cm_obj.damage_window_start / 1000); // dws in seconds
         cm_eps = (-cm_obj.energy_delta + 0.5 * fm_obj.energy_delta
             + 0.5 * y * dws) / ProcessDuration(cm_obj.duration);
     }
@@ -2274,11 +2320,11 @@ function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
  * Clamped between +0-100%
 */
 function GetPartyBoost(f_to_c_ratio) {
-    if (settings_party_size == 1) return 0;
+    if (settings.party_size == 1) return 0;
 
     let f_moves_per_boost;
 
-    switch (settings_party_size) {
+    switch (settings.party_size) {
         case 2:
             f_moves_per_boost = 18;
         break;
@@ -2330,7 +2376,7 @@ function GetSpecificY(types, atk, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
     let fms_per_cm = 1;
     let fm_dur = ProcessDuration(fm_obj.duration);
     let cm_dur = ProcessDuration(cm_obj.duration);
-    if (settings_newdps) {
+    if (settings.newdps) {
         const eps_for_damage = ENERGY_PER_HP * total_incoming_dps;
         fm_dur = fm_dur + FM_DELAY;
         cm_dur = cm_dur + CM_DELAY;
@@ -2368,13 +2414,13 @@ function GetSpecificY(types, atk, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
 /**
  * Processes the duration of fast moves and charged moves.
  * The input is in milliseconds and the output is in seconds.
- * The output differs according to 'settings_raid_system'.
+ * The output differs according to 'settings.raid_system'.
  * 
  * https://www.reddit.com/r/TheSilphRoad/comments/1f4wqw8/analysis_everything_you_thought_you_knew_about/
  */
 function ProcessDuration(duration) {
 
-    if (settings_pve_turns)
+    if (settings.pve_turns)
         return (Math.round((duration / 1000) * 2) / 2);
 
     return (duration / 1000);
@@ -2384,11 +2430,11 @@ function ProcessDuration(duration) {
  * Processes the power of fast moves and charged moves.
  * Any move with a calculated modifier above ~10% gets a power adjustment
  * to compensate for their speed buff.
- * The output differs according to 'settings_raid_system'.
+ * The output differs according to 'settings.raid_system'.
  */
 function ProcessPower(move_obj) {
 
-    if (settings_pve_turns) {
+    if (settings.pve_turns) {
         const newDuration = ProcessDuration(move_obj.duration);
         const modifier = (newDuration - move_obj.duration / 1000) / newDuration;
         if (Math.abs(modifier) >= 0.199)
@@ -2412,7 +2458,7 @@ function GetUniqueIdentifier(pkm_obj, unique_shadow = true) {
         pkm_obj.mega + "-" + 
         pkm_obj.mega_y + "-" + 
         (unique_shadow ? pkm_obj.shadow + "-" : "") + 
-        (pkm_obj.level !== undefined ? pkm_obj.level : settings_default_level[0]);
+        (pkm_obj.level !== undefined ? pkm_obj.level : settings.default_level[0]);
 }
 
 /**
@@ -2772,7 +2818,7 @@ function LoadStrongest(type = "Any") {
     $("#footnote-elite").css('display', search_elite ? 'block' : 'none');
     $("#footnote-mixed-moveset").css('display', search_mixed ? 'block' : 'none');
     $("#footnote-versus").css('display', search_versus ? 'block' : 'none');
-    $("#footnote-party-power").css('display', settings_party_size > 1 ? 'block' : 'none');
+    $("#footnote-party-power").css('display', settings.party_size > 1 ? 'block' : 'none');
 }
 
 /**
@@ -2909,7 +2955,7 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
         search_suboptimal, search_mixed, type = null, versus = false) {
 
     // over-create list, then filter down later
-    const num_rows = 500; //settings_strongest_count;
+    const num_rows = 500; //settings.strongest_count;
 
     // array of strongest pokemon and moveset found so far
     let str_pokemons = [];
@@ -2978,7 +3024,7 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
     }
 
     // searches for pokemons...
-    for (lvl of settings_default_level) {
+    for (lvl of settings.default_level) {
         for (let id = 1; id <= jb_max_id; id++) {
 
             const forms = GetPokemonForms(id);
@@ -2988,7 +3034,7 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
                     entry.id == id && entry.form == def_form);
 
             let search_level = lvl
-            if (settings_xl_budget && jb_pkm_obj !== undefined && !jb_pkm_obj.class)
+            if (settings.xl_budget && jb_pkm_obj !== undefined && !jb_pkm_obj.class)
                 search_level = 50;
 
             // checks whether pokemon should be skipped
@@ -3046,7 +3092,7 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
     let top_compare;
     const best_mon = str_pokemons[0].rat;
     
-    switch (settings_compare) {
+    switch (settings.compare) {
         case "top":
             top_compare = best_mon;
             break;
@@ -3076,7 +3122,7 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
 
     // re-order array based on the optimal movesets of each pokemon
     if (display_grouped) {
-        str_pokemons.length = Math.min(str_pokemons.length, settings_strongest_count); //truncate to top movesets early
+        str_pokemons.length = Math.min(str_pokemons.length, settings.strongest_count); //truncate to top movesets early
 
         let str_pokemons_optimal = new Map(); // map of top movesets per mon
         let rat_order = 0;
@@ -3108,7 +3154,7 @@ function SetTableOfStrongestOfOneType(search_unreleased, search_mega,
         }
         BuildTiers(str_pokemons, top_compare);
     
-        str_pokemons.length = Math.min(str_pokemons.length, settings_strongest_count); // truncate late so all movesets could be evaluated
+        str_pokemons.length = Math.min(str_pokemons.length, settings.strongest_count); // truncate late so all movesets could be evaluated
     }
 
     // sets table from array
@@ -3126,11 +3172,11 @@ function BuildTiers(str_pokemons, top_compare) {
     const best_mon = str_pokemons[0].rat;
 
     // Compare to benchmark, building tiers based on ratio (str_pok.pct)
-    if (settings_tiermethod == "broad" || settings_tiermethod == "ESpace") {
+    if (settings.tiermethod == "broad" || settings.tiermethod == "ESpace") {
         let S_breakpoint = 100.0;
         let S_tier_size = 20.0;
         let letter_tier_size = 10.0;
-        if (settings_tiermethod == "ESpace") { // slightly tweak tier sizes and breakpoints
+        if (settings.tiermethod == "ESpace") { // slightly tweak tier sizes and breakpoints
             S_breakpoint = 105.0;
             S_tier_size = 10.0;
             letter_tier_size = 10.0;
@@ -3148,7 +3194,7 @@ function BuildTiers(str_pokemons, top_compare) {
             }
             else {
                 let tier_cnt = Math.floor((S_breakpoint + 0.00001 - str_pok.pct)/letter_tier_size);
-                //if (settings_tiermethod == "ESpace" && tier_cnt >=1) // Shift to an "A" breakpoint of 85.0
+                //if (settings.tiermethod == "ESpace" && tier_cnt >=1) // Shift to an "A" breakpoint of 85.0
                 //    tier_cnt--;
                 if (tier_cnt >= 4) // Everything past D -> F
                     tier_cnt = 5;
@@ -3159,7 +3205,7 @@ function BuildTiers(str_pokemons, top_compare) {
     // Compare to benchmark, generally trying to set the benchmark into "A" tier within reason
     // Using Jenks Natural Breaks to compute reasonable tier breaks
     // (Minimize internal tier variance, while maximizing variance between tiers)
-    else if (settings_tiermethod == "jenks") {
+    else if (settings.tiermethod == "jenks") {
         let n = str_pokemons.findIndex(e => e.rat <= top_compare * 0.5) - 1; // consider everything up to 50% of comparison mon
         if (n<0)
             n = str_pokemons.length;
@@ -3213,15 +3259,15 @@ function BuildTiers(str_pokemons, top_compare) {
     //   (e.g. Poison/Bug/Fairy tend to have very weak options and are often poor counters)
     // Basic philosophy is that an "S" tier mon should actually be GOOD, not just better than
     //   its counterparts
-    else if (settings_tiermethod == "absolute") {
+    else if (settings.tiermethod == "absolute") {
         for (let str_pok of str_pokemons) {
             const rescale = $("#settings input[value='rescale']:checkbox").is(":checked");
             let check_rat = str_pok.rat;
-            if ((!rescale || (settings_metric == 'DPS' || settings_metric == 'TDO')) 
+            if ((!rescale || (settings.metric == 'DPS' || settings.metric == 'TDO')) 
                 && (versus || (type != 'Any' && search_mixed))) {
                 check_rat /= 1.6;
             }
-            switch (settings_metric) {
+            switch (settings.metric) {
                 case 'DPS':
                     if (check_rat >= 20.0) str_pok.tier = 'SSS';
                     else if (check_rat >= 19.5) str_pok.tier = 'SS';
@@ -3425,7 +3471,7 @@ function GetPokemonStrongestMovesets(jb_pkm_obj,
                         fm_mult, cm_mult, null, y_est, in_cm_est);
                     tdo = GetTDO(dps, hp, def, y_est);
 
-                    if (rescale && settings_metric != 'DPS' && settings_metric != 'TDO') {
+                    if (rescale && settings.metric != 'DPS' && settings.metric != 'TDO') {
                         dps /= 1.6;
                         tdo /= 1.6; // have to ALSO remove the extra scalar on the dps used in the TDO calc
                     }
@@ -3436,7 +3482,7 @@ function GetPokemonStrongestMovesets(jb_pkm_obj,
                         (fm_obj.type == mt) ? 1.60 : 1,
                         (cm_obj.type == mt) ? 1.60 : 1);
 
-                    if (rescale && settings_metric != 'DPS' && settings_metric != 'TDO')
+                    if (rescale && settings.metric != 'DPS' && settings.metric != 'TDO')
                         dps /= 1.6;
                     tdo = GetTDO(dps, hp, def);
                 }
@@ -3448,7 +3494,7 @@ function GetPokemonStrongestMovesets(jb_pkm_obj,
                 }
                 
                 // metrics from Reddit user u/Elastic_Space
-                const rat = Math.pow(dps, 1-settings_metric_exp) * Math.pow(tdo, settings_metric_exp);
+                const rat = Math.pow(dps, 1-settings.metric_exp) * Math.pow(tdo, settings.metric_exp);
 
                 // summary of this moveset and its rating
                 const cur_moveset = {
@@ -3571,7 +3617,7 @@ function GetPokemonStrongestMoveset(jb_pkm_obj, mega, mega_y, shadow,
             const dps = GetDPS(types, atk, def, hp, fm_obj, cm_obj);
             const tdo = GetTDO(dps, hp, def);
             // metrics from Reddit user u/Elastic_Space
-            const rat = Math.pow(dps, 1-settings_metric_exp) * Math.pow(tdo, settings_metric_exp);
+            const rat = Math.pow(dps, 1-settings.metric_exp) * Math.pow(tdo, settings.metric_exp);
 
             // checks whether this moveset is stronger than current strongest,
             // if it is, overrides the previous strongest
@@ -3682,7 +3728,7 @@ function SetStrongestTableFromArray(str_pokemons, num_rows = null,
             const td_cm =
                 "<td><span class='type-text bg-" + p.cm_type + "'>"
                 + p.cm.replaceAll(" Plus", "+") + ((p.cm_is_elite) ? "*" : "") + "</span></td>";
-            const td_rat = "<td>" + settings_metric + " <b>"
+            const td_rat = "<td>" + settings.metric + " <b>"
                 + p.rat.toFixed(2) + "</b></td>";
             const td_pct = ((show_pct) ? "<td>" 
                 + "<div class='bar-bg' style='width: calc(" + (100 / best_pct) + "% - 10px);'>"
