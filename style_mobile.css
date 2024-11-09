@@ -187,8 +187,14 @@ body {
         font-size: 14px;
     }
 
+    #strongest-table tr > *:nth-child(1) {
+        width: 10px;
+    }
+
     .tier-label {
-        display: none;
+        font-size: 8px;
+        writing-mode: vertical-lr;
+        transform: scale(-1);
     }
 
     #base-stats tr > *:nth-child(1), #stats-form tr > *:nth-child(1),
@@ -213,5 +219,13 @@ body {
 @media screen and (max-width:400px) { 
     #strongest-table, #strongest-links {
         font-size: 12px;
+    }
+    
+    #strongest-table tr > *:nth-child(1) {
+        width: 5px;
+    }
+
+    .tier-label {
+        font-size: 0;
     }
 }
