@@ -3431,13 +3431,18 @@ function GetPokemonStrongestMovesets(jb_pkm_obj,
                     }
                 }
                 else if (search_mixed && search_type != "Any") { // mixed movesets scale based on search type (super-effective mult)
-                    dps = GetDPS(types, atk, def, hp, 
-                        fm_obj, cm_obj,
-                        (fm_obj.type == mt) ? 1.60 : 1,
-                        (cm_obj.type == mt) ? 1.60 : 1);
-
-                    if (rescale && settings_metric != 'DPS' && settings_metric != 'TDO')
-                        dps /= 1.6;
+                    if (rescale && settings_metric != 'DPS' && settings_metric != 'TDO') {
+                        dps = GetDPS(types, atk, def, hp, 
+                            fm_obj, cm_obj,
+                            (fm_obj.type == mt) ? 1 : 1 / 1.60,
+                            (cm_obj.type == mt) ? 1 : 1 / 1.60);
+                    }
+                    else {
+                        dps = GetDPS(types, atk, def, hp, 
+                            fm_obj, cm_obj,
+                            (fm_obj.type == mt) ? 1.60 : 1,
+                            (cm_obj.type == mt) ? 1.60 : 1);
+                    }
                     tdo = GetTDO(dps, hp, def);
                 }
                 // non-mixed or "anything-goes" searches use traditional dps
