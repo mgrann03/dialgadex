@@ -78,9 +78,23 @@ function loadSettings() {
     if (savedSettings) {
         try {
             const parsedSettings = JSON.parse(savedSettings);
-            return parsedSettings.version === settingsVersion
+            const settings = parsedSettings.version === settingsVersion
                 ? parsedSettings
                 : migrateSettings(parsedSettings);
+
+            // Update the UI to reflect the saved settings
+            $(document).ready(() => {
+                SetMetricUI(settings.metric, settings.metric_exp);
+                SetDefaultLevelUI(settings.default_level, settings.xl_budget);
+                $("#chk-pve-turns").prop("checked", settings.pve_turns);
+                $("#strongest-count").val(settings.strongest_count);
+                SetCompareUI(settings.compare);
+                SetTierMethodUI(settings.tiermethod);
+                SetPartySizeUI(settings.party_size);
+                $("#chk-newdps").prop("checked", settings.newdps);
+            });
+            
+            return settings;
         } catch (error) {
             console.error('Failed to parse user settings:', error);
         }
@@ -175,11 +189,11 @@ function Main() {
     window.onpopstate = function() { CheckURLAndAct(); }
 
     $("#settings-hide").click(SwapSettingsStatus);
-    $("#metric-er").click(function() { SetMetric("ER"); });
-    $("#metric-eer").click(function() { SetMetric("EER"); });
-    $("#metric-ter").click(function() { SetMetric("TER"); });
-    $("#metric-dps").click(function() { SetMetric("DPS"); });
-    $("#metric-tdo").click(function() { SetMetric("TDO"); });
+    $("#metric-er").click(function() { SetMetric("ER", 0.25); });
+    $("#metric-eer").click(function() { SetMetric("EER", 0.225); });
+    $("#metric-ter").click(function() { SetMetric("TER", 0.15); });
+    $("#metric-dps").click(function() { SetMetric("DPS", 0.00); });
+    $("#metric-tdo").click(function() { SetMetric("TDO", 1.00); });
     $("#pp-1").click(function() { SetPartySize(1); });
     $("#pp-2").click(function() { SetPartySize(2); });
     $("#pp-3").click(function() { SetPartySize(3); });
@@ -377,7 +391,7 @@ function SwapSettingsStatus() {
 /**
  * Sets the metric setting and, if necessary, updates the page accordingly.
  */
-function SetMetric(metric) {
+function SetMetric(metric, metric_exp) {
 
     if (!METRICS.has(metric))
         return;
@@ -405,46 +419,48 @@ function SetMetric(metric) {
                 break;
         }
     }
+    else {
+        settings.metric_exp = metric_exp;
+    }
+
+    // sets settings options selected class
+    SetMetricUI(settings.metric, settings.metric_exp);
+
+    // reload page
+    CheckURLAndAct();
+}
+
+function SetMetricUI(metric, metric_exp) {
+
     // sets settings options selected class
     $("#metric-er").removeClass("settings-opt-sel");
     $("#metric-eer").removeClass("settings-opt-sel");
     $("#metric-ter").removeClass("settings-opt-sel");
     $("#metric-dps").removeClass("settings-opt-sel");
     $("#metric-tdo").removeClass("settings-opt-sel");
-    switch (settings.metric) {
+    switch (metric) {
         case "ER":
             $("#metric-er").addClass("settings-opt-sel");
-            settings.metric_exp = 0.25;
             break;
         case "EER":
             $("#metric-eer").addClass("settings-opt-sel");
-            settings.metric_exp = 0.225;
             break;
         case "TER":
             $("#metric-ter").addClass("settings-opt-sel");
-            settings.metric_exp = 0.15;
             break;
         case "DPS":
             $("#metric-dps").addClass("settings-opt-sel");
-            settings.metric_exp = 0.00;
             break;
         case "TDO":
             $("#metric-tdo").addClass("settings-opt-sel");
-            settings.metric_exp = 1.00;
-            break;
-        case "Custom":
-            settings.metric_exp = parseFloat($("#tof-exp").val());
             break;
     }
     
-    $("#tof-exp").val(settings.metric_exp.toFixed(3));
+    $("#tof-exp").val(metric_exp.toFixed(3));
 
     // sets pokemongo table header
-    $("#table-metric-header").html(settings.metric);
-    $("#table-metric-header-sh").html(settings.metric + "<br>(Shadow)");
-
-    // reload page
-    CheckURLAndAct();
+    $("#table-metric-header").html(metric);
+    $("#table-metric-header-sh").html(metric + "<br>(Shadow)");
 }
 
 /**
@@ -458,15 +474,20 @@ function SetPartySize(party_size) {
     settings.party_size = party_size;
 
     // sets settings options selected class
+    SetPartySizeUI(party_size);
+
+    // reload page
+    CheckURLAndAct();
+}
+
+function SetPartySizeUI(party_size) {
+    // sets settings options selected class
     $("#pp-1").removeClass("settings-opt-sel");
     $("#pp-2").removeClass("settings-opt-sel");
     $("#pp-3").removeClass("settings-opt-sel");
     $("#pp-4").removeClass("settings-opt-sel");
     
     $("#pp-" + party_size.toString()).addClass("settings-opt-sel");
-
-    // reload page
-    CheckURLAndAct();
 }
 
 /**
@@ -477,6 +498,14 @@ function SetDefaultLevel(level, xl_budget = false) {
     settings.default_level = level;
     settings.xl_budget = xl_budget;
 
+    // sets settings options selected class
+    SetDefaultLevelUI(level, xl_budget);
+
+    // reload page
+    CheckURLAndAct();
+}
+
+function SetDefaultLevelUI(level, xl_budget = false) {
     // sets settings options selected class
     $("#lvl-40").removeClass("settings-opt-sel");
     $("#lvl-50").removeClass("settings-opt-sel");
@@ -491,9 +520,6 @@ function SetDefaultLevel(level, xl_budget = false) {
         $("#lvl-40").addClass("settings-opt-sel");
     else if (level[0] == 50)
         $("#lvl-50").addClass("settings-opt-sel");
-
-    // reload page
-    CheckURLAndAct();
 }
 
 /**
@@ -533,6 +559,13 @@ function SetCompare(compareTo = "top") {
     // sets global variable
     settings.compare = compareTo;
 
+    SetCompareUI(compareTo);
+
+    // reload page
+    CheckURLAndAct();
+}
+
+function SetCompareUI(compareTo) {
     $("#cmp-top").removeClass("settings-opt-sel");
     $("#cmp-budget").removeClass("settings-opt-sel");
     $("#cmp-espace").removeClass("settings-opt-sel");
@@ -548,9 +581,6 @@ function SetCompare(compareTo = "top") {
             $("#cmp-espace").addClass("settings-opt-sel");
             break;
     }
-
-    // reload page
-    CheckURLAndAct();
 }
 
 /**
@@ -560,6 +590,13 @@ function SetTierMethod(method = "jenks") {
     // sets global variable
     settings.tiermethod = method;
 
+    SetTierMethodUI(method);
+
+    // reload page
+    CheckURLAndAct();
+}
+
+function SetTierMethodUI(method) {
     $("#tier-jenks").removeClass("settings-opt-sel");
     $("#tier-broad").removeClass("settings-opt-sel");
     $("#tier-espace").removeClass("settings-opt-sel");
@@ -579,9 +616,6 @@ function SetTierMethod(method = "jenks") {
             $("#tier-abs").addClass("settings-opt-sel");
             break;
     }
-
-    // reload page
-    CheckURLAndAct();
 }
 
 /**
