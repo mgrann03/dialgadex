@@ -235,9 +235,17 @@ function GetPokedexStatBars(stats) {
     return [
         GetBarHTML(Clamp(CalcZScore(stats.atk, atk_dist), -2.8, 3) + 3, stats.atk.toFixed(1), 6, 6),
         GetBarHTML(Clamp(CalcZScore(stats.def, def_dist), -2.8, 3) + 3, stats.def.toFixed(1), 6, 6),
-        GetBarHTML(Clamp(CalcZScore(stats.hp, hp_dist), -2.8, 3) + 3, stats.hp.toFixed(1), 6, 6),
+        GetBarHTML(Clamp(CalcZScore(stats.hp, hp_dist), -2.8, 3) + 3, toFixedTrunc(stats.hp, 1), 6, 6),
         GetBarHTML(cp_zscore + 3, cp + " CP", 6, 6, "tier-" + cp_tier)
     ];
+}
+
+/**
+ * Get un-rounded (floored) version of float truncated to a level of precision
+ */
+function toFixedTrunc(num, fixed) {
+    var re = new RegExp('^-?\\d+(?:\.\\d{0,' + (fixed || -1) + '})?');
+    return num.toString().match(re)[0];
 }
 
 /**
