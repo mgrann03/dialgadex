@@ -296,12 +296,18 @@ function GetPokemonForms(pokemon_id) {
         case 9: // Blastoise
         case 15: // Beedrill
         case 18: // Pidgeot
+        case 36: // Clefable
         case 65: // Alakazam
+        case 71: // Victreebel
         case 94: // Gengar
         case 115: // Kangaskhan
+        case 121: // Starmie
         case 127: // Pinsir
         case 130: // Gyarados
         case 142: // Aerodactyl
+        case 149: // Dragonite
+        case 154: // Meganium
+        case 160: // Feraligatr
         case 181: // Ampharos
         case 208: // Steelix
         case 212: // Scizor
@@ -311,6 +317,7 @@ function GetPokemonForms(pokemon_id) {
         case 254: // Sceptile
         case 257: // Blaziken
         case 260: // Swampert
+        case 277: // Skarmory
         case 282: // Gardevoir
         case 302: // Sableye
         case 303: // Mawile
@@ -335,8 +342,24 @@ function GetPokemonForms(pokemon_id) {
         case 448: // Lucario
         case 460: // Abomasnow
         case 475: // Gallade
+        case 478: // Froslass
+        case 500: // Emboar
+        case 530: // Excadrill
         case 531: // Audino
+        case 545: // Scolipede
+        case 560: // Scrafty
+        case 604: // Eelektross
+        case 609: // Chandelure
+        case 652: // Chesnaught
+        case 655: // Delphox
+        case 658: // Greninja
+        case 687: // Malamar
+        case 689: // Barbaracle
+        case 691: // Dragalge
+        case 701: // Hawlucha
         case 719: // Diancie
+        case 780: // Drampa
+        case 870: // Falinks
             return ["Normal", "Mega"]
         case 80: // Slowbro
             return [ "Normal", "Galarian", "Mega" ];
@@ -462,11 +485,12 @@ function GetPokemonForms(pokemon_id) {
                 "Marine", "Modern", "Monsoon", "Ocean", "Poke_ball",
                 "Polar", "River", "Sandstorm", "Savanna", "Sun", "Tundra" ];
         case 668: // Pyroar
-            return [ "Normal", "Female" ];
+            return [ "Normal", "Female", "Mega" ];
         case 669: // Flabebe
-        case 670: // Floette
         case 671: // Florges
             return [ "Red", "Yellow", "Orange", "Blue", "White" ];
+        case 670: // Floette
+            return [ "Red", "Yellow", "Orange", "Blue", "White", "Mega" ];
         case 676: // Furfrou
             return [ "Natural", "Heart", "Star", "Diamond", "Debutante",
                 "Matron", "Dandy", "La_reine", "Kabuki", "Pharaoh" ];
@@ -478,7 +502,7 @@ function GetPokemonForms(pokemon_id) {
         case 711: // Gourgeist
             return [ "Average", "Small", "Large", "Super" ];
         case 718: // Zygarde
-            return [ "Fifty_percent", "Ten_percent", "Complete" ];
+            return [ "Fifty_percent", "Ten_percent", "Complete", "Mega" ];
         case 720: // Hoopa
             return [ "Confined", "Unbound" ];
         case 741: // Oricorio
@@ -526,6 +550,10 @@ function GetPokemonForms(pokemon_id) {
             return [ "Family_of_four", "Family_of_three" ]
         case 964: // Palafin
             return [ "Zero", "Hero" ]
+        case 1012: // Poltchageist
+            return [ "Counterfeit", "Artisan" ];
+        case 1013: // Sinistcha
+            return [ "Unremarkable", "Masterpiece" ];
         default:
             return [ "Normal" ];
     }
@@ -599,8 +627,8 @@ function GetFormText(pokemon_id, form) {
                     return "Normal";
                 case 681: // Aegislash
                     return "Shield";
-                case 890: // Eternatus
-                    return "Eternatus";
+                //case 890: // Eternatus
+                //    return "Eternatus";
             }
             break;
         case "Alola":
@@ -797,7 +825,7 @@ function GetFormText(pokemon_id, form) {
         case "Crowned_shield":
             return "Crowned Shield";
         case "Eternamax":
-            return "Eternamax Eternatus";
+            return "Eternamax"; // Eternatus";
         case "Single_strike":
             return "Single Strike";
         case "Rapid_strike":
@@ -889,8 +917,12 @@ function GetPokemonIconCoords(pokemon_id, form) {
             719, // Diancie
         ];
 
-        offsetID = megaOffset + megaLookup.indexOf(pokemon_id);
-        if (form == "MegaY") offsetID += 1;
+        if (megaLookup.includes(pokemon_id)) { // new Megas without sprites use base form
+            offsetID = megaOffset + megaLookup.indexOf(pokemon_id);
+            if (form == "MegaY") offsetID += 1;
+        }
+        else if (pokemon_id == 718)
+            offsetID = 1171; // Mega Zygarde uses Complete form sprite
     }
     else if (form == "Alola") {
         const alolaOffset = 1151;

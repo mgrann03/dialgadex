@@ -217,9 +217,18 @@ function PatchSpeculative(useUpcoming) {
         jb_unpatch = [];
 
         for (const patch of jb_spec) {
-            const pkm_obj = jb_pkm.find(e=>e.id==patch.id&&e.form==patch.form);
-            if (!pkm_obj)
+            let pkm_obj = jb_pkm.find(e=>e.id==patch.id&&e.form==patch.form);
+            if (!pkm_obj) {
+                jb_pkm.push(patch);
+
+                jb_unpatch.push({
+                    id: patch.id,
+                    name: patch.name,
+                    form: patch.form,
+                    delete: true
+                });
                 continue;
+            }
 
             let unpatch_obj = {
                 id: pkm_obj.id,
@@ -242,6 +251,11 @@ function PatchSpeculative(useUpcoming) {
             const pkm_obj = jb_pkm.find(e=>e.id==unpatch.id&&e.form==unpatch.form);
             if (!pkm_obj)
                 continue;
+
+            if (unpatch.delete) {
+                jb_pkm.splice(jb_pkm.findIndex(e=>e.id==unpatch.id&&e.form==unpatch.form), 1);
+                continue;
+            }
             
             for (const k of Object.keys(unpatch)) {
                 if (!["id", "name", "form"].includes(k)) {
