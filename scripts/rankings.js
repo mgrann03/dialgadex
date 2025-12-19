@@ -374,7 +374,7 @@ function GetComparisonMon(str_pokemons, type = null) {
             try {
                 top_compare = str_pokemons.find(e => e.class == undefined && 
                                                     !e.shadow && 
-                                                    e.form != "Mega" && e.form != "MegaY" &&
+                                                    e.form != "Mega" && e.form != "MegaY" && e.form != "MegaZ" &&
                                                     (e.fm_type == type || e.cm_type == type || 
                                                     type == "Any" || type == "Each" || !type)
                                                 ).rat;
@@ -385,7 +385,7 @@ function GetComparisonMon(str_pokemons, type = null) {
         case "ESpace":
             try {
                 top_compare = str_pokemons.find(e => !(e.class !== undefined && e.shadow) && 
-                                                    e.form != "Mega" && e.form != "MegaY" &&
+                                                    e.form != "Mega" && e.form != "MegaY" && e.form != "MegaZ" &&
                                                     !(e.name == 'Rayquaza' && e.cm == 'Dragon Ascent') &&
                                                     !(e.name == 'Necrozma' && e.form != 'Normal') &&
                                                     !(e.name == 'Kyurem' && e.form != 'Normal') &&

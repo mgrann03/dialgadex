@@ -289,7 +289,12 @@ function GetPokemonForms(pokemon_id) {
 
     switch (pokemon_id) {
         case 6: // Charizard
+        case 26: // Raichu
             return ["Normal", "Mega", "MegaY"];
+        case 359: // Absol
+        case 445: // Garchomp
+        case 448: // Lucario
+            return [ "Normal", "Mega", "MegaZ"];
         case 150: // Mewtwo
             return ["Normal", "Mega", "MegaY", "A"];
         case 3: // Venusaur
@@ -328,7 +333,7 @@ function GetPokemonForms(pokemon_id) {
         case 323: // Camerupt
         case 334: // Altaria
         case 354: // Banette
-        case 359: // Absol
+        case 358: // Chimecho
         case 362: // Glalie
         case 373: // Salamence
         case 376: // Metagross
@@ -337,12 +342,13 @@ function GetPokemonForms(pokemon_id) {
         case 382: // Kyogre
         case 383: // Groudon
         case 384: // Rayquaza
+        case 398: // Staraptor
         case 428: // Lopunny
-        case 445: // Garchomp
-        case 448: // Lucario
         case 460: // Abomasnow
         case 475: // Gallade
         case 478: // Froslass
+        case 485: // Heatran
+        case 491: // Darkrai
         case 500: // Emboar
         case 530: // Excadrill
         case 531: // Audino
@@ -350,6 +356,7 @@ function GetPokemonForms(pokemon_id) {
         case 560: // Scrafty
         case 604: // Eelektross
         case 609: // Chandelure
+        case 623: // Golurk
         case 652: // Chesnaught
         case 655: // Delphox
         case 658: // Greninja
@@ -358,11 +365,27 @@ function GetPokemonForms(pokemon_id) {
         case 691: // Dragalge
         case 701: // Hawlucha
         case 719: // Diancie
+        case 740: // Crabominable
+        case 768: // Golisopod
         case 780: // Drampa
+        case 801: // Magearna
+        case 807: // Zeraora
         case 870: // Falinks
+        case 952: // Scovillain
+        case 970: // Glimmora
+        case 978: // Tatsugiri
+        case 998: // Baxcalibur
             return ["Normal", "Mega"]
         case 80: // Slowbro
             return [ "Normal", "Galarian", "Mega" ];
+        case 668: // Pyroar
+        case 678: // Meowstic
+            return [ "Normal", "Female", "Mega" ];
+        case 670: // Floette
+            return [ "Red", "Yellow", "Orange", "Blue", "White", "Mega" ];
+        case 718: // Zygarde
+            return [ "Fifty_percent", "Ten_percent", "Complete", "Mega" ];
+
         case 19: // Rattata
         case 20: // Raticate
         case 26: // Raichu
@@ -484,25 +507,17 @@ function GetPokemonForms(pokemon_id) {
                 "Fancy", "Garden", "High_plains", "Icy_snow", "Jungle",
                 "Marine", "Modern", "Monsoon", "Ocean", "Poke_ball",
                 "Polar", "River", "Sandstorm", "Savanna", "Sun", "Tundra" ];
-        case 668: // Pyroar
-            return [ "Normal", "Female", "Mega" ];
         case 669: // Flabebe
         case 671: // Florges
             return [ "Red", "Yellow", "Orange", "Blue", "White" ];
-        case 670: // Floette
-            return [ "Red", "Yellow", "Orange", "Blue", "White", "Mega" ];
         case 676: // Furfrou
             return [ "Natural", "Heart", "Star", "Diamond", "Debutante",
                 "Matron", "Dandy", "La_reine", "Kabuki", "Pharaoh" ];
-        case 678: // Meowstic
-            return [ "Normal", "Female" ];
         case 681: // Aegislash
             return [ "Normal", "Blade" ];
         case 710: // Pumpkaboo
         case 711: // Gourgeist
             return [ "Average", "Small", "Large", "Super" ];
-        case 718: // Zygarde
-            return [ "Fifty_percent", "Ten_percent", "Complete", "Mega" ];
         case 720: // Hoopa
             return [ "Confined", "Unbound" ];
         case 741: // Oricorio
@@ -585,7 +600,7 @@ function GetPokemonImgSrcName(pokemon_id, form) {
     if (form != "Normal") {
         if (form == "Mega" && (pokemon_id == 382 || pokemon_id == 383))
             form = "Primal";
-        if (form == "Mega" && (pokemon_id == 6 || pokemon_id == 150))
+        if (form == "Mega" && (pokemon_id == 6 || pokemon_id == 26 || pokemon_id == 150))
             form = "MegaX";
 
         img_src_name += "-";
@@ -921,8 +936,58 @@ function GetPokemonIconCoords(pokemon_id, form) {
             offsetID = megaOffset + megaLookup.indexOf(pokemon_id);
             if (form == "MegaY") offsetID += 1;
         }
-        else if (pokemon_id == 718)
-            offsetID = 1171; // Mega Zygarde uses Complete form sprite
+        else {
+            const megaZAOffset = 1404;
+            const megaZALookup = [
+                36, // Clefable
+                71, // Victreebel
+                121, // Starmie
+                149, // Dragonite
+                154, // Meganium
+                160, // Feraligatr
+                227, // Skarmory
+                478, // Froslass
+                500, // Emboar
+                530, // Excadrill
+                545, // Scolipede
+                560, // Scrafty
+                604, // Eelektross
+                609, // Chandelure
+                652, // Chesnaught
+                655, // Delphox
+                658, // Greninja
+                668, // Pyroar
+                670, // Floette
+                687, // Malamar
+                689, // Barbaracle
+                691, // Dragalge
+                701, // Hawlucha
+                718, // Zygarde
+                780, // Drampa
+                870, // Falinks
+                26, // Raichu X
+                26, // Raichu Y
+                358, // Chimecho
+                0, // RESERVED - Absol Z?
+                0, // RESERVED - Staraptor?
+                0, // RESERVED - Garchomp Z?
+                448, // Lucario Z
+                0, // RESERVED
+                491, // Darkrai
+                0, // RESERVED
+            ];
+
+            if (megaZALookup.includes(pokemon_id)) { // new Megas without sprites use base form
+                offsetID = megaZAOffset + megaZALookup.indexOf(pokemon_id);
+                if (form == "MegaY") offsetID += 1;
+            }
+        }
+    }
+    else if (form == "MegaZ") {
+        switch (pokemon_id) {
+            case 448:
+                offsetID = 1436;
+        }
     }
     else if (form == "Alola") {
         const alolaOffset = 1151;

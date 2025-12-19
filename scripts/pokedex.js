@@ -992,6 +992,8 @@ function ParsePokedexURL(params) {
         form = "Mega";
     if (params.has("y"))
         form = "MegaY";
+    if (params.has("z"))
+        form = "MegaZ";
 
     let level = null;
     if (params.has("lvl"))

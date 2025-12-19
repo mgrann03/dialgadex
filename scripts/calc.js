@@ -701,7 +701,7 @@ function GetStrongestVersus(enemy_params, search_params, num_counters = 100000) 
 function GetEDPS(dps, tdo, pkm_obj = null, enemy_params = null) {
     const RESPAWN_TIME = 1;
     const REJOIN_TIME = settings_relobbytime;
-    const RAID_PARTY_SIZE = (pkm_obj.form == "Mega" || pkm_obj.form == "MegaY") ? settings_team_size_mega : settings_team_size_normal;
+    const RAID_PARTY_SIZE = (pkm_obj.form == "Mega" || pkm_obj.form == "MegaY" || pkm_obj.form == "MegaZ" ) ? settings_team_size_mega : settings_team_size_normal;
     const hp = (enemy_params && enemy_params.stats && enemy_params.stats.hp) ? enemy_params.stats.hp : 1000000000;
 
     const tof = tdo/dps;

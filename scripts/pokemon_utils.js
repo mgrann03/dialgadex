@@ -34,7 +34,7 @@ function GetRaidStats(pkm_obj, tier = null) {
             tier = 3;
             if (pkm_obj.class)
                 tier = 5;
-            if (pkm_obj.form == "Mega" || pkm_obj.form == "MegaY")
+            if (pkm_obj.form == "Mega" || pkm_obj.form == "MegaY" || pkm_obj.form == "MegaZ")
                 tier = 4;
             if (pkm_obj.class && pkm_obj.form == "Mega")
                 tier = 6;
@@ -100,7 +100,7 @@ function GetPokemonMoves(pkm_obj, hidden_power_filter = "Type-Match") {
         //shadow_only_cm.push('Frustration'); // Ignore Frustration because BAD
         pure_only_cm.push('Return');
     }
-    else if (pkm_obj.form == "Mega" || pkm_obj.form == "MegaY") { // Check Return for purified megas
+    else if (pkm_obj.form == "Mega" || pkm_obj.form == "MegaY" || pkm_obj.form == "MegaZ") { // Check Return for purified megas
         const def_form = GetPokemonForms(pkm_obj.id)[0];
         const def_pkm_obj = jb_pkm.find(e => e.id == pkm_obj.id && e.form == def_form);
 
@@ -272,7 +272,7 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal") {
             + "#" + pokemon_id + " "
             + pokemon_name
             + "</a>");
-    if (is_selected && poke_obj && form != "Mega" && form != "MegaY") {
+    if (is_selected && poke_obj && form != "Mega" && form != "MegaY" && form != "MegaZ") {
         const shadow_icon = $("<img src='imgs/flame.svg' class='shadow-icon filter-" + (can_be_shadow ? 'shadow' : 'noshadow') + 
             "' alt='" + (can_be_shadow ? 'Purple flame representing the shadow form is released' : 'Dark purple flame representing the shadow form is not yet released') + "'></img>");
         shadow_icon.on('click', function(e) { 
@@ -352,9 +352,9 @@ function SearchAll(search_params, f_process_pokemon) {
                 pkm_obj = jb_pkm.find(entry =>
                         entry.id == id && entry.form == forms[form_i]);
         
-                // checks whether pokemon should be skipped (form not released)
+                // checks whether pokemon should be skipped (form not released or unwanted)
                 if (!pkm_obj || (!search_params.unreleased && !pkm_obj.released)
-                    || (!search_params.mega && (pkm_obj.form == "Mega" || pkm_obj.form == "MegaY")))
+                    || (!search_params.mega && (pkm_obj.form == "Mega" || pkm_obj.form == "MegaY" || pkm_obj.form == "MegaZ")))
                     continue;
         
                 f_process_pokemon(pkm_obj, false, level, search_params);                                                    
@@ -461,9 +461,9 @@ function GetSearchString(pkm_arr,
     }
 
     // Mega forms
-    const has_mega_forms = pkm_arr.some(e=>e.form=="Mega"||e.form=="MegaY");
+    const has_mega_forms = pkm_arr.some(e=>e.form=="Mega"||e.form=="MegaY"||e.form=="MegaZ");
     if (has_mega_forms) {
-        str = str + "&" + GetUnique(pkm_arr.filter(e=>e.form!="Mega"&&e.form!="MegaY").map(e=>e.id)).join(",") + ",mega1-";
+        str = str + "&" + GetUnique(pkm_arr.filter(e=>e.form!="Mega"&&e.form!="MegaY"&&e.form!="MegaZ").map(e=>e.id)).join(",") + ",mega1-";
     }
     /* Disabled - If we set filters to remove megas, still include the base pokemon
     else {
@@ -471,17 +471,17 @@ function GetSearchString(pkm_arr,
     }*/
 
     // Pure forms
-    //const has_pure_forms = pkm_arr.some(e=>!(e.shadow||e.form=="Mega"||e.form=="MegaY"));
+    //const has_pure_forms = pkm_arr.some(e=>!(e.shadow||e.form=="Mega"||e.form=="MegaY"||e.form=="MegaZ"));
     if (has_shadow_forms && has_mega_forms) {
-        str = str + "&" + GetUnique(pkm_arr.filter(e=>e.form!="Mega"&&e.form!="MegaY"&!e.shadow).map(e=>e.id)).join(",") 
+        str = str + "&" + GetUnique(pkm_arr.filter(e=>e.form!="Mega"&&e.form!="MegaY"&&e.form!="MegaZ"&&!e.shadow).map(e=>e.id)).join(",") 
             + ",shadow,mega1-";
     }
 
     // Alternate (non-Mega) forms
-    const has_alt_forms = GetUnique(pkm_arr.filter(e=>GetPokemonForms(e.id).filter(e=>e!="Mega"&&e!="MegaY").length > 1).map(e=>e.id));
+    const has_alt_forms = GetUnique(pkm_arr.filter(e=>GetPokemonForms(e.id).filter(e=>e!="Mega"&&e!="MegaY"&&e!="MegaZ").length > 1).map(e=>e.id));
     for (let pkm_id of has_alt_forms) {
-        const all_possible_forms = new Set(GetPokemonForms(pkm_id).filter(f=>f!="Mega"&&f!="MegaY"&&jb_pkm.find(p=>p.id==pkm_id&&p.form==f)));
-        const filtered_in_forms = new Set(pkm_arr.filter(e=>e.id==pkm_id).map(e=>e.form).filter(e=>e!="Mega"&&e!="MegaY"));
+        const all_possible_forms = new Set(GetPokemonForms(pkm_id).filter(f=>f!="Mega"&&f!="MegaY"&&f!="MegaZ"&&jb_pkm.find(p=>p.id==pkm_id&&p.form==f)));
+        const filtered_in_forms = new Set(pkm_arr.filter(e=>e.id==pkm_id).map(e=>e.form).filter(e=>e!="Mega"&&e!="MegaY"&&e!="MegaZ"));
 
         // Check if we need to try filtering down more specifically than by id
         if (filtered_in_forms.size < all_possible_forms.size && filtered_in_forms.size > 0) {
@@ -735,7 +735,7 @@ function ApplySearchString(str, pkm_arr, id_filter_only = false) {
                 if (tok=="shadow") // shadow
                     clause_val = clause_val || (p.shadow ^ invert);
                 if (tok.slice(0,4)=="mega") // mega/primal
-                    clause_val = clause_val || ((p.form=="Mega"||p.form=="MegaY") ^ invert);
+                    clause_val = clause_val || ((p.form=="Mega"||p.form=="MegaY"||p.form=="MegaZ") ^ invert);
                 if (tok[0]=="@") { // has attack
                     let check_fm = true, check_cm = true;
                     let fm_phrase_val = false, cm_phrase_val = false;
