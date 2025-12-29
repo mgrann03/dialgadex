@@ -444,6 +444,8 @@ function GetPokemonForms(pokemon_id) {
             return ["Normal", "Paldea"];
         case 128: // Tauros
             return ["Normal", "Paldea_combat", "Paldea_aqua", "Paldea_blaze"];
+        case 25: // Pikachu
+            return ["Normal", "Flying_01", "Doctor", "Horizons", "Pop_star", "Rock_star", "Vs_2019" ];
         case 201: // Unown
             return ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
                 "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y",
@@ -859,6 +861,18 @@ function GetFormText(pokemon_id, form) {
             return "Armored";
         case "Blade":
             return "Blade";
+        case "Flying_01":
+            return "Flying";
+        case "Doctor":
+            return "PhD";
+        case "Horizons":
+            return "Captain";
+        case "Pop_star":
+            return "Pop Star";
+        case "Rock_star":
+            return "Rock Star";
+        case "Vs_2019":
+            return "Libre";
     }
 
     return "";
@@ -1067,6 +1081,20 @@ function GetPokemonIconCoords(pokemon_id, form) {
 
         offsetID = hisuiOffset + hisuiLookup.indexOf(pokemon_id);
     } 
+    else if (pokemon_id == 25) { // Pikachu
+        const pikachuOffset = 1034;
+        const pikachuLookup = [ 
+            , // Belle
+            "Vs_2019", // Libre
+            "Doctor", // PhD
+            "Pop_star",
+            "Rock_star",
+            , // Cosplay
+        ];
+
+        offsetID = pokemon_id;
+        if (pikachuLookup.includes(form)) offsetID = pikachuOffset + pikachuLookup.indexOf(form);
+    }
     else if (pokemon_id == 201) { // Unown
         const unownOffset = 1040;
 
