@@ -79,13 +79,14 @@ async function LoadJSONData() {
  * Fetch JSON from a URL, with automatic fallback to CDN on failure. Additionally calls a function
  * with the returned JSON for processing or other steps.
  */
-async function FetchJSON(URL, fallbackURL, onSuccess) {
+async function FetchJSON(URL, fallbackURL, onSuccess, onFallback, onFailure) {
     let json;
 
     try { // check direct URL
         const response = await fetch(URL);
         if (!response.ok) throw new Error(`Primary failed: ${response.status}`);
         json = await response.json();
+        if (onSuccess) onSuccess(json);
     } catch (primaryError) {
         console.warn("Primary fetch failed, trying fallback...", primaryError.message);
         
@@ -93,14 +94,15 @@ async function FetchJSON(URL, fallbackURL, onSuccess) {
             const fallbackResponse = await fetch(fallbackURL);
             if (!fallbackResponse.ok) throw new Error(`Fallback failed: ${fallbackResponse.status}`);
             json = await fallbackResponse.json();
+            if (onFallback) onFallback(json);
         } catch (fallbackError) {
             console.error("Critical Error: Both primary and fallback failed.");
+            if (onFailure) onFailure(fallbackError);
             throw fallbackError;
         }
     }
 
     // Success path
-    if (onSuccess) onSuccess(json);
     return json;
 }
 
@@ -108,7 +110,7 @@ async function FetchJSON(URL, fallbackURL, onSuccess) {
  * Automatically builds URL and fallback for pokemon-resources data loads
  */
 async function FetchJSONPokeData(path, onSuccess) {
-    return FetchJSON(JB_URL + path, CDN_URL + path, onSuccess);
+    return FetchJSON(JB_URL + path, CDN_URL + path, onSuccess, onSuccess);
 }
 
 /**

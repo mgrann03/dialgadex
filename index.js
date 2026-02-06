@@ -34,6 +34,7 @@ async function Main() {
     // Load Pokemon Data
     const jsonLoaded = await LoadJSONData();
     if (jsonLoaded) {
+        await InitializeLocalization();
         CheckURLAndAct();
         InitializePokemonSearch();
     }
