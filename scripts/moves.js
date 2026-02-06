@@ -188,9 +188,6 @@ function BindMoveData() {
  * The type can be 'any' or an actual type.
  */
 function LoadMoves(type = "Any") {
-    if (!finished_loading)
-        return;
-
     cur_sort.move_type = type;
 
     // displays what should be displayed 
@@ -232,10 +229,6 @@ function LoadMoves(type = "Any") {
  * Calls the 'LoadMoves' function and updates the url accordingly.
  */
 function LoadMovesAndUpdateURL(type = "Any", move_kind) {
-
-    if (!finished_loading)
-        return false;
-
     if (!move_kind) {
         move_kind = $("#chk-move-kind").prop("checked") ? "charged" : "fast";
     }

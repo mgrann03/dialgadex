@@ -225,9 +225,6 @@ function GetMonSearchIssue(parent, pkm_obj, form_issue = false, shadow_issue = f
  * The type can be 'each', 'any' or an actual type.
  */
 function LoadStrongest(type = "Any") {
-    if (!finished_loading)
-        return false;
-
     // Move filters for display
     MoveFilterPopup("#strongest-filters");
 
@@ -343,10 +340,6 @@ function LoadStrongest(type = "Any") {
  * Calls the 'LoadStrongest' function and updates the url accordingly.
  */
 function LoadStrongestAndUpdateURL(type = "Any", versus = null) {
-
-    if (!finished_loading)
-        return false;
-
     if (versus !== null)
         $("#chk-versus").prop("checked", !!versus);
 

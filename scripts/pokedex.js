@@ -5,7 +5,7 @@ let atk_dist, def_dist, hp_dist, cp_dist;
  */
 function LoadPokedex(pokedex_mon) {
 
-    if (!finished_loading || loading_pogo_moves || loading_counters)
+    if (loading_pogo_moves || loading_counters)
         return;
 
     if (!pokedex_mon || pokedex_mon.pokemon_id == 0) {
@@ -99,7 +99,7 @@ function LoadPokedex(pokedex_mon) {
  */
 function LoadPokedexAndUpdateURL(pokedex_mon) {
 
-    if (!finished_loading || loading_pogo_moves || loading_counters)
+    if (loading_pogo_moves || loading_counters)
         return false;
 
     LoadPokedex(pokedex_mon);

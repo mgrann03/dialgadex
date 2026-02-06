@@ -24,7 +24,7 @@ let counters_loaded = false;
 /**
  * Main function.
  */
-function Main() {
+async function Main() {
     // when going back or forward in the browser history
     window.onpopstate = function() { CheckURLAndAct(); }
 
@@ -32,7 +32,11 @@ function Main() {
     BindAll();
 
     // Load Pokemon Data
-    LoadJSONData();
+    const jsonLoaded = await LoadJSONData();
+    if (jsonLoaded) {
+        CheckURLAndAct();
+        InitializePokemonSearch();
+    }
 }
 
 /**
