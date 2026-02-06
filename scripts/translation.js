@@ -1,7 +1,7 @@
 let currentLocale = 'en';
 let translationMap;
 
-const availableLocales = ['en'];
+const availableLocales = ['en', 'es', 'fr'];
 /**
  * Checks whether the input locale is currently supported.
  */
@@ -67,14 +67,39 @@ async function InitializeLocalization() {
 
 /**
  * Look up key in the translation map and return the associated value
+ * 
+ * Supports chaining keys in the map, for better logical grouping of related strings.
+ * Eg "page.element.subelement" to access into a map structured like
+ *     {
+ *         page: {
+ *             element: {
+ *                 subelement: "Translation"
+ *             }
+ *         }
+ *     }
  */
 function GetTranslation(key, fallback) {
-    if (!translationMap) {
-        return (fallback) ?? "Localization Failure";
-    }
-    
-    if (key in translationMap)
-        return translationMap[key];
+    if (!fallback) fallback = "Localization Failure";
 
-    return (fallback) ?? "Localization Failure";
+    if (!translationMap) return fallback;
+    
+    const ret = (key.split('.').reduce((a,b) => {return (a[b] ?? fallback)}, translationMap));
+
+    return (typeof ret === 'string') ? ret : fallback;
 } 
+
+/**
+ * Scan DOM for translatable elements and perform updates to live document
+ */
+function TranslateEverything() {
+    TranslateElement($('body'));
+}
+
+/**
+ * Scan descendants for translatable elements and perform updates to live document
+ */
+function TranslateElement(element) {
+    $(element).find('[data-i18n]').each(function() {
+        $(this).text(GetTranslation($(this).attr('data-i18n'), $(this).text()));
+    });
+}
