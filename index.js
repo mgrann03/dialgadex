@@ -29,7 +29,7 @@ async function Main() {
     window.onpopstate = function() { CheckURLAndAct(); }
 
     // Bind Event Handlers
-    //BindAll();
+    BindAll();
 
     // Load Pokemon Data
     const jsonLoaded = await LoadJSONData();
@@ -45,9 +45,6 @@ async function Main() {
  */
 function BindAll() {
     BindSettings();
-    BindPokeDex();
-    BindRankings();
-    BindMoveData();
     BindMenu();
     BindFooter();
     
@@ -316,9 +313,9 @@ function LoadAboutAndUpdateURL() {
  */
 async function LoadPage(pageName) {
     let pages = [
-        {id: 'pokedex-page', template_path: '/templates/pokedex.html'},
-        {id: 'strongest', template_path: '/templates/rankings.html'},
-        {id: 'move-data', template_path: '/templates/moves.html'},
+        {id: 'pokedex-page', template_path: '/templates/pokedex.html', binder: BindPokeDex},
+        {id: 'strongest', template_path: '/templates/rankings.html', binder: BindRankings},
+        {id: 'move-data', template_path: '/templates/moves.html', binder: BindMoveData},
         {id: 'type-matrix', template_path: '/templates/typechart.html'},
         {id: 'faq', template_path: '/templates/faq.html'},
         {id: 'about', template_path: '/templates/about.html'}
@@ -338,6 +335,7 @@ async function LoadPage(pageName) {
                 templateElement.children().appendTo(pageDiv);
 
                 // Bind
+                if (page.binder) page.binder();
 
                 // Mark as loaded
                 pageDiv.attr('data-loaded',true);
