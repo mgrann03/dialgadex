@@ -32,6 +32,17 @@ function BindRankings() {
         CheckURLAndAct();
     });
 
+    // Refresh list when any options change
+    $("#strongest").on("change", "#filter-settings :checkbox", function() {
+        if ($("#strongest").is(":visible")) {
+            CheckURLAndAct();
+        }
+        else if ($("#counters").is(":visible")) {
+            ResetPokedexCounters();
+            LoadPokedexCounters();
+        }
+    });
+
     BindSearchStringDialog();
 
     SetupScroll();
@@ -225,11 +236,11 @@ function GetMonSearchIssue(parent, pkm_obj, form_issue = false, shadow_issue = f
  * The type can be 'each', 'any' or an actual type.
  */
 async function LoadStrongest(type = "Any") {
-    // Move filters for display
-    MoveFilterPopup("#strongest-filters");
-
     // displays what should be displayed 
     await LoadPage("strongest");
+
+    // Move filters for display
+    MoveFilterPopup("#strongest-filters");
 
     // Only enable suboptimal filters if we're searching a specific type (not "Each")
     if (type == null || type == "Each")

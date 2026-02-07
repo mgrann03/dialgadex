@@ -30,17 +30,6 @@ let settings_newdps = true;
  * Bind event handlers for all settings options
  */
 function BindSettings() {
-    // Refresh list when any options change
-    $("#filter-settings :checkbox").change(function() {
-        if ($("#strongest").is(":visible")) {
-            CheckURLAndAct();
-        }
-        else if ($("#counters").is(":visible")) {
-            ResetPokedexCounters();
-            LoadPokedexCounters();
-        }
-    });
-
     // Dark Mode
     $("#settings-darkmode").change(function() { 
         if ($("#settings-darkmode").is(":checked"))
@@ -523,6 +512,6 @@ function GetSearchParms(type, versus) {
  * Ensures the same filters are shared everywhere, without duplicating all the DOM.
  */
 function MoveFilterPopup(new_parent_id) {
-    // Move filters for display
     $("#filter-settings").appendTo(new_parent_id);
+    $("#filter-settings").css("display", "");
 }

@@ -1073,7 +1073,7 @@ function BindPokeDex() {
     });
 
     // Options for Counters
-    $("#counters :checkbox").change(function() {
+    $("#counters").on("change", ":checkbox", function() {
         if (current_pkm_obj) {
             ResetPokedexCounters();
             LoadPokedexCounters();
