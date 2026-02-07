@@ -14,7 +14,9 @@ let display_numbered = true, show_pct = true, highlight_suboptimal = true;
 function BindRankings() {
     // Moveset count
     $("#chk-suboptimal").change(function() {
-        $("#chk-grouped").prop("disabled", !$("#chk-suboptimal").is(":checked"));
+        const isChecked = $('#chk-suboptimal').is(":checked");
+        $("#chk-grouped").prop("disabled", !isChecked);
+        ShowHideSearchStringIcon(!isChecked);
     });
 
     // Enemy type
@@ -42,6 +44,13 @@ function BindRankings() {
             LoadPokedexCounters();
         }
     });
+
+    // Update types based on selector
+    $("#strongest-links-types").on("type-change", function (event) {
+        LoadStrongestAndUpdateURL(event.detail.type);
+    });
+
+    document.getElementById("strongest-links-types").setHrefs((type) => `/?strongest&t=${type}`);
 
     BindSearchStringDialog();
 
@@ -175,13 +184,7 @@ function BindSearchStringDialog() {
 /**
  *  Enable/Disable Search String dialog button based on current settings
  */ 
-function ShowHideSearchStringIcon() {
-    let visible = true;
-    if ($('#chk-suboptimal').is(":checked"))
-        visible = false;
-    if ($('#each-type-strongest-link').is('.selected'))
-        visible = false;
-
+function ShowHideSearchStringIcon(visible) {
     $('#search-string-icon').css('display', (visible ? '' : 'none'));
 }
 
@@ -247,15 +250,6 @@ async function LoadStrongest(type = "Any") {
         $("#chk-suboptimal").prop("disabled", true);
     else 
         $("#chk-suboptimal").prop("disabled", false);
-
-    // sets selected link
-    $("#strongest-links li").removeClass("selected");
-    if (type == "Any")
-        $("#any-type-strongest-link").addClass("selected");
-    else if (type == "Each")
-        $("#each-type-strongest-link").addClass("selected");
-    else 
-        $("#strongest-links-types li:has(a.bg-"+type+")").addClass("selected");
 
     // Handle logic for "versus"
     const versus_chk = $("#strongest input[value='versus']:checkbox");
@@ -340,7 +334,7 @@ async function LoadStrongest(type = "Any") {
     $("#footnote-versus").css('display', search_params.versus ? 'block' : 'none');
 
     // Update Icon
-    ShowHideSearchStringIcon();
+    ShowHideSearchStringIcon(type != "Each");
 
     // Prevent Link
     return false;

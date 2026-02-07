@@ -1643,7 +1643,7 @@ input.settings-num {
     text-align: center;
 }
 
-.type-links ul {
+.type-links ul, type-selector {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     gap: 0.4em;
@@ -1654,7 +1654,8 @@ input.settings-num {
     padding: 0;
     list-style-type: none;
 }
-#any-type-strongest-link, #each-type-strongest-link, #any-type-move-link {
+#any-type-strongest-link, #each-type-strongest-link, #any-type-move-link,
+type-selector .span2 {
     grid-column: span 2;
     margin-bottom: 0.8em;
     background-color: var(--col-widget);
