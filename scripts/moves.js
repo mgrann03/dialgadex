@@ -187,11 +187,11 @@ function BindMoveData() {
  * Loads the list of the moves of a specific type in pokemon go.
  * The type can be 'any' or an actual type.
  */
-function LoadMoves(type = "Any") {
+async function LoadMoves(type = "Any") {
     cur_sort.move_type = type;
 
     // displays what should be displayed 
-    LoadPage("move-data");
+    await LoadPage("move-data");
     
     // sets selected link
     $("#move-type-links li").removeClass("selected");

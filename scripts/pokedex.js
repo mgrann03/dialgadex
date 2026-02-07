@@ -3,7 +3,7 @@ let atk_dist, def_dist, hp_dist, cp_dist;
 /**
  * Loads a Pokémon page.
  */
-function LoadPokedex(pokedex_mon) {
+async function LoadPokedex(pokedex_mon) {
 
     if (loading_pogo_moves || loading_counters)
         return;
@@ -12,6 +12,9 @@ function LoadPokedex(pokedex_mon) {
         LoadPokedexAndUpdateURL(GetPokeDexMon(1, "Normal", null, null));
         return;
     }
+    
+    // displays what should be displayed
+    await LoadPage("pokedex-page");
 
     // sets the page title
     const pokemon_name = jb_names[pokedex_mon.pokemon_id];
@@ -82,9 +85,6 @@ function LoadPokedex(pokedex_mon) {
 
         $(".container-selected").get(0).scrollIntoView({block: "end", inline: "center"});
     }
-
-    // displays what should be displayed
-    LoadPage("pokedex-page");
 
     LoadPokedexData(pokedex_mon);
 

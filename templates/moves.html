@@ -1,0 +1,96 @@
+<div id=move-type-links class="unselectable type-links">
+    <ul id=move-type-links-bytype>
+        <li>&nbsp;</li>
+        <li>&nbsp;</li>
+        <li id="any-type-move-link"><a class="type-text" href="/?moves" onclick="return LoadMovesAndUpdateURL('Any')">All types</a></li>
+        <li>&nbsp;</li>
+        <li>&nbsp;</li>
+        <li><a class="type-text bg-Normal" href="/?moves&t=Normal" onclick="return LoadMovesAndUpdateURL('Normal')">Normal</a></li>
+        <li><a class="type-text bg-Fire" href="/?moves&t=Fire" onclick="return LoadMovesAndUpdateURL('Fire')">Fire</a></li>
+        <li><a class="type-text bg-Water" href="/?moves&t=Water" onclick="return LoadMovesAndUpdateURL('Water')">Water</a></li>
+        <li><a class="type-text bg-Grass" href="/?moves&t=Grass" onclick="return LoadMovesAndUpdateURL('Grass')">Grass</a></li>
+        <li><a class="type-text bg-Electric" href="/?moves&t=Electric" onclick="return LoadMovesAndUpdateURL('Electric')">Electric</a></li>
+        <li><a class="type-text bg-Ice" href="/?moves&t=Ice" onclick="return LoadMovesAndUpdateURL('Ice')">Ice</a></li>
+        <li><a class="type-text bg-Fighting" href="/?moves&t=Fighting" onclick="return LoadMovesAndUpdateURL('Fighting')">Fighting</a></li>
+        <li><a class="type-text bg-Poison" href="/?moves&t=Poison" onclick="return LoadMovesAndUpdateURL('Poison')">Poison</a></li>
+        <li><a class="type-text bg-Ground" href="/?moves&t=Ground" onclick="return LoadMovesAndUpdateURL('Ground')">Ground</a></li>
+        <li><a class="type-text bg-Flying" href="/?moves&t=Flying" onclick="return LoadMovesAndUpdateURL('Flying')">Flying</a></li>
+        <li><a class="type-text bg-Psychic" href="/?moves&t=Psychic" onclick="return LoadMovesAndUpdateURL('Psychic')">Psychic</a></li>
+        <li><a class="type-text bg-Bug" href="/?moves&t=Bug" onclick="return LoadMovesAndUpdateURL('Bug')">Bug</a></li>
+        <li><a class="type-text bg-Rock" href="/?moves&t=Rock" onclick="return LoadMovesAndUpdateURL('Rock')">Rock</a></li>
+        <li><a class="type-text bg-Ghost" href="/?moves&t=Ghost" onclick="return LoadMovesAndUpdateURL('Ghost')">Ghost</a></li>
+        <li><a class="type-text bg-Dragon" href="/?moves&t=Dragon" onclick="return LoadMovesAndUpdateURL('Dragon')">Dragon</a></li>
+        <li><a class="type-text bg-Dark" href="/?moves&t=Dark" onclick="return LoadMovesAndUpdateURL('Dark')">Dark</a></li>
+        <li><a class="type-text bg-Steel" href="/?moves&t=Steel" onclick="return LoadMovesAndUpdateURL('Steel')">Steel</a></li>
+        <li><a class="type-text bg-Fairy" href="/?moves&t=Fairy" onclick="return LoadMovesAndUpdateURL('Fairy')">Fairy</a></li>
+    </ul>
+</div>
+<div class="card">
+    <div id=move-data-header class="card-header">
+        <div class="card-title">
+            <span id="move-type-title"></span>
+            <input type='checkbox' class='toggling' value='charged' id='chk-move-kind' unchecked>
+            <label class='togglebutton' for='chk-move-kind'>
+                <div class='action'>
+                    <span class='option-1'>Fast</span>
+                    <span class='option-2'>Charged</span>
+                </div>
+            </label>
+            <span> Move Data</span>
+        </div>
+        <div class="drawer absolute-right v-middle" id="move-edit-icon">
+            <img class="drawer-icon" src="imgs/edit.svg" alt="Pencil button to open move data editor" />
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="table-bg move-table" id=move-data-table>
+            <thead>
+                <tr class=table-header>
+                    <th id=move-name><a href="#" class=sortable onclick="MoveSort('name')">Move</a></th>
+                    <th id=move-power><a href="#" class=sortable onclick="MoveSort('power')">
+                        <span class="desktop">Power</span><span class="mobile">PWR</span>
+                    </a></th>
+                    <th id=move-energy><a href="#" class=sortable onclick="MoveSort('energy')">
+                        <span class="desktop">Energy</span><span class="mobile">ENG</span>
+                    </a></th>
+                    <th id=move-duration><a href="#" class=sortable onclick="MoveSort('duration')">
+                        <span class="desktop">Duration</span><span class="mobile">DUR</span>
+                    </a></th>
+                    <th id=move-pps><a href="#" class="tooltip tooltip-top sortable" onclick="MoveSort('pps')">P/S
+                        <span class="tooltiptext">
+                            <div class="tooltip-title">Power per Second (DPS)</div>
+                            <p>How effective a move is at dealing damage</p>
+                        </span>
+                    </a></th>
+                    <th id=move-eps><a href="#" class="tooltip tooltip-top sortable" onclick="MoveSort('eps')">E/S
+                        <span class="tooltiptext">
+                            <div class="tooltip-title">Energy per Second (EPS)</div>
+                            <p>How effective a fast move is at building up charged move energy</p>
+                        </span>
+                    </a></th>
+                    <th id=move-ppe><a href="#" class="tooltip tooltip-top sortable" onclick="MoveSort('ppe')">P/E
+                        <span class="tooltiptext">
+                            <div class="tooltip-title">Power per Energy (DPE)</div>
+                            <p>How efficiently a charged move converts energy into damage</p>
+                        </span>
+                    </a></th>
+                    <th id=move-p2pes><a href="#" class="tooltip tooltip-top sortable" onclick="MoveSort('p2pes')">P<sup class='small-text'>2</sup>/ES
+                        <span class="tooltiptext">
+                            <div class="tooltip-title">P/S * P/E</div>
+                            <p>How well a charged move both uses charged energy <em>and</em> deals damage</p>
+                        </span>
+                    </a></th>
+                    <th id=move-peps2><a href="#" class="tooltip tooltip-top sortable" onclick="MoveSort('peps2')">PE/S<sup class="small-text">2</sup>
+                        <span class="tooltiptext">
+                            <div class="tooltip-title">P/S * E/S</div>
+                            <p>How well a fast move accomplishes both building charged energy <em>and</em> dealing damage on its own</p>
+                        </span>
+                    </a></th>
+                    <th>Top Users</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div class="card-footer">&nbsp;</div>
+</div>
