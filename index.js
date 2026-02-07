@@ -210,8 +210,9 @@ function CheckURLAndAct() {
     // if url has 'moves' param...
     if (params.has("moves")) {
 
-        // preserve move-kind param
-        $("#chk-move-kind").prop("checked", params.get("moves").toLowerCase() == "charged");
+        // parse move kind
+        let kind = "Fast";
+        if (params.get("moves").toLowerCase() == "charged") kind = "Charged";
 
         // if url has 't' param...
         if (params.has("t")) {
@@ -222,9 +223,9 @@ function CheckURLAndAct() {
                 + type.slice(1).toLowerCase();
             
             if (type == "Any")
-                LoadMoves("Any");
+                LoadMoves("Any", kind);
             else if (POKEMON_TYPES.has(type))
-                LoadMoves(type);
+                LoadMoves(type, kind);
 
             return;
         }

@@ -21,7 +21,16 @@ function BindMoveData() {
         
         window.history.pushState({}, "", "?" + urlParams.toString().replace(/=(?=&|$)/gm, ''));
         
+        document.getElementById("move-type-links-bytype").setHrefs((type) => {
+            return`/?moves=` + (this.checked ? "charged" : "fast") + `&t=${type}`
+        });
+
         CheckURLAndAct();
+    });
+
+    // Update types based on selector
+    $("#move-type-links-bytype").on("type-change", function (event) {
+        LoadMovesAndUpdateURL(event.detail.type);
     });
     
     // Move Editor
@@ -187,22 +196,21 @@ function BindMoveData() {
  * Loads the list of the moves of a specific type in pokemon go.
  * The type can be 'any' or an actual type.
  */
-async function LoadMoves(type = "Any") {
+async function LoadMoves(type = "Any", kind) {
     cur_sort.move_type = type;
 
     // displays what should be displayed 
     await LoadPage("move-data");
-    
-    // sets selected link
-    $("#move-type-links li").removeClass("selected");
-    if (type == "Any")
-        $("#any-type-move-link").addClass("selected");
-    else 
-        $("#move-type-links li:has(a.bg-"+type+")").addClass("selected");
 
-    // Handle logic for "versus"
-    const move_kind_chk = $("#chk-move-kind");
-    cur_sort.move_kind = move_kind_chk.prop("checked") ? "Charged" : "Fast";
+    // Handle logic for "kind"
+    if (kind === undefined) 
+        kind = ($("#chk-move-kind").prop("checked") ? "Charged" : "Fast"); // preserve move-kind param
+    $("#chk-move-kind").prop("checked", kind == "Charged");
+    cur_sort.move_kind = kind; 
+
+    document.getElementById("move-type-links-bytype").setHrefs((type) => {
+        return`/?moves=` + kind + `&t=${type}`
+    });
 
     // sets titles
     let title = (cur_sort.move_type == "Any" ? "" : cur_sort.move_type + "-type ") + 

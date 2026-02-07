@@ -51,10 +51,24 @@ class TypeSelector extends HTMLElement {
     connectedCallback() {
         this.#typeNodeMap = new Map();
 
-        this.#newTextNode("\u00A0");
-        this.#newTypeNode("Any", "All types", "span2");
-        this.#newTypeNode("Each", "Each type", "span2");
-        this.#newTextNode("\u00A0");
+        const showAny = !this.hasAttribute("hideAny");
+        const showEach = !this.hasAttribute("hideEach");
+        if (showAny || showEach) { // Check if we need a header line
+            if (showAny && showEach) { // Show both
+                this.#newTextNode("\u00A0");
+                this.#newTypeNode("Any", "All types", "span2");
+                this.#newTypeNode("Each", "Each type", "span2");
+                this.#newTextNode("\u00A0");
+            }
+            else { // Show one
+                this.#newTextNode("\u00A0");
+                this.#newTextNode("\u00A0");
+                if (showAny) this.#newTypeNode("Any", "All types", "span2");
+                if (showEach) this.#newTypeNode("Each", "Each type", "span2");
+                this.#newTextNode("\u00A0");
+                this.#newTextNode("\u00A0");
+            }
+        }
 
         // Build buttons for each type
         for (const type of TypeSelector.#typeList) {
