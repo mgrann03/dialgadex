@@ -1,0 +1,205 @@
+<div id=strongest-links class="unselectable type-links">
+    <ul id="strongest-links-types">
+        <li>&nbsp;</li>
+        <li id="any-type-strongest-link"><a class="type-text" href="/?strongest" onclick="return LoadStrongestAndUpdateURL('Any')">All types</a></li>
+        <li id="each-type-strongest-link"><a class="type-text" href="/?strongest&t=Each" onclick="return LoadStrongestAndUpdateURL('Each')">Each type</a></li>
+        <li>&nbsp;</li>
+        <li><a class="type-text bg-Normal" href="/?strongest&t=Normal" onclick="return LoadStrongestAndUpdateURL('Normal')">Normal</a></li>
+        <li><a class="type-text bg-Fire" href="/?strongest&t=Fire" onclick="return LoadStrongestAndUpdateURL('Fire')">Fire</a></li>
+        <li><a class="type-text bg-Water" href="/?strongest&t=Water" onclick="return LoadStrongestAndUpdateURL('Water')">Water</a></li>
+        <li><a class="type-text bg-Grass" href="/?strongest&t=Grass" onclick="return LoadStrongestAndUpdateURL('Grass')">Grass</a></li>
+        <li><a class="type-text bg-Electric" href="/?strongest&t=Electric" onclick="return LoadStrongestAndUpdateURL('Electric')">Electric</a></li>
+        <li><a class="type-text bg-Ice" href="/?strongest&t=Ice" onclick="return LoadStrongestAndUpdateURL('Ice')">Ice</a></li>
+        <li><a class="type-text bg-Fighting" href="/?strongest&t=Fighting" onclick="return LoadStrongestAndUpdateURL('Fighting')">Fighting</a></li>
+        <li><a class="type-text bg-Poison" href="/?strongest&t=Poison" onclick="return LoadStrongestAndUpdateURL('Poison')">Poison</a></li>
+        <li><a class="type-text bg-Ground" href="/?strongest&t=Ground" onclick="return LoadStrongestAndUpdateURL('Ground')">Ground</a></li>
+        <li><a class="type-text bg-Flying" href="/?strongest&t=Flying" onclick="return LoadStrongestAndUpdateURL('Flying')">Flying</a></li>
+        <li><a class="type-text bg-Psychic" href="/?strongest&t=Psychic" onclick="return LoadStrongestAndUpdateURL('Psychic')">Psychic</a></li>
+        <li><a class="type-text bg-Bug" href="/?strongest&t=Bug" onclick="return LoadStrongestAndUpdateURL('Bug')">Bug</a></li>
+        <li><a class="type-text bg-Rock" href="/?strongest&t=Rock" onclick="return LoadStrongestAndUpdateURL('Rock')">Rock</a></li>
+        <li><a class="type-text bg-Ghost" href="/?strongest&t=Ghost" onclick="return LoadStrongestAndUpdateURL('Ghost')">Ghost</a></li>
+        <li><a class="type-text bg-Dragon" href="/?strongest&t=Dragon" onclick="return LoadStrongestAndUpdateURL('Dragon')">Dragon</a></li>
+        <li><a class="type-text bg-Dark" href="/?strongest&t=Dark" onclick="return LoadStrongestAndUpdateURL('Dark')">Dark</a></li>
+        <li><a class="type-text bg-Steel" href="/?strongest&t=Steel" onclick="return LoadStrongestAndUpdateURL('Steel')">Steel</a></li>
+        <li><a class="type-text bg-Fairy" href="/?strongest&t=Fairy" onclick="return LoadStrongestAndUpdateURL('Fairy')">Fairy</a></li>
+    </ul>
+</div>
+<div class="card">
+    <div id=strongest-header class="card-header">
+        <div class="card-title" style="padding: 0.5rem 3rem">
+            <span class="desktop" data-i18n="strongest.title.long">Strongest </span><span class="mobile">Top </span>
+            <span id="strongest-type-title"></span>
+            <input type='checkbox' class='toggling' value='versus' id='chk-versus' unchecked>
+            <label class='togglebutton' for='chk-versus'>
+                <div class='action'>
+                    <span class='option-1'>Attackers</span>
+                    <span class='option-2'>Counters</span>
+                </div>
+            </label>
+            <span id="strongest-title-suffix"></span>
+        </div>
+        <div class="absolute-right row">
+            <div class="drawer v-middle" id="search-string-icon">
+                <img class="drawer-icon" src="imgs/search-string.svg" alt="Magnifying glass button to open search string generator" />
+            </div> 
+            <div class="drawer v-middle">
+                <img class="drawer-icon" src="imgs/filter.svg" alt="Funnel button to open filter and display options" />
+                <div id=strongest-filters class="drawer-popup">
+                    <div id="filter-settings">
+                        <div class="settings-list">
+                            <div class="settings-subtitle">Species Filters</div>
+                            <span class="tooltip tooltip-left">Unreleased
+                                <span class="tooltiptext">Include Pokémon found in the Game Master but not yet available in game</span>
+                            </span>
+                                <label class="switch">
+                                    <input type=checkbox value=unreleased unchecked>
+                                    <span class="slider"></span>
+                                </label>
+                            <span>Mega/Primal</span>
+                                <label class="switch">
+                                    <input type=checkbox value=mega checked>
+                                    <span class="slider"></span>
+                                </label>
+                            <span>Shadow</span>
+                                <label class="switch">
+                                    <input type=checkbox value=shadow checked>
+                                    <span class="slider"></span>
+                                </label>
+                            <span class="tooltip tooltip-left">Legendary
+                                <span class="tooltiptext">Also includes Mythical Pokémon and Ultrabeasts</span>
+                            </span>
+                                <label class="switch">
+                                    <input type=checkbox value=legendary checked>
+                                    <span class="slider"></span>
+                                </label>
+                        </div>
+                        <div class="settings-list">
+                            <div class="settings-subtitle">Move Filters</div>
+                            <span class="tooltip tooltip-left">Elite Moves*
+                                <span class="tooltiptext"><p>Allow moves with limited availability</p>
+                                    <p>(Requires Special event or Elite TMs)</p></span>
+                            </span>
+                                <label class="switch">
+                                    <input type=checkbox value=elite checked>
+                                    <span class="slider"></span>
+                                </label>
+                            <span class="labeltext tooltip tooltip-left">Mixed Types
+                                <span class="tooltiptext">Allow fast and charged moves with different types</span>
+                            </span>
+                                <label class="switch">
+                                    <input type=checkbox value=mixed id=chk-mixed checked>
+                                    <span class="slider"></span>
+                                </label>
+                            <span class="labeltext tooltip tooltip-left">Off Types
+                                <span class="tooltiptext">Allow movesets where neither the fast nor charged move matches the target type</span>
+                            </span>
+                                <label class="switch">
+                                    <input type=checkbox value=offtype id=chk-offtype>
+                                    <span class="slider"></span>
+                                </label>
+                            <span class="tooltip tooltip-left">Suboptimal Moves
+                                <span class="tooltiptext">Allow multiple movesets per Pokémon</span>
+                            </span>
+                                <label class="switch tooltip tooltip-left">
+                                    <input type=checkbox value=suboptimal id=chk-suboptimal unchecked>
+                                    <span class="slider"></span>
+                                </label>
+                        </div>
+                        <div class="settings-list">
+                            <div class="settings-subtitle">Display Settings</div>
+                            <span class="tooltip tooltip-left" id=settings-group-header>Group Species
+                                <span class="tooltiptext"><div style="display: inline-grid; grid-template-columns: auto auto auto; column-gap: 5px;">
+                                    <span>Checked</span><span>→</span><span>Compare suboptimal movesets to that Pokémon's best moveset</span>
+                                    <span>Unchecked</span><span>→</span><span>Compare all movesets to each other</span></div></span>
+                            </span>
+                                <label class="switch tooltip tooltip-left" id=settings-group>
+                                    <input type=checkbox value=grouped id=chk-grouped disabled>
+                                    <span class="slider" ></span>
+                                </label>
+                            <span class="tooltip tooltip-left" id=settings-compare-header>Baseline
+                                <span class="tooltiptext">Sets the "100%" reference Pokémon</span>
+                            </span>
+                                <div class="col" id=settings-compare>
+                                    <span id=cmp-budget class="settings-opt settings-opt-sel unselectable tooltip">Budget
+                                        <span class="tooltiptext">
+                                            <p>Compare to the top "cheap" Pokémon</p>
+                                            <ul>
+                                                <li>No Megas</li>
+                                                <li>No Shadows</li>
+                                                <li>No Legendaries</li>
+                                                <li>Must be on-type</li>
+                                            </ul>
+                                        </span>
+                                    </span>
+                                    <span id=cmp-espace class="settings-opt unselectable tooltip">ESpace
+                                        <span class="tooltiptext">
+                                            <p>Compare to the top "available-ish" Pokémon</p>
+                                            <ul>
+                                                <li>No Shadow Legendaries</li>
+                                                <li>No Research Mythics</li>
+                                                <li>No Energy Gimmicks (Mega/Fusion/Crowned)</li>
+                                                <li>No Dragon Ascent</li>
+                                                <li>Must be on-type</li>
+                                            </ul>
+                                            <p><i>Defined by <a href="https://reddit.com/u/Elastic_Space">/u/Elastic_Space</a></i></p>
+                                            <p><i>Used in infographics by <a href="https://reddit.com/u/bulbavisual">/u/bulbavisual</a></i></p>
+                                        </span>
+                                    </span>
+                                    <span id=cmp-top class="settings-opt unselectable tooltip">Best
+                                        <span class="tooltiptext">Compare to the absolute best Pokémon</span>
+                                    </span>
+                                </div>
+                            <span class="tooltip tooltip-left" id=settings-tiermethod-header>Tiers
+                                <span class="tooltiptext"><p>Determines how tiers are computed.</p>
+                                    <p>Depends on comparison Pokémon.</p></span>
+                                </span>
+                                <div class="col" id=settings-tiermethod>
+                                    <span id=tier-jenks class="settings-opt settings-opt-sel unselectable tooltip">Jenks
+                                        <span class="tooltiptext">Algorithmic tiers based on minimum variance</span></span>
+                                    <!--<span id=tier-broad class="settings-opt unselectable tooltip">Broad
+                                        <span class="tooltiptext">Broad tiers based on hardcoded breakpoints</span></span>-->
+                                    <span id=tier-espace class="settings-opt unselectable tooltip">ESpace
+                                        <span class="tooltiptext">
+                                            <p>Tiers with hardcoded breakpoints at every 10%</p>
+                                            <p><i>Defined by <a href="https://reddit.com/u/Elastic_Space">/u/Elastic_Space</a></i></p>
+                                        </span></span>
+                                    <span id=tier-abs class="settings-opt unselectable tooltip">Absolute
+                                        <span class="tooltiptext">
+                                            <p>Absolute tiers based on only the displayed rating</p>
+                                            <ul>
+                                                <li>Ignores context (comparison Pokémon, type)</li>
+                                                <li>Tuned to overall "All-type" rankings</li>
+                                                <li>Best for comparing across different types</li>
+                                            </ul></span></span>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+        </div>
+    </div>
+    <div class="card-body" id="strongest-scroller">
+        <table class="table-bg" id=strongest-table>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div class="card-footer">
+        <ul class="footnotes">
+            <li id=footnote-elite>* Elite fast or charged move</li>
+            <li id=footnote-typed-ranking>Typed rankings are calculated using super-effective damage for the chosen type, and neutral damage for all other types.</li>
+            <li id=footnote-versus>"Versus" rankings are calculated using appropriate effectiveness multiplier for attacking damage.
+                <!--<br />Versus rankings also assume incoming damage is of the chosen type, and apply relevant defensive multipliers.-->
+            </li>
+            <li id=footnote-affinity-ranking>Rankings are calculated based on an 
+                <a href="#" class="tooltip tooltip-top" id="type-affinity-link">average of all raid bosses
+                    <div class="tooltiptext" id="type-affinity-tooltip">
+                        <table id="affinity-table">
+                            <thead><tr><th></th><th style='width: 100px'>Boss Weakness</th><th  style='width: 100px'>Boss Damage</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </a>
+                matching the scenario.</li>
+        </ul>
+    </div>
+</div>

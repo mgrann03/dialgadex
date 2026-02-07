@@ -224,12 +224,12 @@ function GetMonSearchIssue(parent, pkm_obj, form_issue = false, shadow_issue = f
  * Loads the list of the strongest pokemon of a specific type in pokemon go.
  * The type can be 'each', 'any' or an actual type.
  */
-function LoadStrongest(type = "Any") {
+async function LoadStrongest(type = "Any") {
     // Move filters for display
     MoveFilterPopup("#strongest-filters");
 
     // displays what should be displayed 
-    LoadPage("strongest");
+    await LoadPage("strongest");
 
     // Only enable suboptimal filters if we're searching a specific type (not "Each")
     if (type == null || type == "Each")
@@ -349,7 +349,7 @@ function LoadStrongestAndUpdateURL(type = "Any", versus = null) {
 
     window.history.pushState({}, "", url);
     
-    return LoadStrongest(type);
+    LoadStrongest(type);
 }
 
 /**

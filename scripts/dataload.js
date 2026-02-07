@@ -107,6 +107,24 @@ async function FetchJSON(URL, fallbackURL, onSuccess, onFallback, onFailure) {
 }
 
 /**
+ * Fetch template from a URL and return as a temporary div (not yet loaded into page)
+ */
+async function FetchTemplate(URL) {
+    try {
+        const response = await fetch(URL);
+        if (!response.ok) throw new Error(`Template load request failed: ${response.status}`);
+
+        const innerHTML = await response.text();
+        const temporaryElement = $('<div>');
+        temporaryElement.html(innerHTML);
+        return temporaryElement
+    } catch (err) {
+        console.error("Critical Error: Template load failed", err.message);
+        throw err;
+    }
+}
+
+/**
  * Automatically builds URL and fallback for pokemon-resources data loads
  */
 async function FetchJSONPokeData(path, onSuccess) {

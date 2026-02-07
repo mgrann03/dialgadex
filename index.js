@@ -29,7 +29,7 @@ async function Main() {
     window.onpopstate = function() { CheckURLAndAct(); }
 
     // Bind Event Handlers
-    BindAll();
+    //BindAll();
 
     // Load Pokemon Data
     const jsonLoaded = await LoadJSONData();
@@ -314,12 +314,40 @@ function LoadAboutAndUpdateURL() {
 /**
  * Shows appropriate part of SPA, hiding all other parts
  */
-function LoadPage(pageName) {
-    let pages = ['pokedex-page', 'strongest', 'move-data', 'type-matrix', 'faq', 'about'];
+async function LoadPage(pageName) {
+    let pages = [
+        {id: 'pokedex-page', template_path: '/templates/pokedex.html'},
+        {id: 'strongest', template_path: '/templates/rankings.html'},
+        {id: 'move-data', template_path: '/templates/moves.html'},
+        {id: 'type-matrix', template_path: '/templates/typechart.html'},
+        {id: 'faq', template_path: '/templates/faq.html'},
+        {id: 'about', template_path: '/templates/about.html'}
+    ];
 
-    pages.forEach(page=>{
-        $("#"+page).css("display", (page==pageName ? "revert" : "none"));
-    });
+    for (const page of pages) {
+        const pageDiv = $("#"+page.id);
+
+        if (page.id == pageName) {
+            if (!pageDiv.attr('data-loaded')) { // Load page if not already loaded
+                // Build a translated copy of template
+                const templateElement = await FetchTemplate(page.template_path);
+                //templateElement.html(templateHTML);
+                TranslateElement(templateElement);
+                
+                // Swap copy in
+                templateElement.children().appendTo(pageDiv);
+
+                // Bind
+
+                // Mark as loaded
+                pageDiv.attr('data-loaded',true);
+            }
+            pageDiv.css("display", "revert");
+        }
+        else {
+            $("#"+page.id).css("display", "none");
+        }
+    };
 
     // If we're loading any page, show the footer
     $("#footer").css("display", (!!pageName ? "revert" : "none"));
