@@ -66,7 +66,7 @@ function ShowHideSearchStringIcon(visible) {
  * Loads the list of the strongest pokemon of a specific type in pokemon go.
  * The type can be 'each', 'any' or an actual type.
  */
-async function LoadStrongest(type = "Any") {
+async function LoadStrongest(type = "Any", versus) {
     // displays what should be displayed 
     await LoadPage("strongest");
 
@@ -81,6 +81,7 @@ async function LoadStrongest(type = "Any") {
 
     // Handle logic for "versus"
     const versus_chk = $("#strongest input[value='versus']:checkbox");
+    versus_chk.prop("checked", versus);
     if (type == "Any" || type == "Each") { // disabled if not a specific type
         versus_chk.prop("checked", false);
         versus_chk.prop("disabled", true);
@@ -88,7 +89,6 @@ async function LoadStrongest(type = "Any") {
     else {
         versus_chk.prop("disabled", false);
     }
-    const versus = versus_chk.is(":checked");
 
     // sets titles
     let title = "Best " + (type == "Any" || type == "Each" || versus ? "" : type + "-type ") + "Attackers";
@@ -174,7 +174,7 @@ async function LoadStrongest(type = "Any") {
  */
 function LoadStrongestAndUpdateURL(type = "Any", versus = null) {
     if (versus !== null)
-        $("#chk-versus").prop("checked", !!versus);
+        versus = !!versus;
 
     let url = "?strongest&t=" + type;
     if ($("#chk-versus").prop("checked")) 
@@ -182,7 +182,7 @@ function LoadStrongestAndUpdateURL(type = "Any", versus = null) {
 
     window.history.pushState({}, "", url);
     
-    LoadStrongest(type);
+    LoadStrongest(type, versus);
 }
 
 /**
