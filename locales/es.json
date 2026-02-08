@@ -4,5 +4,31 @@
             "long": "Mejor",
             "short": "Mejor"
         }
+    },
+
+    "terms": {
+        "types": {
+            "Normal": "Normal",
+            "Fire": "Fuego",
+            "Water": "Agua",
+            "Grass": "Planta",
+            "Electric": "Eléctrico",
+            "Ice": "Hielo",
+            "Fighting": "Lucha",
+            "Poison": "Veneno",
+            "Ground": "Tierra",
+            "Flying": "Volador",
+            "Psychic": "Psíquico",
+            "Bug": "Bicho",
+            "Rock": "Roca",
+            "Ghost": "Fantasma",
+            "Dragon": "Dragón",
+            "Dark": "Siniestro",
+            "Steel": "Acero",
+            "Fairy": "Hada",
+            "Any": "Todos tipos",
+            "Each": "Cada tipo"
+        },
+        "type": "tipo"
     }
 }

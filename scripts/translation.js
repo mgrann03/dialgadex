@@ -58,6 +58,9 @@ async function InitializeLocalization() {
                 console.warn("Unsupported language or translation map unable to load. Falling back to English.")
                 currentLocale = 'en';
             });
+        
+        if (newLocale != 'en')
+            TranslateEverything();
     }
     catch (err) {
         console.error("No translation context found");
