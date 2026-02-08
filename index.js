@@ -106,6 +106,49 @@ function BindFooter() {
 }
 
 /**
+ * Populates type chart, building headers and effectiveness matrix
+ */
+function BuildTypeChart() {
+    // Build headers
+    for (const def_type of POKEMON_TYPES) {
+        const th_defending = $(`<th class="vertical"><a class="type-text bg-${def_type}" href="/?strongest&t=${def_type}&v">${def_type}</a></th>`);
+        th_defending.on("click", function(e) {
+            e.preventDefault();
+            LoadStrongestAndUpdateURL(def_type, true);
+        })
+        $("#type-matrix-topaxis").append(th_defending);
+    }
+
+    // Build rows
+    for (const att_type of POKEMON_TYPES) {
+        // Header (attacking type axis)
+        const tr_attacking = $("<tr></tr>");
+        const td_header = $("<td></td>");
+        td_header.append(GetTypeLink(att_type, false));
+        tr_attacking.append(td_header);
+
+        const att_effects = POKEMON_TYPES_EFFECT.get(att_type);
+
+        // Matrix
+        for (const def_type of POKEMON_TYPES) {
+            if (att_effects[0].includes(def_type)) { // immunity
+                tr_attacking.append(`<td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td>`);
+            }
+            else if (att_effects[1].includes(def_type)) { // resistance
+                tr_attacking.append(`<td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td>`);
+            }
+            else if (att_effects[2].includes(def_type)) { // supereffective
+                tr_attacking.append(`<td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td>`);
+            }
+            else {
+                tr_attacking.append("<td></td>");
+            }
+        }
+        $("#type-matrix-body").append(tr_attacking);
+    }
+}
+
+/**
  * Hides and de-focuses the menu when navigating
  */
 function CloseMenu() {
@@ -318,7 +361,7 @@ async function LoadPage(pageName) {
         {id: 'pokedex-page', template_path: '/templates/pokedex.html', binder: BindPokeDex},
         {id: 'strongest', template_path: '/templates/rankings.html', binder: BindRankings},
         {id: 'move-data', template_path: '/templates/moves.html', binder: BindMoveData},
-        {id: 'type-matrix', template_path: '/templates/typechart.html'},
+        {id: 'type-matrix', template_path: '/templates/typechart.html', binder: BuildTypeChart},
         {id: 'faq', template_path: '/templates/faq.html'},
         {id: 'about', template_path: '/templates/about.html'}
     ];
