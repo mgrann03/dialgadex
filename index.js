@@ -47,6 +47,7 @@ function BindAll() {
     BindSettings();
     BindMenu();
     BindFooter();
+    BindDialogs();
     
     // Passthrough clicks for touchscreens
     $(document).click(function(event) { OnDocumentClick(event); });

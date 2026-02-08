@@ -1079,30 +1079,6 @@ function BindPokeDex() {
             LoadPokedexCounters();
         }
     });
-
-    // Moveset Editor
-    $("#moveset-edit-icon").click(function() {
-        $("#overlay").addClass("active");
-
-        UpdateMovesetEditor();
-        $("#moveset-edit").get(0).show();
-    });
-    $("#move-reset").click(function() {
-        delete current_pkm_obj.fm_add;
-        delete current_pkm_obj.cm_add;
-        delete current_pkm_obj.fm_rem;
-        delete current_pkm_obj.cm_rem;
-        UpdateMovesetEditor();
-    });
-    $("#moveset-edit").on("close", function(e) {
-        if (e.target === e.currentTarget) {// only apply to this, not children
-            ClearTypeTiers();
-            ClearMoveUserMap();
-            UpdatePokemonStatsAndURL();
-            
-            $("#overlay").removeClass("active");
-        }
-    });
 }
 
 /**
