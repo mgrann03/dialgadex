@@ -266,12 +266,12 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal") {
     pokemon_container_div.append(img_container_div);
 
     // pokemon name p
-    const pokemon_name_p= $("<a href='/?p=" + pokemon_id + "&f=" + form 
-            + "' class='pokemon-name pokefont unselectable'"
-            + "onclick='return LoadPokedexAndUpdateURL(GetPokeDexMon(" + pokemon_id + ",\"" + form + "\"))'>"
-            + "#" + pokemon_id + " "
-            + pokemon_name
-            + "</a>");
+    const pokemon_name_p= $(`<a href='/?p=${pokemon_id}&f=${form}' class='pokemon-name pokefont unselectable'">#${pokemon_id} ${pokemon_name}</a>`);
+    pokemon_name_p.on("click", function(e) {
+        e.preventDefault();
+        LoadPokedexAndUpdateURL(GetPokeDexMon(pokemon_id, form));
+    });
+
     if (is_selected && poke_obj && form != "Mega" && form != "MegaY" && form != "MegaZ") {
         const shadow_icon = $("<img src='imgs/flame.svg' class='shadow-icon filter-" + (can_be_shadow ? 'shadow' : 'noshadow') + 
             "' alt='" + (can_be_shadow ? 'Purple flame representing the shadow form is released' : 'Dark purple flame representing the shadow form is not yet released') + "'></img>");
@@ -292,13 +292,7 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal") {
     const types = poke_obj !== undefined ? poke_obj.types : [];
     const pokemon_types_div = $("<div class=pokemon-types></div>");
     for (type of types) {
-        pokemon_types_div.append($("<a href='/?strongest&t=" + type 
-                + "' onclick='return LoadStrongestAndUpdateURL(\"" + type
-                + "\", false)'>"
-                + "<img src=imgs/types/"
-                + type.toLowerCase() + ".gif" 
-                + " alt='" + type + 
-                "'></img></a>"));
+        pokemon_types_div.append(GetTypeLinkImg(type));
     }
     pokemon_container_div.append(pokemon_types_div);
 

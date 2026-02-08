@@ -350,6 +350,32 @@ function DeleteMove(move_name) {
     made_edits = true;
 }
 
+
+/**
+ * Builds a formatted span element to open the move editor
+ */
+function GetMoveLink(move_name, move_type, is_elite) {
+    if (move_type === undefined) {
+        let move_obj = jb_fm.find(e=>e.name==move_name);
+        if (!move_obj) move_obj = jb_cm.find(e=>e.name==move_name);
+        move_type = move_obj.type;
+    }
+    if (move_type == "None") 
+        move_type = "any-type"; // Hidden Power
+
+    const span = $("<span class='type-text'></a>");
+    span.addClass("bg-" + move_type);
+    span.text(move_name + (is_elite ? "*" : ""));
+    span.on("click", function (e) {
+        e.preventDefault();
+        OpenMoveEditor(move_name);
+    });
+
+    return span;
+}
+
+
+
 /**
  * Creates and displays a dropdown field to easily choose a move.
  * 

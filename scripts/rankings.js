@@ -721,11 +721,13 @@ function GetRankingRow(row_i) {
                 ? (((display_grouped) 
                     ? p.grouped_rat : row_i) + 1) : "")
             +"</td>";
-        const td_name = $("<td class='td-poke-name'>"
-            + "<a class='a-poke-name' href='/?p=" + p.id + "&f=" + p.form 
-            + "' onclick='return LoadPokedexAndUpdateURL(GetPokeDexMon(" + p.id
-                + ",\"" + p.form + "\"))'>"
-            + "<span class=pokemon-icon style='background-image:url("
+        const td_name = $("<td class='td-poke-name'></td>")
+        const a_name = $(`<a class='a-poke-name' href='/?p=${p.id}&f=${p.form}'</a>`);
+        a_name.on("click", function(e) {
+            e.preventDefault();
+            LoadPokedexAndUpdateURL(GetPokeDexMon(p.id, p.form));
+        });
+        a_name.html("<span class=pokemon-icon style='background-image:url("
             + ICONS_URL + ");background-position:" + coords.x + "px "
             + coords.y + "px'></span>"
             + " <span class='strongest-name'>"
@@ -736,17 +738,13 @@ function GetRankingRow(row_i) {
             +"</span>"
             + ((form_text.length > 0)
                 ? "<span class=poke-form-name> (" + form_text + ")</span>" 
-                : "")
-            + "</a></td>");
-        const td_fm =
-            "<td><span class='type-text bg-"
-            + ((p.fm == "Hidden Power") ? "any-type" : p.fm_type) + "' "
-            + "onclick=\"OpenMoveEditor('" + p.fm + "')\">"
-            + p.fm + ((p.fm_is_elite) ? "*" : "") + "</span></td>";
-        const td_cm =
-            "<td><span class='type-text bg-" + p.cm_type + "' "
-            + "onclick=\"OpenMoveEditor('" + p.cm + "')\">"
-            + p.cm + ((p.cm_is_elite) ? "*" : "") + "</span></td>";
+                : ""));
+        td_name.append(a_name);
+
+        const td_fm = $("<td></td>");
+        td_fm.append(GetMoveLink(p.fm, p.fm_type, p.fm_is_elite));
+        const td_cm = $("<td></td>");
+        td_cm.append(GetMoveLink(p.cm, p.cm_type, p.cm_is_elite));
         const td_rat = "<td>" + settings_metric + " <b>"
             + p.rat.toFixed(2) + "</b></td>";
         const td_pct = ((show_pct && p.pct) ? "<td>" + GetBarHTML(p.pct, p.pct.toFixed(1) + "%", 100, best_pct, ((Math.abs(p.pct - 100) < 0.000001) ? "contrast" : "")) + "</td>" : "");
@@ -910,4 +908,32 @@ function throttle(func, timeFrame) {
             lastTime = now;
         }
     };
+}
+
+/**
+ * Builds a formatted anchor element to link back to a type ranking list
+ */
+function GetTypeLink(type, versus) {
+    const anchor = $(`<a class='type-text bg-${type}' href='/?strongest&t=${type}${(versus ? "&v" : "")}'>${type}</a>`);
+    anchor.on("click", function (e) {
+        e.preventDefault();
+        LoadStrongestAndUpdateURL(type, versus);
+    });
+
+    return anchor;
+}
+
+/**
+ * Builds a formatted anchor element to link back to a type ranking list
+ */
+function GetTypeLinkImg(type, versus) {
+    const anchor = $(`<a href='/?strongest&t=${type}${(versus ? "&v" : "")}'></a>`);
+    anchor.on("click", function (e) {
+        e.preventDefault();
+        LoadStrongestAndUpdateURL(type, versus);
+    });
+    const img = $(`<img src='/imgs/types/${type.toLowerCase()}.gif' alt=${type}></img>`);
+    anchor.append(img);
+
+    return anchor;
 }

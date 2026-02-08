@@ -268,12 +268,13 @@ function SetMoveTable(sort_info) {
         const tr = $("<tr></tr>");
         tr.addClass((i%2 ? "odd" : "even"));
         
-        const td_move_name ="<td" + (sort_info.sort_by=="name" ? " class='selected'" : "") + ">" + 
-                "<span class='type-text bg-" +
-                ((md.name == "Hidden Power") ? "any-type" : md.type) + "'" +
-                " onclick=\"OpenMoveEditor('" + md.name + "')\">" +
-                md.name +
-            "</span></td>";
+        const td_move_name = $("<td></td>");
+        if (sort_info.sort_by == "name")
+            td_move_name.addClass("selected");
+        const span_move_name = $(`<span class='type-text'>${md.name}</span>`);
+        span_move_name.addClass("bg-" + ((md.name == "Hidden Power") ? "any-type" : md.type));
+        span_move_name.on("click", function() { OpenMoveEditor(md.name) });
+        td_move_name.append(span_move_name);
 
         const td_power = MoveDataTD(FormatDecimal(md.power,3,0), 
             sort_info.sort_by=="power");
@@ -321,12 +322,17 @@ function SetMoveTable(sort_info) {
             //users.sort((a,b)=>b.stats.baseAttack-a.stats.baseAttack);
             for (let i=Math.min(users.length,MAX_USERS)-1; i>=0; i--) {
                 const coords = GetPokemonIconCoords(users[i].id, users[i].form);
-                td_users.append("<a class=pokemon-icon href='/?p=" + users[i].id + "&f=" + users[i].form
-                        + "' onclick='return LoadPokedexAndUpdateURL(GetPokeDexMon(" + users[i].id
-                            + ",\"" + users[i].form + "\"))' " 
-                        + "style='background-image:url("
-                            + ICONS_URL + ");background-position:" + coords.x + "px "
-                            + coords.y + "px'></a>");
+
+                const mon_link = $("<a class='pokemon-icon'></a>");
+                mon_link.attr("href", "/?p=" + users[i].id + "&f=" + users[i].form);
+                mon_link.css("background-image", `url(${ICONS_URL})`);
+                mon_link.css("background-position", coords.x + "px " + coords.y + "px");
+                mon_link.on("click", function(e) {
+                    e.preventDefault();
+                    LoadPokedexAndUpdateURL(GetPokeDexMon(users[i].id, users[i].form));
+                });
+
+                td_users.append(mon_link);
             }
         }
         tr.append(td_users);

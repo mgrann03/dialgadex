@@ -312,51 +312,20 @@ function LoadPokedexEffectiveness(pkm_obj) {
 
     //$("#effectiveness-title").html("Type effectiveness against <b>" + pkm_obj.name + "</b>");
 
-    let effectiveness_0244_html = "";
-    for (let type of effectiveness_0244) {
-        effectiveness_0244_html += "<a class='type-text bg-" + type
-                + "' href='/?strongest&t=" + type
-                + "' onclick='return LoadStrongestAndUpdateURL(\"" + type
-                + "\", false)'>" + type + "</a> ";
-    }
-    $("#effectiveness-0244").html(effectiveness_0244_html);
-        
+    const all_effectivenesses = {
+        "0244": effectiveness_0244,
+        "0391": effectiveness_0391,
+        "0625": effectiveness_0625,
+        "160": effectiveness_160,
+        "256": effectiveness_256
+    };
 
-    let effectiveness_0391_html = "";
-    for (let type of effectiveness_0391) {
-        effectiveness_0391_html += "<a class='type-text bg-" + type
-                + "' href='/?strongest&t=" + type
-                + "' onclick='return LoadStrongestAndUpdateURL(\"" + type
-                + "\", false)'>" + type + "</a> ";
+    for (const [key, arr] of Object.entries(all_effectivenesses)) {
+        $("#effectiveness-"+key).empty();
+        for (const type of arr) {
+            $("#effectiveness-"+key).append(GetTypeLink(type, false));
+        }
     }
-    $("#effectiveness-0391").html(effectiveness_0391_html);
-
-    let effectiveness_0625_html = "";
-    for (let type of effectiveness_0625) {
-        effectiveness_0625_html += "<a class='type-text bg-" + type
-                + "' href='/?strongest&t=" + type
-                + "' onclick='return LoadStrongestAndUpdateURL(\"" + type
-                + "\", false)'>" + type + "</a> ";
-    }
-    $("#effectiveness-0625").html(effectiveness_0625_html);
-
-    let effectiveness_160_html = "";
-    for (let type of effectiveness_160) {
-        effectiveness_160_html += "<a class='type-text bg-" + type
-                + "' href='/?strongest&t=" + type
-                + "' onclick='return LoadStrongestAndUpdateURL(\"" + type
-                + "\", false)'>" + type + "</a> ";
-    }
-    $("#effectiveness-160").html(effectiveness_160_html);
-
-    let effectiveness_256_html = "";
-    for (let type of effectiveness_256) {
-        effectiveness_256_html += "<a class='type-text bg-" + type
-                + "' href='/?strongest&t=" + type
-                + "' onclick='return LoadStrongestAndUpdateURL(\"" + type
-                + "\", false)'>" + type + "</a> ";
-    }
-    $("#effectiveness-256").html(effectiveness_256_html);
 }
 
 
@@ -748,15 +717,10 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
 
             // creates one row
             const tr = $("<tr></tr>");
-            const td_fm = $("<td><span class='type-text bg-"
-                + ((fm == "Hidden Power") ? "any-type" : fm_type)
-                + "' onclick=\"OpenMoveEditor('" + fm + "')\">"
-                + fm + ((fm_is_elite) ? "*" : "")
-                + "</span></td>");
-            const td_cm = $("<td><span class='type-text bg-" + cm_type
-                + "' onclick=\"OpenMoveEditor('" + cm + "')\">"
-                + cm + ((cm_is_elite) ? "*" : "")
-                + "</span></td>");
+            const td_fm = $("<td></td>");
+            td_fm.append(GetMoveLink(fm, fm_type, fm_is_elite));
+            const td_cm = $("<td></td>");
+            td_cm.append(GetMoveLink(cm, cm_type, cm_is_elite));
             const td_dps = $("<td>" + dps.toFixed(3) + "</td>");
             const td_dps_sh = $("<td>"
                 + ((can_be_shadow) ? dps_sh.toFixed(3) : "-")
@@ -858,9 +822,9 @@ function BuildTypeTiers(attackTiers) {
             const attackTier = attackTiers[type];
 
             if (attackTier.pure != "F")
-                $("#dex-tier-"+(attackTier.pure == "MRay" ? "S" : attackTier.pure[0])).append(BuildTypeTierLabel(type));
+                $("#dex-tier-"+(attackTier.pure == "MRay" ? "S" : attackTier.pure[0])).append(GetTypeLink(type));
             if (attackTier.shadow && attackTier.shadow != "F") {
-                $("#dex-tier-"+(attackTier.shadow == "MRay" ? "S" : attackTier.shadow[0])+"-shadow").append(BuildTypeTierLabel(type));
+                $("#dex-tier-"+(attackTier.shadow == "MRay" ? "S" : attackTier.shadow[0])+"-shadow").append(GetTypeLink(type));
                 $("#attack-tier-shadow-header").css("display", "");
                 $("#attack-tier-results-shadow").css("display", "");
                 $("#attack-tier-results").css("flex-basis", "50%");
@@ -871,15 +835,6 @@ function BuildTypeTiers(attackTiers) {
     else {
         $("#attack-tiers").css("display", "none");
     }
-}
-
-/**
- * Builds the tier icon for a type-tier
- */
-function BuildTypeTierLabel(type) {
-    return $(`<a class='type-text bg-${type}' 
-        href='/?strongest&t=${type}'
-        onclick='return LoadStrongestAndUpdateURL("${type}", false)'>${type}</a>`);
 }
 
 /**
