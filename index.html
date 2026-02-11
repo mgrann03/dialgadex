@@ -216,19 +216,19 @@
 <dialog class="card" id="move-edit" style="white-space: nowrap;">
 <form autocomplete=off>
     <div class="card-header">
-        <div class="card-title" id="move-edit-title">Edit Move Data</div>
+        <div class="card-title" id="move-edit-title" data-i18n="moves.editor.edit.title">Edit Move Data</div>
         <div class="drawer absolute-right v-middle dialog-close">
             <img class="drawer-icon" src="imgs/close.svg" alt="X Button to close the dialog" />
         </div>
     </div>
     <div class="card-body">
         <div class="move-form">
-            <label for="any-search-box">Name:</label>
+            <label for="any-search-box"><span data-i18n="terms.name">Name</span>:</label>
                 <div style="position: relative;">
                     <input type=text class=search-box name="name" id="any-search-box" aria-label="Move Name">
                     <img class="inlaid-icon search-icon" src="imgs/search.svg" alt="" />
                 </div>
-            <label for="move-edit-type">Type:</label>
+            <label for="move-edit-type"><span data-i18n="terms.type">Type</span>:</label>
                 <div class="row" style="gap: 1em; white-space-collapse: collapse;">
                     <select type="select" class="type-text bg-Normal" name="type" id="move-edit-type">
                         <option value="Normal" class="bg-Normal" data-i18n="terms.types.Normal">Normal</option>
@@ -253,18 +253,18 @@
                     <input type="checkbox" class="toggling" value="fast" name="kind" id="move-edit-kind">
                     <label class="togglebutton" for="move-edit-kind" tabindex="0">
                         <div class="action">
-                            <span class="option-1">Fast</span>
-                            <span class="option-2">Charged</span>
+                            <span class="option-1" data-i18n="terms.fast">Fast</span>
+                            <span class="option-2" data-i18n="terms.charged">Charged</span>
                         </div>
                     </label>
                 </div>
-            <label for="move-edit-power">Power:</label>
+            <label for="move-edit-power"><span data-i18n="terms.power">Power</span>:</label>
                 <div class="num-input-group">
                     <input type="button" data-id="move-edit-power" class="minus" value="–" />
                     <input type=number name="power" id="move-edit-power" min=0 max=50 step=1 >
                     <input type="button" data-id="move-edit-power" class="plus" value="+" />
                 </div>
-            <label for="move-edit-energy">Energy:</label>
+            <label for="move-edit-energy"><span data-i18n="terms.energy">Energy</span>:</label>
                 <div>
                     <div class="bar-bg unselectable" id="move-edit-energybar"></div>
                     <div class="num-input-group" id="move-edit-energygroup">
@@ -273,7 +273,7 @@
                         <input type="button" data-id="move-edit-energy" class="plus" value="+" />
                     </div>
                 </div>
-            <label for="move-edit-duration">Duration:</label>
+            <label for="move-edit-duration"><span data-i18n="terms.duration">Duration</span>:</label>
                 <div class="num-input-group">
                     <input type="button" data-id="move-edit-duration" class="minus" value="–" />
                     <input type=number name="duration" id="move-edit-duration" min=0.5 max=5 step=0.5 >
@@ -282,9 +282,9 @@
         </div>
     </div>
     <div class="card-footer buttons">
-        <input type="button" value="Clear" id="move-edit-clear">
+        <input type="button" value="Clear" id="move-edit-clear" data-i18n="moves.editor.clear">
         <input type="button" value="Apply" id="move-edit-apply" style="background-color: var(--col-widget);" autofocus>
-        <input type="button" value="Delete" id="move-edit-delete" style="background-color: var(--col-red);" hidden>
+        <input type="button" value="Delete" id="move-edit-delete" data-i18n="moves.editor.delete.action" style="background-color: var(--col-red);" hidden>
     </div>
 </form>
 </dialog>

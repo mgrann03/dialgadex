@@ -6,6 +6,26 @@
         }
     },
 
+    "moves": {
+        "editor": {
+            "edit": {
+                "title": "Editar Datos del Ataque",
+                "action": "Editar",
+                "confirm": "¡Editado!"
+            },
+            "add": {
+                "title": "Agregar Nuevo Ataque",
+                "action": "Agregar",
+                "confirm": "¡Agregado!"
+            },
+            "delete": {
+                "action": "Eliminar",
+                "confirm": "¡Eliminado!"
+            },
+            "clear": "Limpiar"
+        }
+    },
+
     "terms": {
         "types": {
             "Normal": "Normal",
@@ -14,12 +34,12 @@
             "Grass": "Planta",
             "Electric": "Eléctrico",
             "Ice": "Hielo",
-            "Fighting": "Lucha",
+            "Fighting": "Pelea",
             "Poison": "Veneno",
             "Ground": "Tierra",
             "Flying": "Volador",
             "Psychic": "Psíquico",
-            "Bug": "Bicho",
+            "Bug": "Insecto",
             "Rock": "Roca",
             "Ghost": "Fantasma",
             "Dragon": "Dragón",
@@ -29,6 +49,13 @@
             "Any": "Todos tipos",
             "Each": "Cada tipo"
         },
-        "type": "tipo"
+        "type": "Tipo",
+        "name": "Nombre",
+        "power": "Potencia",
+        "energy": "Energía",
+        "duration": "Tiempo",
+        "fast": "Rápido",
+        "charged": "Cargado",
+        "move": "Ataque"
     }
 }

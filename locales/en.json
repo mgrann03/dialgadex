@@ -6,26 +6,56 @@
         }
     },
 
-    "types": {
-        "Normal": "Normal",
-        "Fire": "Fire",
-        "Water": "Water",
-        "Grass": "Grass",
-        "Electric": "Electric",
-        "Ice": "Ice",
-        "Fighting": "Fighting",
-        "Poison": "Poison",
-        "Ground": "Ground",
-        "Flying": "Flying",
-        "Psychic": "Psychic",
-        "Bug": "Bug",
-        "Rock": "Rock",
-        "Ghost": "Ghost",
-        "Dragon": "Dragon",
-        "Dark": "Dark",
-        "Steel": "Steel",
-        "Fairy": "Fairy",
-        "Any": "All types",
-        "Each": "Each type"
+    "moves": {
+        "editor": {
+            "edit": {
+                "title": "Edit Move Data",
+                "action": "Edit",
+                "confirm": "Edited!"
+            },
+            "add": {
+                "title": "Add New Move",
+                "action": "Add",
+                "confirm": "Added!"
+            },
+            "delete": {
+                "action": "Delete",
+                "confirm": "Deleted!"
+            },
+            "clear": "Clear"
+        }
+    },
+
+    "terms": {
+        "types": {
+            "Normal": "Normal",
+            "Fire": "Fire",
+            "Water": "Water",
+            "Grass": "Grass",
+            "Electric": "Electric",
+            "Ice": "Ice",
+            "Fighting": "Fighting",
+            "Poison": "Poison",
+            "Ground": "Ground",
+            "Flying": "Flying",
+            "Psychic": "Psychic",
+            "Bug": "Bug",
+            "Rock": "Rock",
+            "Ghost": "Ghost",
+            "Dragon": "Dragon",
+            "Dark": "Dark",
+            "Steel": "Steel",
+            "Fairy": "Fairy",
+            "Any": "All types",
+            "Each": "Each type"
+        },
+        "type": "Type",
+        "name": "Name",
+        "power": "Power",
+        "energy": "Energy",
+        "duration": "Duration",
+        "fast": "Fast",
+        "charged": "Charged",
+        "move": "Move"
     }
 }

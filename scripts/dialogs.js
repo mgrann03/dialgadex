@@ -13,7 +13,7 @@ function BindDialogs() {
  * Binds behavior of move editor popup
  */
 function BindMoveEditor() {
-    $("#move-edit-icon").click(function() {
+    $(document).on("click", "#move-edit-icon", function() {
         OpenMoveEditor();
     });
     $("#move-edit").on("close", function(e) {
@@ -115,13 +115,23 @@ function BindMoveEditor() {
         if (ValidateMove()) {
             AddEditMove();
             
-            $("#move-edit-apply").attr("value", $("#move-edit-apply").attr("value") + "ed!");
-            setTimeout(()=>{ UpdateMoveEditor() }, 1000);
+            $("#move-edit-apply").attr("value", GetTranslation("moves.editor."+editor_action+".confirm"));
+            $("#move-edit-apply").prop("disabled", true);
+            setTimeout(()=>{ 
+                UpdateMoveEditor();
+                $("#move-edit-apply").prop("disabled", false);
+            }, 1000);
         }
     });
     $("#move-edit-delete").click(function() {
         DeleteMove($("#any-search-box").val());
-        UpdateMoveEditor();
+
+        $("#move-edit-delete").attr("value", GetTranslation("moves.editor.delete.confirm"));
+        $("#move-edit-delete").prop("disabled", true);
+        setTimeout(()=>{ 
+            UpdateMoveEditor();
+            $("#move-edit-delete").prop("disabled", false);
+         }, 1000);
     });
 
     let repeat_chain = 0, repeat_interval = 600;
@@ -172,6 +182,7 @@ function BindMoveEditor() {
 }
 
 let made_edits = false;
+let editor_action = "";
 /**
  * Opens the dialog to the specified move (including showing the dialog)
  */
@@ -211,7 +222,8 @@ function UpdateMoveEditor(move_name, clear_fields = true) {
 
     // Editing existing move
     if (move_obj) {
-        $("#move-edit-title").text("Edit Move Data");
+        editor_action = "edit";
+        $("#move-edit-title").text(GetTranslation("moves.editor.edit.title"));
         
         $("#any-search-box").val(move_obj.name);
         $("#move-edit-type").val(move_obj.type);
@@ -224,14 +236,15 @@ function UpdateMoveEditor(move_name, clear_fields = true) {
         $("#move-edit-kind").prop("checked", move_kind == "cm");
         $("#move-edit-kind").trigger("change");
 
-        $("#move-edit-apply").val("Edit");
+        $("#move-edit-apply").val(GetTranslation("moves.editor.edit.action"));
         if (move_obj.custom)
             $("#move-edit-delete").removeAttr("hidden");
         else 
             $("#move-edit-delete").attr("hidden", true)
     }
     else {
-        $("#move-edit-title").text("Add New Move");
+        editor_action = "add";
+        $("#move-edit-title").text(GetTranslation("moves.editor.add.title"));
         
         if (clear_fields) {
             $("#any-search-box").val("");
@@ -245,7 +258,7 @@ function UpdateMoveEditor(move_name, clear_fields = true) {
             $("#move-edit-kind").trigger("change");
         }
         
-        $("#move-edit-apply").val("Add");
+        $("#move-edit-apply").val(GetTranslation("moves.editor.add.action"));
         $("#move-edit-delete").attr("hidden", true)
     }
     

@@ -103,6 +103,18 @@ function TranslateEverything() {
  */
 function TranslateElement(element) {
     $(element).find('[data-i18n]').each(function() {
-        $(this).text(GetTranslation($(this).attr('data-i18n'), $(this).text()));
+        const tagName = $(this).prop("tagName");
+        switch (tagName) {
+            case "IMG":
+                // TODO: Also translate to a localized image?
+                $(this).prop("alt", GetTranslation($(this).attr('data-i18n'), $(this).prop("alt")));
+                break;
+            case "INPUT":
+                // TODO: Also translate to a localized image?
+                $(this).val(GetTranslation($(this).attr('data-i18n'), $(this).val()));
+                break;
+            default:
+                $(this).text(GetTranslation($(this).attr('data-i18n'), $(this).text()));
+        }
     });
 }
