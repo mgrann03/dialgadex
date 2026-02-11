@@ -6,6 +6,27 @@
         }
     },
 
+    "moves": {
+        "move-data": "Move Data",
+        "top-users": "Top Users",
+
+        "pps": "Power per Second (DPS)",
+        "pps-short": "P/S",
+        "pps-tooltip": "How effective a move is at dealing damage",
+        "eps": "Energy per Second (EPS)",
+        "eps-short": "E/S",
+        "eps-tooltip": "How effective a fast move is at building up charged move energy",
+        "ppe": "Power per Energy (DPE)",
+        "ppe-short": "P/E",
+        "ppe-tooltip": "How efficiently a charged move converts energy into damage",
+        "p2pes": "P/S * P/E",
+        "p2pes-short": "§P^2^/ES",
+        "p2pes-tooltip": "§How well a charged move both uses charged energy *and* deals damage",
+        "peps2": "P/S * E/S",
+        "peps2-short": "§PE/S^2^",
+        "peps2-tooltip": "§How well a fast move accomplishes both building charged energy *and* dealing damage on its own"
+    },
+
     "move-editor": {
         "edit": {
             "title": "Edit Move Data",
@@ -53,10 +74,15 @@
             "Each": "Each type"
         },
         "type": "Type",
+
         "name": "Name",
         "power": "Power",
+        "power-short": "PWR",
         "energy": "Energy",
+        "energy-short": "ENG",
         "duration": "Duration",
+        "duration-short": "DUR",
+
         "fast": "Fast",
         "charged": "Charged",
         "move": "Move",

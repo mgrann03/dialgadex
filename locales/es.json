@@ -5,6 +5,27 @@
             "short": "Mejor"
         }
     },
+    
+    "moves": {
+        "move-data": "Datos del Ataques",
+        "top-users": "Los Mejores",
+
+        "pps": "Potencia por Segundo (DPS)",
+        "pps-short": "P/S",
+        "pps-tooltip": "",
+        "eps": "Energía por Segundo (EPS)",
+        "eps-short": "E/S",
+        "eps-tooltip": "",
+        "ppe": "Potencia por Energía (DPE)",
+        "ppe-short": "P/E",
+        "ppe-tooltip": "",
+        "p2pes": "P/S * P/E",
+        "p2pes-short": "§P^2^/ES",
+        "p2pes-tooltip": "",
+        "peps2": "P/S * E/S",
+        "peps2-short": "§PE/S^2^",
+        "peps2-tooltip": ""
+    },
 
     "move-editor": {
         "edit": {
@@ -24,7 +45,7 @@
         "clear": "Limpiar"
     },
     "moveset-editor": {
-        "title": "Editar del Ataques",
+        "title": "Editar de Ataques",
         "reset": "Reiniciar",
         "apply": "Aplicar"
     },
@@ -53,10 +74,15 @@
             "Each": "Cada tipo"
         },
         "type": "Tipo",
+
         "name": "Nombre",
         "power": "Potencia",
+        "power-short": "POT",
         "energy": "Energía",
+        "energy-short": "ENG",
         "duration": "Tiempo",
+        "duration-short": "TMP",
+
         "fast": "Rápido",
         "charged": "Cargado",
         "move": "Ataque",

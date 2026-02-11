@@ -3,16 +3,16 @@
 </div>
 <div class="card">
     <div id=move-data-header class="card-header">
-        <div class="card-title">
+        <div class="card-title" id="move-data-title">
             <span id="move-type-title"></span>
             <input type='checkbox' class='toggling' value='charged' id='chk-move-kind' unchecked>
             <label class='togglebutton' for='chk-move-kind'>
                 <div class='action'>
-                    <span class='option-1'>Fast</span>
-                    <span class='option-2'>Charged</span>
+                    <span class='option-1' data-i18n="terms.fast">Fast</span>
+                    <span class='option-2' data-i18n="terms.charged">Charged</span>
                 </div>
             </label>
-            <span> Move Data</span>
+            <span data-i18n="moves.move-data">Move Data</span>
         </div>
         <div class="drawer absolute-right v-middle" id="move-edit-icon">
             <img class="drawer-icon" src="imgs/edit.svg" alt="Pencil button to open move data editor" />
@@ -22,47 +22,47 @@
         <table class="table-bg move-table" id=move-data-table>
             <thead>
                 <tr class=table-header>
-                    <th id=move-name><a href="#" class=sortable onclick="MoveSort('name')">Move</a></th>
+                    <th id=move-name><a href="#" class=sortable onclick="MoveSort('name')" data-i18n="terms.move">Move</a></th>
                     <th id=move-power><a href="#" class=sortable onclick="MoveSort('power')">
-                        <span class="desktop">Power</span><span class="mobile">PWR</span>
+                        <span class="desktop" data-i18n="terms.power">Power</span><span class="mobile" data-i18n="terms.power-short">PWR</span>
                     </a></th>
                     <th id=move-energy><a href="#" class=sortable onclick="MoveSort('energy')">
-                        <span class="desktop">Energy</span><span class="mobile">ENG</span>
+                        <span class="desktop" data-i18n="terms.energy">Energy</span><span class="mobile" data-i18n="terms.energy-short">ENG</span>
                     </a></th>
                     <th id=move-duration><a href="#" class=sortable onclick="MoveSort('duration')">
-                        <span class="desktop">Duration</span><span class="mobile">DUR</span>
+                        <span class="desktop" data-i18n="terms.duration">Duration</span><span class="mobile" data-i18n="terms.duration-short">DUR</span>
                     </a></th>
-                    <th id=move-pps><a href="#" class="tooltip tooltip-top sortable" onclick="MoveSort('pps')">P/S
+                    <th id=move-pps><a href="#" class="tooltip tooltip-top sortable" onclick="MoveSort('pps')"><span data-i18n="moves.pps-short">P/S</span>
                         <span class="tooltiptext">
-                            <div class="tooltip-title">Power per Second (DPS)</div>
-                            <p>How effective a move is at dealing damage</p>
+                            <div class="tooltip-title" data-i18n="moves.pps">Power per Second (DPS)</div>
+                            <p data-i18n="moves.pps-tooltip">How effective a move is at dealing damage</p>
                         </span>
                     </a></th>
-                    <th id=move-eps><a href="#" class="tooltip tooltip-top sortable" onclick="MoveSort('eps')">E/S
+                    <th id=move-eps><a href="#" class="tooltip tooltip-top sortable" onclick="MoveSort('eps')"><span data-i18n="moves.eps-short">E/S</span>
                         <span class="tooltiptext">
-                            <div class="tooltip-title">Energy per Second (EPS)</div>
-                            <p>How effective a fast move is at building up charged move energy</p>
+                            <div class="tooltip-title" data-i18n="moves.eps">Energy per Second (EPS)</div>
+                            <p data-i18n="moves.eps-tooltip">How effective a fast move is at building up charged move energy</p>
                         </span>
                     </a></th>
-                    <th id=move-ppe><a href="#" class="tooltip tooltip-top sortable" onclick="MoveSort('ppe')">P/E
+                    <th id=move-ppe><a href="#" class="tooltip tooltip-top sortable" onclick="MoveSort('ppe')"><span data-i18n="moves.ppe-short">P/E</span>
                         <span class="tooltiptext">
-                            <div class="tooltip-title">Power per Energy (DPE)</div>
-                            <p>How efficiently a charged move converts energy into damage</p>
+                            <div class="tooltip-title" data-i18n="moves.ppe">Power per Energy (DPE)</div>
+                            <p data-i18n="moves.ppe-tooltip">How efficiently a charged move converts energy into damage</p>
                         </span>
                     </a></th>
-                    <th id=move-p2pes><a href="#" class="tooltip tooltip-top sortable" onclick="MoveSort('p2pes')">P<sup class='small-text'>2</sup>/ES
+                    <th id=move-p2pes><a href="#" class="tooltip tooltip-top sortable" onclick="MoveSort('p2pes')"><span data-i18n="moves.p2pes-short">P<sup>2</sup>/ES</span>
                         <span class="tooltiptext">
-                            <div class="tooltip-title">P/S * P/E</div>
-                            <p>How well a charged move both uses charged energy <em>and</em> deals damage</p>
+                            <div class="tooltip-title" data-i18n="moves.p2pes">P/S * P/E</div>
+                            <p data-i18n="moves.p2pes-tooltip">How well a charged move both uses charged energy <em>and</em> deals damage</p>
                         </span>
                     </a></th>
-                    <th id=move-peps2><a href="#" class="tooltip tooltip-top sortable" onclick="MoveSort('peps2')">PE/S<sup class="small-text">2</sup>
+                    <th id=move-peps2><a href="#" class="tooltip tooltip-top sortable" onclick="MoveSort('peps2')"><span data-i18n="moves.peps2-short">PE/S<sup>2</sup></span>
                         <span class="tooltiptext">
-                            <div class="tooltip-title">P/S * E/S</div>
-                            <p>How well a fast move accomplishes both building charged energy <em>and</em> dealing damage on its own</p>
+                            <div class="tooltip-title" data-i18n="moves.peps2">P/S * E/S</div>
+                            <p data-i18n="moves.peps2-tooltip">How well a fast move accomplishes both building charged energy <em>and</em> dealing damage on its own</p>
                         </span>
                     </a></th>
-                    <th>Top Users</th>
+                    <th data-i18n="moves.top-users">Top Users</th>
                 </tr>
             </thead>
             <tbody></tbody>

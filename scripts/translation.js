@@ -104,17 +104,43 @@ function TranslateEverything() {
 function TranslateElement(element) {
     $(element).find('[data-i18n]').each(function() {
         const tagName = $(this).prop("tagName");
+        const transKey = $(this).attr('data-i18n');
+
         switch (tagName) {
             case "IMG":
                 // TODO: Also translate to a localized image?
-                $(this).prop("alt", GetTranslation($(this).attr('data-i18n'), $(this).prop("alt")));
+                $(this).prop("alt", GetTranslation(transKey, $(this).prop("alt")));
                 break;
             case "INPUT":
-                // TODO: Also translate to a localized image?
-                $(this).val(GetTranslation($(this).attr('data-i18n'), $(this).val()));
+                $(this).val(GetTranslation(transKey, $(this).val()));
                 break;
             default:
-                $(this).text(GetTranslation($(this).attr('data-i18n'), $(this).text()));
+                const translation = GetTranslation(transKey, $(this).text())
+                if (translation[0] == '§') { // Interpret as markdown and replace as HTML instead
+                    $(this).html(MarkdownToHTML(translation.slice(1)));
+                }
+                else {
+                    $(this).text(translation);
+                }
         }
     });
+}
+
+
+
+
+/**
+ * Minimal markdown implementation to implement a few formatting options as HTML tags
+ */
+function MarkdownToHTML(str) {
+    let html = str;
+
+    // *Italics*
+    html = html.replace(/(\*|_)(.+?)\1/gm, '<em>$2</em>');
+    // **Bold**
+    html = html.replace(/(\*\*|__)(.+?)\1/gm, '<strong>$2</strong>');
+    // Super^Script^
+    html = html.replace(/\^(.+?)\^/gm, '<sup>$1</sup>');
+
+    return html;
 }
