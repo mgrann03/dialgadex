@@ -780,10 +780,10 @@ function Clamp(num, min, max) {
  * Format a decimal value with spaces in the left-padding and rounding-off fractional parts
  * (Aligns the decimal point for the whole column)
  */
-function FormatDecimal(val, minIntDigits, maxFracDigits) {
+function FormatDecimal(val, minIntDigits, minFracDigits, maxFracDigits) {
     if (val==0)
         return "&#8199;".repeat(minIntDigits-1) + "0";
 
     return "&#8199;".repeat(Math.max(0, minIntDigits - Math.floor(Math.max(0,Math.log10(val)) + 1)))
-        + val.toLocaleString("en", { maximumFractionDigits: maxFracDigits });
+        + val.toLocaleString(currentLocale, { minimumFractionDigits: minFracDigits, maximumFractionDigits: maxFracDigits });
 }

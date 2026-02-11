@@ -276,14 +276,14 @@ function SetMoveTable(sort_info) {
         span_move_name.on("click", function() { OpenMoveEditor(md.name) });
         td_move_name.append(span_move_name);
 
-        const td_power = MoveDataTD(FormatDecimal(md.power,3,0), 
+        const td_power = MoveDataTD(FormatDecimal(md.power,3,0,0), 
             sort_info.sort_by=="power");
         const td_energy = (sort_info.move_kind == "Charged") ? 
             EnergyTD(md.energy) :
-            MoveDataTD(FormatDecimal(md.energy,2,0), sort_info.sort_by=="energy");
-        const td_duration = MoveDataTD(md.duration.toFixed(1) + "s", 
+            MoveDataTD(FormatDecimal(md.energy,2,0,0), sort_info.sort_by=="energy");
+        const td_duration = MoveDataTD(FormatDecimal(md.duration,1,1,1) + "s", 
             sort_info.sort_by=="duration");
-        const td_pps = MoveDataTD(FormatDecimal(md.pps,3,2), 
+        const td_pps = MoveDataTD(FormatDecimal(md.pps,3,0,2), 
             sort_info.sort_by=="pps");
         
         tr.append(td_move_name);
@@ -298,7 +298,7 @@ function SetMoveTable(sort_info) {
                 md.ppe.toLocaleString("en", { maximumFractionDigits: 2 }),
                 sort_info.sort_by=="ppe"));
             $("#move-p2pes").css("display", "");
-            tr.append(MoveDataTD(FormatDecimal(md.p2pes,3,2), 
+            tr.append(MoveDataTD(FormatDecimal(md.p2pes,3,0,2), 
                 sort_info.sort_by=="p2pes"));
 
             $("#move-peps2").css("display", "none");
@@ -309,10 +309,10 @@ function SetMoveTable(sort_info) {
             $("#move-p2pes").css("display", "none");
             
             $("#move-eps").css("display", "");
-            tr.append(MoveDataTD(FormatDecimal(md.eps,2,2), 
+            tr.append(MoveDataTD(FormatDecimal(md.eps,2,0,2), 
                 sort_info.sort_by=="eps"));
             $("#move-peps2").css("display", "");
-            tr.append(MoveDataTD(FormatDecimal(md.peps2,3,2), 
+            tr.append(MoveDataTD(FormatDecimal(md.peps2,3,0,2), 
                 sort_info.sort_by=="peps2"));
         }
 
