@@ -182,7 +182,7 @@
 <dialog class="card" id="moveset-edit" style="white-space: nowrap;">
 <form autocomplete=off>
     <div class="card-header">
-        <div class="card-title">Edit Moveset</div>
+        <div class="card-title" data-i18n="moveset-editor.title">Edit Moveset</div>
         <div class="drawer absolute-right v-middle dialog-close">
             <img class="drawer-icon" src="imgs/close.svg" alt="X Button to close the dialog" />
         </div>
@@ -190,7 +190,7 @@
     <div class="card-body">
         <div class="row">
             <div class="column-l">
-                <h3>Fast Moves</h3>
+                <h3 data-i18n="terms.fast-moves">Fast Moves</h3>
                 <div style="position: relative; margin-bottom: 0.5em;">
                     <input id=fm-search-box class=search-box type=text aria-label="FM Search">
                     <img class="inlaid-icon search-icon" src="imgs/search.svg" alt="" />
@@ -198,7 +198,7 @@
                 <ul class="move-select" id="fm-select"></ul>
             </div>
             <div class="column-r">
-                <h3>Charged Moves</h3>
+                <h3 data-i18n="terms.charged-moves">Charged Moves</h3>
                 <div style="position: relative; margin-bottom: 0.5em;">
                     <input id=cm-search-box class=search-box type=text aria-label="CM Search">
                     <img class="inlaid-icon search-icon" src="imgs/search.svg" alt="" />
@@ -208,15 +208,15 @@
         </div>
     </div>
     <div class="card-footer buttons">
-        <input type="button" value="Reset" id="move-reset">
-        <input type="submit" value="Apply" autofocus formmethod="dialog">
+        <input type="button" value="Reset" id="move-reset" data-i18n="moveset-editor.reset">
+        <input type="submit" value="Apply" data-i18n="moveset-editor.apply" autofocus formmethod="dialog">
     </div>
 </form>
 </dialog>
 <dialog class="card" id="move-edit" style="white-space: nowrap;">
 <form autocomplete=off>
     <div class="card-header">
-        <div class="card-title" id="move-edit-title" data-i18n="moves.editor.edit.title">Edit Move Data</div>
+        <div class="card-title" id="move-edit-title" data-i18n="move-editor.edit.title">Edit Move Data</div>
         <div class="drawer absolute-right v-middle dialog-close">
             <img class="drawer-icon" src="imgs/close.svg" alt="X Button to close the dialog" />
         </div>
@@ -282,9 +282,9 @@
         </div>
     </div>
     <div class="card-footer buttons">
-        <input type="button" value="Clear" id="move-edit-clear" data-i18n="moves.editor.clear">
+        <input type="button" value="Clear" id="move-edit-clear" data-i18n="move-editor.clear">
         <input type="button" value="Apply" id="move-edit-apply" style="background-color: var(--col-widget);" autofocus>
-        <input type="button" value="Delete" id="move-edit-delete" data-i18n="moves.editor.delete.action" style="background-color: var(--col-red);" hidden>
+        <input type="button" value="Delete" id="move-edit-delete" data-i18n="move-editor.delete.action" style="background-color: var(--col-red);" hidden>
     </div>
 </form>
 </dialog>

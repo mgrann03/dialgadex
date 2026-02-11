@@ -6,24 +6,27 @@
         }
     },
 
-    "moves": {
-        "editor": {
-            "edit": {
-                "title": "Edit Move Data",
-                "action": "Edit",
-                "confirm": "Edited!"
-            },
-            "add": {
-                "title": "Add New Move",
-                "action": "Add",
-                "confirm": "Added!"
-            },
-            "delete": {
-                "action": "Delete",
-                "confirm": "Deleted!"
-            },
-            "clear": "Clear"
-        }
+    "move-editor": {
+        "edit": {
+            "title": "Edit Move Data",
+            "action": "Edit",
+            "confirm": "Edited!"
+        },
+        "add": {
+            "title": "Add New Move",
+            "action": "Add",
+            "confirm": "Added!"
+        },
+        "delete": {
+            "action": "Delete",
+            "confirm": "Deleted!"
+        },
+        "clear": "Clear"
+    },
+    "moveset-editor": {
+        "title": "Edit Moveset",
+        "reset": "Reset",
+        "apply": "Apply"
     },
 
     "terms": {
@@ -56,6 +59,9 @@
         "duration": "Duration",
         "fast": "Fast",
         "charged": "Charged",
-        "move": "Move"
+        "move": "Move",
+        "moves": "Moves",
+        "fast-moves": "Fast Moves",
+        "charged-moves": "Charged Moves"
     }
 }

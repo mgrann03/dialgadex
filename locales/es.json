@@ -6,24 +6,27 @@
         }
     },
 
-    "moves": {
-        "editor": {
-            "edit": {
-                "title": "Editar Datos del Ataque",
-                "action": "Editar",
-                "confirm": "¡Editado!"
-            },
-            "add": {
-                "title": "Agregar Nuevo Ataque",
-                "action": "Agregar",
-                "confirm": "¡Agregado!"
-            },
-            "delete": {
-                "action": "Eliminar",
-                "confirm": "¡Eliminado!"
-            },
-            "clear": "Limpiar"
-        }
+    "move-editor": {
+        "edit": {
+            "title": "Editar Datos del Ataque",
+            "action": "Editar",
+            "confirm": "¡Editado!"
+        },
+        "add": {
+            "title": "Agregar Nuevo Ataque",
+            "action": "Agregar",
+            "confirm": "¡Agregado!"
+        },
+        "delete": {
+            "action": "Eliminar",
+            "confirm": "¡Eliminado!"
+        },
+        "clear": "Limpiar"
+    },
+    "moveset-editor": {
+        "title": "Editar del Ataques",
+        "reset": "Reiniciar",
+        "apply": "Aplicar"
     },
 
     "terms": {
@@ -56,6 +59,9 @@
         "duration": "Tiempo",
         "fast": "Rápido",
         "charged": "Cargado",
-        "move": "Ataque"
+        "move": "Ataque",
+        "moves": "Ataques",
+        "fast-moves": "Ataques Rápidos",
+        "charged-moves": "Ataques Cargados"
     }
 }

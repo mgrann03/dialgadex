@@ -1037,62 +1037,6 @@ function BindPokeDex() {
 }
 
 /**
- * Updates the dialog to reflect the current state of a Pokemon's learnsets
- */
-function UpdateMovesetEditor() {
-    $("#fm-select").empty();
-    $("#cm-select").empty();
-    
-    $("#fm-search-box").val("");
-    $("#cm-search-box").val("");
-
-    function GetEditableMove(move_name, move_type, is_elite) {
-        const move_obj = (move_type == "fm" ? jb_fm : jb_cm).find(e=>e.name==move_name);
-        if (!move_obj) return;
-
-        const li = $("<li class='move-select-move'><span class='type-text bg-"+(move_obj.name=="Hidden Power" ? "any-type" : move_obj.type)+"'>"
-            +move_name+(is_elite ? "*" : "")+"</span></li>");
-        const img = $("<img class='absolute-right delete-icon' src='imgs/delete.svg' alt='Delete Button' />");
-        img.click(function(e) {
-            // default move; add to _rem
-            if (current_pkm_obj[move_type].includes(move_name)) {
-                if (!Array.isArray(current_pkm_obj[move_type + "_rem"]))
-                    current_pkm_obj[move_type + "_rem"] = [];
-                current_pkm_obj[move_type + "_rem"].push(move_name);
-            }
-            // custom move; remove from _add
-            else if (Array.isArray(current_pkm_obj[move_type + "_add"])) {
-                const ndx = current_pkm_obj[move_type + "_add"].indexOf(move_name);
-                if (ndx > -1) {
-                    current_pkm_obj[move_type + "_add"].splice(ndx, 1);
-                }
-            }
-
-            UpdateMovesetEditor();
-        });
-        li.append(img);
-        return li;
-    }
-
-    const moves = GetPokemonMoves(current_pkm_obj, "None");
-
-    for (const fm of moves[0]) {
-        $("#fm-select").append(GetEditableMove(fm, "fm", false));
-    }
-    for (const cm of moves[1]) {
-        $("#cm-select").append(GetEditableMove(cm, "cm", false));
-    }
-    for (const fm of moves[2]) {
-        $("#fm-select").append(GetEditableMove(fm, "fm", true));
-    }
-    for (const cm of moves[3]) {
-        $("#cm-select").append(GetEditableMove(cm, "cm", true));
-    }
-
-    LoadMoveInputs();
-}
-
-/**
  * Add a move to a Pokemon and refresh dialog
  */
 function AddPokemonMove(pkm_obj, move_name, moveType) {

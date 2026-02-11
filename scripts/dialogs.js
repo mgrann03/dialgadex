@@ -115,7 +115,7 @@ function BindMoveEditor() {
         if (ValidateMove()) {
             AddEditMove();
             
-            $("#move-edit-apply").attr("value", GetTranslation("moves.editor."+editor_action+".confirm"));
+            $("#move-edit-apply").attr("value", GetTranslation("move-editor."+editor_action+".confirm"));
             $("#move-edit-apply").prop("disabled", true);
             setTimeout(()=>{ 
                 UpdateMoveEditor();
@@ -126,7 +126,7 @@ function BindMoveEditor() {
     $("#move-edit-delete").click(function() {
         DeleteMove($("#any-search-box").val());
 
-        $("#move-edit-delete").attr("value", GetTranslation("moves.editor.delete.confirm"));
+        $("#move-edit-delete").attr("value", GetTranslation("move-editor.delete.confirm"));
         $("#move-edit-delete").prop("disabled", true);
         setTimeout(()=>{ 
             UpdateMoveEditor();
@@ -223,7 +223,7 @@ function UpdateMoveEditor(move_name, clear_fields = true) {
     // Editing existing move
     if (move_obj) {
         editor_action = "edit";
-        $("#move-edit-title").text(GetTranslation("moves.editor.edit.title"));
+        $("#move-edit-title").text(GetTranslation("move-editor.edit.title"));
         
         $("#any-search-box").val(move_obj.name);
         $("#move-edit-type").val(move_obj.type);
@@ -236,7 +236,7 @@ function UpdateMoveEditor(move_name, clear_fields = true) {
         $("#move-edit-kind").prop("checked", move_kind == "cm");
         $("#move-edit-kind").trigger("change");
 
-        $("#move-edit-apply").val(GetTranslation("moves.editor.edit.action"));
+        $("#move-edit-apply").val(GetTranslation("move-editor.edit.action"));
         if (move_obj.custom)
             $("#move-edit-delete").removeAttr("hidden");
         else 
@@ -244,7 +244,7 @@ function UpdateMoveEditor(move_name, clear_fields = true) {
     }
     else {
         editor_action = "add";
-        $("#move-edit-title").text(GetTranslation("moves.editor.add.title"));
+        $("#move-edit-title").text(GetTranslation("move-editor.add.title"));
         
         if (clear_fields) {
             $("#any-search-box").val("");
@@ -258,7 +258,7 @@ function UpdateMoveEditor(move_name, clear_fields = true) {
             $("#move-edit-kind").trigger("change");
         }
         
-        $("#move-edit-apply").val(GetTranslation("moves.editor.add.action"));
+        $("#move-edit-apply").val(GetTranslation("move-editor.add.action"));
         $("#move-edit-delete").attr("hidden", true)
     }
     
@@ -475,6 +475,63 @@ function BindMoveSetEditor() {
             $("#overlay").removeClass("active");
         }
     });
+}
+
+
+/**
+ * Updates the dialog to reflect the current state of a Pokemon's learnsets
+ */
+function UpdateMovesetEditor() {
+    $("#fm-select").empty();
+    $("#cm-select").empty();
+    
+    $("#fm-search-box").val("");
+    $("#cm-search-box").val("");
+
+    function GetEditableMove(move_name, move_type, is_elite) {
+        const move_obj = (move_type == "fm" ? jb_fm : jb_cm).find(e=>e.name==move_name);
+        if (!move_obj) return;
+
+        const li = $("<li class='move-select-move'><span class='type-text bg-"+(move_obj.type=="None" ? "any-type" : move_obj.type)+"'>"
+            +move_name+(is_elite ? "*" : "")+"</span></li>");
+        const img = $("<img class='absolute-right delete-icon' src='imgs/delete.svg' alt='Delete Button' />");
+        img.click(function(e) {
+            // default move; add to _rem
+            if (current_pkm_obj[move_type].includes(move_name)) {
+                if (!Array.isArray(current_pkm_obj[move_type + "_rem"]))
+                    current_pkm_obj[move_type + "_rem"] = [];
+                current_pkm_obj[move_type + "_rem"].push(move_name);
+            }
+            // custom move; remove from _add
+            else if (Array.isArray(current_pkm_obj[move_type + "_add"])) {
+                const ndx = current_pkm_obj[move_type + "_add"].indexOf(move_name);
+                if (ndx > -1) {
+                    current_pkm_obj[move_type + "_add"].splice(ndx, 1);
+                }
+            }
+
+            UpdateMovesetEditor();
+        });
+        li.append(img);
+        return li;
+    }
+
+    const moves = GetPokemonMoves(current_pkm_obj, "None");
+
+    for (const fm of moves[0]) {
+        $("#fm-select").append(GetEditableMove(fm, "fm", false));
+    }
+    for (const cm of moves[1]) {
+        $("#cm-select").append(GetEditableMove(cm, "cm", false));
+    }
+    for (const fm of moves[2]) {
+        $("#fm-select").append(GetEditableMove(fm, "fm", true));
+    }
+    for (const cm of moves[3]) {
+        $("#cm-select").append(GetEditableMove(cm, "cm", true));
+    }
+
+    LoadMoveInputs();
 }
 
 
