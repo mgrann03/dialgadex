@@ -7,6 +7,7 @@
     },
 
     "moves": {
+        "type-helper": "type",
         "move-data": "Move Data",
         "top-users": "Top Users",
 
@@ -24,7 +25,15 @@
         "p2pes-tooltip": "§How well a charged move both uses charged energy *and* deals damage",
         "peps2": "P/S * E/S",
         "peps2-short": "§PE/S^2^",
-        "peps2-tooltip": "§How well a fast move accomplishes both building charged energy *and* dealing damage on its own"
+        "peps2-tooltip": "§How well a fast move accomplishes both building charged energy *and* dealing damage on its own",
+
+        "»move-title": [
+            "#move-type-title",
+            "#move-type-helper",
+            "#chk-move-kind",
+            "#move-kind-lbl",
+            "#move-data-span"
+        ]
     },
 
     "move-editor": {
@@ -85,6 +94,8 @@
 
         "fast": "Fast",
         "charged": "Charged",
+        "fast-plural": "Fast",
+        "charged-plural": "Charged",
         "move": "Move",
         "moves": "Moves",
         "fast-moves": "Fast Moves",

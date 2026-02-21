@@ -102,7 +102,7 @@ function TranslateEverything() {
  * Scan descendants for translatable elements and perform updates to live document
  */
 function TranslateElement(element) {
-    $(element).find('[data-i18n]').each(function() {
+    $(element).find('[data-i18n]').each(function() { // Text translation
         const tagName = $(this).prop("tagName");
         const transKey = $(this).attr('data-i18n');
 
@@ -122,6 +122,15 @@ function TranslateElement(element) {
                 else {
                     $(this).text(translation);
                 }
+        }
+    });
+
+    $(element).find('[data-i18n-reorder]').each(function() { // Locale-specific reorder of elements
+        const orderKey = $(this).attr('data-i18n-reorder');
+        const orderArr = (orderKey.split('.').reduce((a,b) => {return a[b]}, translationMap));
+
+        for (const selector of orderArr) {
+            $(this).append($(this).find(selector), " ");
         }
     });
 }

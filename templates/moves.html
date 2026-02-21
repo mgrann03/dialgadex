@@ -3,16 +3,16 @@
 </div>
 <div class="card">
     <div id=move-data-header class="card-header">
-        <div class="card-title" id="move-data-title">
-            <span id="move-type-title"></span>
+        <div class="card-title" id="move-data-title" data-i18n-reorder="moves.»move-title">
+            <span id="move-type-title"></span><span data-i18n="moves.type-helper" id="move-type-helper">-type</span>
             <input type='checkbox' class='toggling' value='charged' id='chk-move-kind' unchecked>
-            <label class='togglebutton' for='chk-move-kind'>
+            <label class='togglebutton' for='chk-move-kind' id="move-kind-lbl">
                 <div class='action'>
-                    <span class='option-1' data-i18n="terms.fast">Fast</span>
-                    <span class='option-2' data-i18n="terms.charged">Charged</span>
+                    <span class='option-1' data-i18n="terms.fast-plural">Fast</span>
+                    <span class='option-2' data-i18n="terms.charged-plural">Charged</span>
                 </div>
             </label>
-            <span data-i18n="moves.move-data">Move Data</span>
+            <span data-i18n="moves.move-data" id="move-data-span">Move Data</span>
         </div>
         <div class="drawer absolute-right v-middle" id="move-edit-icon">
             <img class="drawer-icon" src="imgs/edit.svg" alt="Pencil button to open move data editor" />

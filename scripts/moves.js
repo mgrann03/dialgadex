@@ -58,7 +58,8 @@ async function LoadMoves(type = "Any", kind) {
     let title = (cur_sort.move_type == "Any" ? "" : cur_sort.move_type + "-type ") + 
         cur_sort.move_kind + " Moves";
     document.title = title + " - DialgaDex"; // page title
-    $("#move-type-title").text(cur_sort.move_type == "Any" ? "" : cur_sort.move_type + "-type");
+    $("#move-type-title").text(cur_sort.move_type == "Any" ? "" : GetTranslation("terms.types." + cur_sort.move_type));
+    $("#move-type-helper").text(cur_sort.move_type == "Any" ? "" : GetTranslation("moves.type-helper"));
 
     // sets description
     $('meta[name=description]').attr('content', 

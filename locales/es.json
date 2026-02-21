@@ -7,6 +7,7 @@
     },
     
     "moves": {
+        "type-helper": "del tipo",
         "move-data": "Datos del Ataques",
         "top-users": "Los Mejores",
 
@@ -24,7 +25,15 @@
         "p2pes-tooltip": "",
         "peps2": "P/S * E/S",
         "peps2-short": "§PE/S^2^",
-        "peps2-tooltip": ""
+        "peps2-tooltip": "",
+        
+        "»move-title": [
+            "#move-data-span",
+            "#chk-move-kind",
+            "#move-kind-lbl",
+            "#move-type-helper",
+            "#move-type-title"
+        ]
     },
 
     "move-editor": {
@@ -85,6 +94,8 @@
 
         "fast": "Rápido",
         "charged": "Cargado",
+        "fast-plural": "Rápidos",
+        "charged-plural": "Cargados",
         "move": "Ataque",
         "moves": "Ataques",
         "fast-moves": "Ataques Rápidos",
