@@ -225,7 +225,7 @@ function CheckURLAndAct() {
     if (params.has("strongest")) {
 
         // preserve versus param
-        $("#chk-versus").prop("checked", params.has("v") == true);
+        const versus = params.has("v");
 
         // if url has 't' param...
         if (params.has("t")) {
@@ -240,7 +240,7 @@ function CheckURLAndAct() {
             else if (type == "Any")
                 LoadStrongest("Any");
             else if (POKEMON_TYPES.has(type))
-                LoadStrongest(type);
+                LoadStrongest(type, versus);
 
             return;
         }
