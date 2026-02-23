@@ -26,7 +26,6 @@
                 "#strongest-type-helper"
             ]
         },
-
         "types": {
             "helper-text": "del tipo",
             "»order": [
@@ -36,6 +35,22 @@
                 "#strongest-type-helper",
                 "#strongest-type-title"
             ]
+        },
+        
+        "notes": {
+            "elite": "* Ataque élite (rápido o cargardo)",
+            "typed": "",
+            "versus": "",
+            "affinity": {
+                "prefix": "",
+                "link": "",
+                "suffix": "",
+                "»order": [
+                    "#footnote-affinity-prefix",
+                    "#type-affinity-link",
+                    "#footnote-affinity-suffix"
+                ]
+            }
         }
     },
     

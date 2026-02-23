@@ -26,7 +26,6 @@
                 "#strongest-type-helper"
             ]
         },
-
         "types": {
             "helper-text": "type",
             "»order": [
@@ -36,6 +35,22 @@
                 "#chk-versus",
                 "#strongest-vs-lbl"
             ]
+        },
+
+        "notes": {
+            "elite": "* Elite fast or charged move",
+            "typed": "Typed rankings are calculated using super-effective damage for the chosen type, and neutral damage for all other types.",
+            "versus": "\"Versus\" rankings are calculated using appropriate effectiveness multiplier for attacking damage.",
+            "affinity": {
+                "prefix": "Rankings are calculated based on an",
+                "link": "average of all raid bosses",
+                "suffix": "matching the scenario.",
+                "»order": [
+                    "#footnote-affinity-prefix",
+                    "#type-affinity-link",
+                    "#footnote-affinity-suffix"
+                ]
+            }
         }
     },
 

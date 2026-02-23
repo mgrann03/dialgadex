@@ -32,13 +32,15 @@
     </div>
     <div class="card-footer">
         <ul class="footnotes">
-            <li id=footnote-elite>* Elite fast or charged move</li>
-            <li id=footnote-typed-ranking>Typed rankings are calculated using super-effective damage for the chosen type, and neutral damage for all other types.</li>
-            <li id=footnote-versus>"Versus" rankings are calculated using appropriate effectiveness multiplier for attacking damage.
+            <li id=footnote-elite data-i18n="strongest.notes.elite">* Elite fast or charged move</li>
+            <li id=footnote-typed-ranking data-i18n="strongest.notes.typed">Typed rankings are calculated using super-effective damage for the chosen type, and neutral damage for all other types.</li>
+            <li id=footnote-versus data-i18n="strongest.notes.versus">"Versus" rankings are calculated using appropriate effectiveness multiplier for attacking damage.
                 <!--<br />Versus rankings also assume incoming damage is of the chosen type, and apply relevant defensive multipliers.-->
             </li>
-            <li id=footnote-affinity-ranking>Rankings are calculated based on an 
-                <a href="#" class="tooltip tooltip-top" id="type-affinity-link">average of all raid bosses
+            <li id=footnote-affinity-ranking data-i18n-reorder="strongest.notes.affinity.»order">
+                <span id=footnote-affinity-prefix data-i18n="strongest.notes.affinity.prefix">Rankings are calculated based on an</span>
+                <a href="#" class="tooltip tooltip-top" id="type-affinity-link">
+                    <span data-i18n="strongest.notes.affinity.link">average of all raid bosses</span>
                     <div class="tooltiptext" id="type-affinity-tooltip">
                         <table id="affinity-table">
                             <thead><tr><th></th><th style='width: 100px'>Boss Weakness</th><th  style='width: 100px'>Boss Damage</th></tr></thead>
@@ -46,7 +48,8 @@
                         </table>
                     </div>
                 </a>
-                matching the scenario.</li>
+                <span id=footnote-affinity-suffix data-i18n="strongest.notes.affinity.suffix">matching the scenario.</span>
+            </li>
         </ul>
     </div>
 </div>
