@@ -233,19 +233,11 @@ function GetPokedexStatBars(stats) {
         cp_tier = String.fromCharCode("A".charCodeAt(0) - Math.floor(cp_zscore));    
 
     return [
-        GetBarHTML(Clamp(CalcZScore(stats.atk, atk_dist), -2.8, 3) + 3, stats.atk.toFixed(1), 6, 6),
-        GetBarHTML(Clamp(CalcZScore(stats.def, def_dist), -2.8, 3) + 3, stats.def.toFixed(1), 6, 6),
-        GetBarHTML(Clamp(CalcZScore(stats.hp, hp_dist), -2.8, 3) + 3, toFixedTrunc(stats.hp, 1), 6, 6),
+        GetBarHTML(Clamp(CalcZScore(stats.atk, atk_dist), -2.8, 3) + 3, FormatDecimal(stats.atk,1,1,1), 6, 6),
+        GetBarHTML(Clamp(CalcZScore(stats.def, def_dist), -2.8, 3) + 3, FormatDecimal(stats.def,1,1,1), 6, 6),
+        GetBarHTML(Clamp(CalcZScore(stats.hp, hp_dist), -2.8, 3) + 3, FormatDecimal(stats.hp,1,10,10).slice(0,-9), 6, 6),
         GetBarHTML(cp_zscore + 3, cp + " CP", 6, 6, "tier-" + cp_tier)
     ];
-}
-
-/**
- * Get un-rounded (floored) version of float truncated to a level of precision
- */
-function toFixedTrunc(num, fixed) {
-    var re = new RegExp('^-?\\d+(?:\.\\d{0,' + (fixed || -1) + '})?');
-    return num.toString().match(re)[0];
 }
 
 /**
@@ -536,7 +528,7 @@ function ShowCountersPopup(hover_element, show, counter = null) {
             + "</p>"
 
         $("#counters-popup").html(name
-            + "<p class='counter-metric'>" + settings_metric + " " + counter.rat.toFixed(2) + "</p>"
+            + "<p class='counter-metric'>" + settings_metric + " " + FormatDecimal(counter.rat,1,2,2) + "</p>"
             + "<p class='counter-types'><span class='type-text bg-"
                 + ((counter.fm == "Hidden Power") ? "any-type" : counter.fm_type) + "'>"
                 + counter.fm + ((counter.fm_is_elite) ? "*" : "")
@@ -721,17 +713,17 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
             td_fm.append(GetMoveLink(fm, fm_type, fm_is_elite));
             const td_cm = $("<td></td>");
             td_cm.append(GetMoveLink(cm, cm_type, cm_is_elite));
-            const td_dps = $("<td>" + dps.toFixed(3) + "</td>");
+            const td_dps = $("<td>" + FormatDecimal(dps,2,3,3) + "</td>");
             const td_dps_sh = $("<td>"
-                + ((can_be_shadow) ? dps_sh.toFixed(3) : "-")
+                + ((can_be_shadow) ? FormatDecimal(dps_sh,2,3,3) : "-")
                 + "</td>");
-            const td_tdo = $("<td>" + tdo.toFixed(1) + "</td>");
+            const td_tdo = $("<td>" + FormatDecimal(tdo,3,1,1) + "</td>");
             const td_tdo_sh = $("<td>"
-                + ((can_be_shadow) ? tdo_sh.toFixed(1) : "-")
+                + ((can_be_shadow) ? FormatDecimal(tdo_sh,3,1,1) : "-")
                 + "</td>");
-            const td_rat = $("<td>" + rat.toFixed(2) + "</td>");
+            const td_rat = $("<td>" + FormatDecimal(rat,2,3,3) + "</td>");
             const td_rat_sh = $("<td>"
-                + ((can_be_shadow) ? rat_sh.toFixed(2) : "-")
+                + ((can_be_shadow) ? FormatDecimal(rat_sh,2,3,3) : "-")
                 + "</td>");
 
             if (shadow_only_cms.includes(cm)) {

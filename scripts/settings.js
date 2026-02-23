@@ -195,7 +195,7 @@ function SetMetric(metric) {
             break;
     }
     
-    $("#tof-exp").val(settings_metric_exp.toFixed(3));
+    //$("#tof-exp").val(settings_metric_exp.toFixed(3));
 
     // sets pokemondex move table header
     $("#table-metric-header").html(settings_metric);

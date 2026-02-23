@@ -752,8 +752,8 @@ function GetRankingRow(row_i) {
         const td_cm = $("<td></td>");
         td_cm.append(GetMoveLink(p.cm, p.cm_type, p.cm_is_elite));
         const td_rat = "<td>" + settings_metric + " <b>"
-            + p.rat.toFixed(2) + "</b></td>";
-        const td_pct = ((show_pct && p.pct) ? "<td>" + GetBarHTML(p.pct, p.pct.toFixed(1) + "%", 100, best_pct, ((Math.abs(p.pct - 100) < 0.000001) ? "contrast" : "")) + "</td>" : "");
+            + FormatDecimal(p.rat,2,2,2) + "</b></td>";
+        const td_pct = ((show_pct && p.pct) ? "<td>" + GetBarHTML(p.pct, FormatDecimal(p.pct,3,1,1) + "%", 100, best_pct, ((Math.abs(p.pct - 100) < 0.000001) ? "contrast" : "")) + "</td>" : "");
 
         //if (!show_pct || !display_numbered)
         //    td_name.css("width", "45%");
@@ -787,12 +787,12 @@ function UpdateAffinityTooltip(enemy_params) {
         tr.append(`<td><span class='type-text bg-${t}'>${t}</span></td>`);
         tr.append(`<td><div style="width: 50px">
                 <div class="bar-fg" style="width: ${t_weakness*50}px">
-                    <span class="bar-txt">${t_weakness.toFixed(2)}</span>
+                    <span class="bar-txt">${FormatDecimal(t_weakness,1,2,2)}</span>
                 </div>
             </div></td>`);
         tr.append(`<td><div style="width: 100px">
                 <div class="bar-fg" style="width: ${(t_damage/total_damage*100*2)}px">
-                    <span class="bar-txt">${(t_damage/total_damage*100).toFixed(1)}%</span>
+                    <span class="bar-txt">${FormatDecimal((t_damage/total_damage*100),2,1,1)}%</span>
                 </div>
             </div></td>`);
         tbl.append(tr);
