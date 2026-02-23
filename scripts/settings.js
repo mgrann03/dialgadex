@@ -198,8 +198,8 @@ function SetMetric(metric) {
     //$("#tof-exp").val(settings_metric_exp.toFixed(3));
 
     // sets pokemondex move table header
-    $("#table-metric-header").html(settings_metric);
-    $("#table-metric-header-sh").html(settings_metric + "<br>(Shadow)");
+    //$("#table-metric-header").html(settings_metric);
+    //$("#table-metric-header-sh").html(settings_metric + "<br>(Shadow)");
 
     // Reset any cached tier rankings
     ClearTypeTiers();
