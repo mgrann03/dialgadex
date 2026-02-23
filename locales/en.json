@@ -1,8 +1,41 @@
 {
     "strongest": {
-        "title": {
-            "long": "Strongest",
-            "short": "Top"
+        "best": "Top",
+        "attackers": "Attackers",
+        "counters": "Counters",
+        
+        "any": {
+            "type-text": "Overall",
+            "helper-text": "",
+            "»order": [
+                "#strongest-best-span",
+                "#strongest-type-title",
+                "#strongest-type-helper",
+                "#chk-versus",
+                "#strongest-vs-lbl"
+            ]
+        },
+        "each": {
+            "type-text": "of Each",
+            "helper-text": "type",
+            "»order": [
+                "#strongest-best-span",
+                "#chk-versus",
+                "#strongest-vs-lbl",
+                "#strongest-type-title",
+                "#strongest-type-helper"
+            ]
+        },
+
+        "types": {
+            "helper-text": "type",
+            "»order": [
+                "#strongest-best-span",
+                "#strongest-type-title",
+                "#strongest-type-helper",
+                "#chk-versus",
+                "#strongest-vs-lbl"
+            ]
         }
     },
 

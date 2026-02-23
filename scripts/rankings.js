@@ -98,17 +98,23 @@ async function LoadStrongest(type = "Any", versus) {
         title = title + " against " + type + "-type Bosses";
     document.title = title + " - DialgaDex"; // page title
 
-    $("#strongest-type-title").text("");
-    $("#strongest-title-suffix").text("");
     if (type == "Any") {
-        $("#strongest-type-title").text("Overall");
+        $("#strongest-type-title").attr("data-i18n", "strongest.any.type-text");
+        $("#strongest-type-helper").attr("data-i18n", "strongest.any.helper-text");
+        $("#strongest-title").attr("data-i18n-reorder", "strongest.any.»order");
     }
     else if (type == "Each") {
-        $("#strongest-title-suffix").text("of Each Type");
+        $("#strongest-type-title").attr("data-i18n", "strongest.each.type-text");
+        $("#strongest-type-helper").attr("data-i18n", "strongest.each.helper-text");
+        $("#strongest-title").attr("data-i18n-reorder", "strongest.each.»order");
     }
     else {
-        $("#strongest-type-title").html(type + "<span class='desktop'>-type<span>");
+        $("#strongest-type-title").attr("data-i18n", "terms.types."+type);
+        $("#strongest-type-helper").attr("data-i18n", "strongest.types.helper-text");
+        $("#strongest-title").attr("data-i18n-reorder", "strongest.types.»order");
     }
+
+    TranslateElement("#strongest");
 
     // sets description
     $('meta[name=description]').attr('content', 

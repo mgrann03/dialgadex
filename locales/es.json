@@ -1,8 +1,41 @@
 {
     "strongest": {
-        "title": {
-            "long": "Mejor",
-            "short": "Mejor"
+        "best": "Mejores",
+        "attackers": "Atacantes",
+        "counters": "Contrarios",
+        
+        "any": {
+            "type-text": "Generales",
+            "helper-text": "",
+            "»order": [
+                "#strongest-best-span",
+                "#chk-versus",
+                "#strongest-vs-lbl",
+                "#strongest-type-title",
+                "#strongest-type-helper"
+            ]
+        },
+        "each": {
+            "type-text": "de Cada",
+            "helper-text": "tipo",
+            "»order": [
+                "#strongest-best-span",
+                "#chk-versus",
+                "#strongest-vs-lbl",
+                "#strongest-type-title",
+                "#strongest-type-helper"
+            ]
+        },
+
+        "types": {
+            "helper-text": "del tipo",
+            "»order": [
+                "#strongest-best-span",
+                "#chk-versus",
+                "#strongest-vs-lbl",
+                "#strongest-type-helper",
+                "#strongest-type-title"
+            ]
         }
     },
     

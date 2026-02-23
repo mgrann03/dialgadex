@@ -3,17 +3,17 @@
 </div>
 <div class="card">
     <div id=strongest-header class="card-header">
-        <div class="card-title" style="padding: 0.5rem 3rem">
-            <span class="desktop" data-i18n="strongest.title.long">Strongest </span><span class="mobile">Top </span>
-            <span id="strongest-type-title"></span>
+        <div class="card-title" style="padding: 0.5rem 3rem" id="strongest-title" data-i18n-reorder="strongest.any.»order">
+            <span data-i18n="strongest.best" id="strongest-best-span">Top</span>
+            <span id="strongest-type-title" data-i18n="strongest.any.type-text">Overall</span>
+            <span id="strongest-type-helper" data-i18n="strongest.any.type-helper"></span>
             <input type='checkbox' class='toggling' value='versus' id='chk-versus' unchecked>
-            <label class='togglebutton' for='chk-versus'>
+            <label class='togglebutton' for='chk-versus' id="strongest-vs-lbl">
                 <div class='action'>
-                    <span class='option-1'>Attackers</span>
-                    <span class='option-2'>Counters</span>
+                    <span class='option-1' data-i18n="strongest.attackers">Attackers</span>
+                    <span class='option-2' data-i18n="strongest.counters">Counters</span>
                 </div>
             </label>
-            <span id="strongest-title-suffix"></span>
         </div>
         <div class="absolute-right row">
             <div class="drawer v-middle" id="search-string-icon">
