@@ -150,6 +150,8 @@ function MarkdownToHTML(str) {
     html = html.replace(/(\*\*|__)(.+?)\1/gm, '<strong>$2</strong>');
     // Super^Script^
     html = html.replace(/\^(.+?)\^/gm, '<sup>$1</sup>');
+    // New Line
+    html = html.replace("\n", '<br>');
 
     return html;
 }

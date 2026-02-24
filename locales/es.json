@@ -53,6 +53,67 @@
             }
         }
     },
+
+    "filters": {
+        "species": {
+            "title": "Filtros de Especies",
+            "unreleased": "Inédito",
+            "unreleased-tooltip": "",
+            "mega": "Mega/Primigenio",
+            "shadow": "Oscuro",
+            "legendary": "Legendario",
+            "legendary-tooltip": "También incluye Pokémon Singulares y Ultraentes"
+        },
+        "moves": {
+            "title": "Filtros de Ataques",
+            "elite": "Ataques Élite*",
+            "elite-tooltip": "",
+            "mixed": "Tipos Mezclados",
+            "mixed-tooltip": "",
+            "off": "Otros Tipos",
+            "off-tooltip": "",
+            "suboptimal": "Ataques Subóptimos",
+            "suboptimal-tooltip": ""
+        },
+        "display": {
+            "title": "Configuraciónes Visuales",
+            "group": "Agrupar Especies",
+            "group-enabled": "",
+            "group-disabled": "",
+            "baseline": "Base",
+            "baseline-tooltip": "",
+            "budget": "Económica",
+            "budget-tooltip": {
+                "title": "",
+                "mega": "Sin Megas",
+                "shadow": "Sin Oscuros",
+                "legendary": "Sin Legendarios",
+                "type": "Necesita ser el mismo tipo"
+            },
+            "espace-tooltip": {
+                "title": "",
+                "slegend": "Sin Legendarios Oscuros",
+                "rmythic": "Sin Singulares de Investigaciónes",
+                "energy": "Que no necesitan Energía (Mega/Fusión/Supremo)",
+                "ascent": "No Cola de Dragón",
+                "authorlink": "Hecho por",
+                "graphiclink": "Usado en infografías por"
+            },
+            "best": "Mejor",
+            "best-tooltip": "",
+            "tiers": "Niveles",
+            "tiers-tooltip": "",
+            "jenks-tooltip": "",
+            "espace-tiers": "",
+            "absolute": "Absoluto",
+            "absolute-tooltip": {
+                "title": "",
+                "contextless": "",
+                "baseline": "",
+                "purpose": ""
+            }
+        }
+    },
     
     "moves": {
         "type-helper": "del tipo",
@@ -147,6 +208,9 @@
         "move": "Ataque",
         "moves": "Ataques",
         "fast-moves": "Ataques Rápidos",
-        "charged-moves": "Ataques Cargados"
+        "charged-moves": "Ataques Cargados",
+
+        "enabled": "Activado",
+        "disabled": "Desactivado"
     }
 }

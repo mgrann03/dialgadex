@@ -52,26 +52,26 @@
 <div id=overlay></div>
 <div id="filter-settings" style="display: none;">
     <div class="settings-list">
-        <div class="settings-subtitle">Species Filters</div>
-        <span class="tooltip tooltip-left">Unreleased
-            <span class="tooltiptext">Include Pokémon found in the Game Master but not yet available in game</span>
+        <div class="settings-subtitle" data-i18n="filters.species.title">Species Filters</div>
+        <span class="tooltip tooltip-bottom"><span data-i18n="filters.species.unreleased">Unreleased</span>
+            <span class="tooltiptext" data-i18n="filters.species.unreleased-tooltip">Include Pokémon found in the Game Master but not yet available in game</span>
         </span>
             <label class="switch">
                 <input type=checkbox value=unreleased unchecked>
                 <span class="slider"></span>
             </label>
-        <span>Mega/Primal</span>
+        <span data-i18n="filters.species.mega">Mega/Primal</span>
             <label class="switch">
                 <input type=checkbox value=mega checked>
                 <span class="slider"></span>
             </label>
-        <span>Shadow</span>
+        <span data-i18n="filters.species.shadow">Shadow</span>
             <label class="switch">
                 <input type=checkbox value=shadow checked>
                 <span class="slider"></span>
             </label>
-        <span class="tooltip tooltip-left">Legendary
-            <span class="tooltiptext">Also includes Mythical Pokémon and Ultrabeasts</span>
+        <span class="tooltip tooltip-bottom"><span data-i18n="filters.species.legendary">Legendary</span>
+            <span class="tooltiptext" data-i18n="filters.species.legendary-tooltip">Also includes Mythical Pokémon and Ultrabeasts</span>
         </span>
             <label class="switch">
                 <input type=checkbox value=legendary checked>
@@ -79,82 +79,82 @@
             </label>
     </div>
     <div class="settings-list">
-        <div class="settings-subtitle">Move Filters</div>
-        <span class="tooltip tooltip-left">Elite Moves*
-            <span class="tooltiptext"><p>Allow moves with limited availability</p>
-                <p>(Requires Special event or Elite TMs)</p></span>
+        <div class="settings-subtitle" data-i18n="filters.moves.title">Move Filters</div>
+        <span class="tooltip tooltip-bottom"><span data-i18n="filters.moves.elite">Elite Moves*</span>
+            <span class="tooltiptext" data-i18n="filters.moves.elite-tooltip">Allow moves with limited availability<br>
+                (Requires Special event or Elite TMs)</span>
         </span>
             <label class="switch">
                 <input type=checkbox value=elite checked>
                 <span class="slider"></span>
             </label>
-        <span class="labeltext tooltip tooltip-left">Mixed Types
-            <span class="tooltiptext">Allow fast and charged moves with different types</span>
+        <span class="labeltext tooltip tooltip-bottom"><span data-i18n="filters.moves.mixed">Mixed Types</span>
+            <span class="tooltiptext" data-i18n="filters.moves.mixed-tooltip">Allow fast and charged moves with different types</span>
         </span>
             <label class="switch">
                 <input type=checkbox value=mixed id=chk-mixed checked>
                 <span class="slider"></span>
             </label>
-        <span class="labeltext tooltip tooltip-left">Off Types
-            <span class="tooltiptext">Allow movesets where neither the fast nor charged move matches the target type</span>
+        <span class="labeltext tooltip tooltip-bottom"><span data-i18n="filters.moves.off">Off Types</span>
+            <span class="tooltiptext" data-i18n="filters.moves.off-tooltip">Allow movesets where neither the fast nor charged move matches the target type</span>
         </span>
             <label class="switch">
                 <input type=checkbox value=offtype id=chk-offtype>
                 <span class="slider"></span>
             </label>
-        <span class="tooltip tooltip-left">Suboptimal Moves
-            <span class="tooltiptext">Allow multiple movesets per Pokémon</span>
+        <span class="tooltip tooltip-bottom"><span data-i18n="filters.moves.suboptimal">Suboptimal Moves</span>
+            <span class="tooltiptext" data-i18n="filters.moves.suboptimal-tooltip">Allow multiple movesets per Pokémon</span>
         </span>
-            <label class="switch tooltip tooltip-left">
+            <label class="switch tooltip tooltip-bottom">
                 <input type=checkbox value=suboptimal id=chk-suboptimal unchecked>
                 <span class="slider"></span>
             </label>
     </div>
     <div class="settings-list">
-        <div class="settings-subtitle">Display Settings</div>
-        <span class="tooltip tooltip-left" id=settings-group-header>Group Species
+        <div class="settings-subtitle" data-i18n="filters.display.title">Display Settings</div>
+        <span class="tooltip tooltip-bottom" id=settings-group-header><span data-i18n="filters.display.group">Group Species</span>
             <span class="tooltiptext"><div style="display: inline-grid; grid-template-columns: auto auto auto; column-gap: 5px;">
-                <span>Checked</span><span>→</span><span>Compare suboptimal movesets to that Pokémon's best moveset</span>
-                <span>Unchecked</span><span>→</span><span>Compare all movesets to each other</span></div></span>
+                <span data-i18n="terms.enabled">Enabled</span><span>→</span><span data-i18n="filters.display.group-enabled">Compare suboptimal movesets to that Pokémon's best moveset</span>
+                <span data-i18n="terms.disabled">Unchecked</span><span>→</span><span data-i18n="filters.display.group-disabled">Compare all movesets to each other</span></div></span>
         </span>
-            <label class="switch tooltip tooltip-left" id=settings-group>
+            <label class="switch tooltip tooltip-bottom" id=settings-group>
                 <input type=checkbox value=grouped id=chk-grouped disabled>
                 <span class="slider" ></span>
             </label>
-        <span class="tooltip tooltip-left" id=settings-compare-header>Baseline
-            <span class="tooltiptext">Sets the "100%" reference Pokémon</span>
+        <span class="tooltip tooltip-bottom" id=settings-compare-header><span data-i18n="filters.display.baseline">Baseline</span>
+            <span class="tooltiptext" data-i18n="filters.display.baseline-tooltip">Sets the "100%" reference Pokémon</span>
         </span>
             <div class="col" id=settings-compare>
-                <span id=cmp-budget class="settings-opt settings-opt-sel unselectable tooltip">Budget
+                <span id=cmp-budget class="settings-opt settings-opt-sel unselectable tooltip"><span data-i18n="filters.display.budget">Budget</span>
                     <span class="tooltiptext">
-                        <p>Compare to the top "cheap" Pokémon</p>
+                        <p data-i18n="filters.display.budget-tooltip.title">Compare to the top "cheap" Pokémon</p>
                         <ul>
-                            <li>No Megas</li>
-                            <li>No Shadows</li>
-                            <li>No Legendaries</li>
-                            <li>Must be on-type</li>
+                            <li data-i18n="filters.display.budget-tooltip.mega">No Megas</li>
+                            <li data-i18n="filters.display.budget-tooltip.shadow">No Shadows</li>
+                            <li data-i18n="filters.display.budget-tooltip.legendary">No Legendaries</li>
+                            <li data-i18n="filters.display.budget-tooltip.type">Must be on-type</li>
                         </ul>
                     </span>
                 </span>
                 <span id=cmp-espace class="settings-opt unselectable tooltip">ESpace
                     <span class="tooltiptext">
-                        <p>Compare to the top "available-ish" Pokémon</p>
+                        <p data-i18n="filters.display.espace-tooltip.title">Compare to the top "available-ish" Pokémon</p>
                         <ul>
-                            <li>No Shadow Legendaries</li>
-                            <li>No Research Mythics</li>
-                            <li>No Energy Gimmicks (Mega/Fusion/Crowned)</li>
-                            <li>No Dragon Ascent</li>
-                            <li>Must be on-type</li>
+                            <li data-i18n="filters.display.espace-tooltip.slegend">No Shadow Legendaries</li>
+                            <li data-i18n="filters.display.espace-tooltip.rmythic">No Research Mythics</li>
+                            <li data-i18n="filters.display.espace-tooltip.energy">No Energy Gimmicks (Mega/Fusion/Crowned)</li>
+                            <li data-i18n="filters.display.espace-tooltip.ascent">No Dragon Ascent</li>
+                            <li data-i18n="filters.display.espace-tooltip.type">Must be on-type</li>
                         </ul>
-                        <p><i>Defined by <a href="https://reddit.com/u/Elastic_Space">/u/Elastic_Space</a></i></p>
-                        <p><i>Used in infographics by <a href="https://reddit.com/u/bulbavisual">/u/bulbavisual</a></i></p>
+                        <p><i><span data-i18n="filters.display.espace-tooltip.authorlink">Defined by</span> <a href="https://reddit.com/u/Elastic_Space">/u/Elastic_Space</a></i></p>
+                        <p><i><span data-i18n="filters.display.espace-tooltip.graphiclink">Used in infographics by</span> <a href="https://reddit.com/u/bulbavisual">/u/bulbavisual</a></i></p>
                     </span>
                 </span>
-                <span id=cmp-top class="settings-opt unselectable tooltip">Best
-                    <span class="tooltiptext">Compare to the absolute best Pokémon</span>
+                <span id=cmp-top class="settings-opt unselectable tooltip"><span data-i18n="filters.display.best">Best</span>
+                    <span class="tooltiptext" data-i18n="filters.display.best-tooltip">Compare to the absolute best Pokémon</span>
                 </span>
             </div>
-        <span class="tooltip tooltip-left" id=settings-tiermethod-header>Tiers
+        <span class="tooltip tooltip-bottom" id=settings-tiermethod-header>Tiers
             <span class="tooltiptext"><p>Determines how tiers are computed.</p>
                 <p>Depends on comparison Pokémon.</p></span>
             </span>

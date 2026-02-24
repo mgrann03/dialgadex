@@ -54,6 +54,67 @@
         }
     },
 
+    "filters": {
+        "species": {
+            "title": "Species Filters",
+            "unreleased": "Unreleased",
+            "unreleased-tooltip": "Include Pokémon found in the Game Master but not yet available in game",
+            "mega": "Mega/Primal",
+            "shadow": "Shadow",
+            "legendary": "Legendary",
+            "legendary-tooltip": "Also includes Mythical Pokémon and Ultrabeasts"
+        },
+        "moves": {
+            "title": "Move Filters",
+            "elite": "Elite Moves*",
+            "elite-tooltip": "§Allow moves with limited availability\n(Requires Special event or Elite TMs)",
+            "mixed": "Mixed Types",
+            "mixed-tooltip": "Allow fast and charged moves to be different types",
+            "off": "Off Types",
+            "off-tooltip": "Allow movesets where neither the fast nor charged move matches the target type",
+            "suboptimal": "Suboptimal Moves",
+            "suboptimal-tooltip": "Allow multiple movesets per Pokémon"
+        },
+        "display": {
+            "title": "Display Settings",
+            "group": "Group Species",
+            "group-enabled": "Compare suboptimal movesets to that Pokémon's best moveset",
+            "group-disabled": "Compare all movesets to each other",
+            "baseline": "Baseline",
+            "baseline-tooltip": "Sets the \"100%\" reference Pokémon",
+            "budget": "Budget",
+            "budget-tooltip": {
+                "title": "Compare to the top \"cheap\" Pokémon",
+                "mega": "No Megas",
+                "shadow": "No Shadows",
+                "legendary": "No Legendaries",
+                "type": "Must be on-type"
+            },
+            "espace-tooltip": {
+                "title": "Compare to the top \"available-ish\" Pokémon",
+                "slegend": "No Shadow Legendaries",
+                "rmythic": "No Research Mythics",
+                "energy": "No Energy Gimmicks (Mega/Fusion/Crowned)",
+                "ascent": "No Dragon Ascent",
+                "authorlink": "Defined by",
+                "graphiclink": "Used in infographics by"
+            },
+            "best": "Best",
+            "best-tooltip": "Compare to the absolute best Pokémon",
+            "tiers": "Tiers",
+            "tiers-tooltip": "§Determines how tiers are computed.\nDepends on comparison Pokémon.",
+            "jenks-tooltip": "Algorithmic tiers based on minimum variance",
+            "espace-tiers": "Tiers with hardcoded breakpoints at every 10%",
+            "absolute": "Absolute",
+            "absolute-tooltip": {
+                "title": "Absolute tiers based on only the displayed rating",
+                "contextless": "Ignores context (comparison Pokémon, type)",
+                "baseline": "Tuned to overall \"All-type\" rankings",
+                "purpose": "Best for comparing across different types"
+            }
+        }
+    },
+
     "moves": {
         "type-helper": "type",
         "move-data": "Move Data",
@@ -147,6 +208,9 @@
         "move": "Move",
         "moves": "Moves",
         "fast-moves": "Fast Moves",
-        "charged-moves": "Charged Moves"
+        "charged-moves": "Charged Moves",
+
+        "enabled": "Enabled",
+        "disabled": "Disabled"
     }
 }
