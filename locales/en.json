@@ -167,6 +167,11 @@
         "reset": "Reset",
         "apply": "Apply"
     },
+    "type-affinity": {
+        "title": "Type Affinity",
+        "weakness": "§Boss\nWeakness",
+        "damage": "§Boss\nDamage"
+    },
 
     "terms": {
         "types": {

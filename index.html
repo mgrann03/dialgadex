@@ -154,31 +154,47 @@
                     <span class="tooltiptext" data-i18n="filters.display.best-tooltip">Compare to the absolute best Pokémon</span>
                 </span>
             </div>
-        <span class="tooltip tooltip-bottom" id=settings-tiermethod-header>Tiers
-            <span class="tooltiptext"><p>Determines how tiers are computed.</p>
-                <p>Depends on comparison Pokémon.</p></span>
+        <span class="tooltip tooltip-bottom" id=settings-tiermethod-header><span data-i18n="filters.display.tiers">Tiers</span>
+            <span class="tooltiptext" data-i18n="filters.display.tiers-tooltip">Determines how tiers are computed.<br>Depends on comparison Pokémon.</span>
             </span>
             <div class="col" id=settings-tiermethod>
                 <span id=tier-jenks class="settings-opt settings-opt-sel unselectable tooltip">Jenks
-                    <span class="tooltiptext">Algorithmic tiers based on minimum variance</span></span>
+                    <span class="tooltiptext" data-i18n="filters.display.jenks-tooltip">Algorithmic tiers based on minimum variance</span></span>
                 <!--<span id=tier-broad class="settings-opt unselectable tooltip">Broad
                     <span class="tooltiptext">Broad tiers based on hardcoded breakpoints</span></span>-->
                 <span id=tier-espace class="settings-opt unselectable tooltip">ESpace
                     <span class="tooltiptext">
-                        <p>Tiers with hardcoded breakpoints at every 10%</p>
-                        <p><i>Defined by <a href="https://reddit.com/u/Elastic_Space">/u/Elastic_Space</a></i></p>
+                        <p data-i18n="filters.display.espace-tiers">Tiers with hardcoded breakpoints at every 10%</p>
+                        <p><i><span data-i18n="filters.display.espace-tooltip.authorlink">Defined by</span> <a href="https://reddit.com/u/Elastic_Space">/u/Elastic_Space</a></i></p>
                     </span></span>
-                <span id=tier-abs class="settings-opt unselectable tooltip">Absolute
+                <span id=tier-abs class="settings-opt unselectable tooltip"><span data-i18n="filters.display.absolute">Absolute</span>
                     <span class="tooltiptext">
-                        <p>Absolute tiers based on only the displayed rating</p>
+                        <p data-i18n="filters.display.absolute-tooltip.title">Absolute tiers based on only the displayed rating</p>
                         <ul>
-                            <li>Ignores context (comparison Pokémon, type)</li>
-                            <li>Tuned to overall "All-type" rankings</li>
-                            <li>Best for comparing across different types</li>
+                            <li data-i18n="filters.display.absolute-tooltip.contextless">Ignores context (comparison Pokémon, type)</li>
+                            <li data-i18n="filters.display.absolute-tooltip.baseline">Tuned to overall "All-type" rankings</li>
+                            <li data-i18n="filters.display.absolute-tooltip.purpose">Best for comparing across different types</li>
                         </ul></span></span>
             </div>
     </div>
 </div>
+<dialog class="card" id="type-affinity-popup" style="white-space: nowrap;">
+<form autocomplete=off>
+    <div class="card-header">
+        <div class="card-title" data-i18n="type-affinity.title">Type Affinity</div>
+        <div class="drawer absolute-right v-middle dialog-close">
+            <img class="drawer-icon" src="imgs/close.svg" alt="X Button to close the dialog" />
+        </div>
+    </div>
+    <div class="card-body">
+        <div id="affinity-table">
+            <span>&nbsp;</span>
+            <span class="affinity-header" data-i18n="type-affinity.weakness">Boss<br>Weakness</span>
+            <span class="affinity-header" data-i18n="type-affinity.damage">Boss<br>Damage</span>
+        </div>
+    </div>
+</form>
+</dialog>
 <dialog class="card" id="moveset-edit" style="white-space: nowrap;">
 <form autocomplete=off>
     <div class="card-header">

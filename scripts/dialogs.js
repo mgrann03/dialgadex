@@ -5,6 +5,7 @@ function BindDialogs() {
     BindMoveEditor();
     BindMoveSetEditor();
     BindSearchStringDialog();
+    BindAffinityDialog();
 }
 
 
@@ -707,4 +708,43 @@ function GetMonSearchIssue(parent, pkm_obj, form_issue = false, shadow_issue = f
         rightside.append(`<span class="type-text bg-${cm_obj.type}">${cm_issue.move}</span>`);
     }
     parent.append(rightside);
+}
+
+
+/**
+ * Binds behavior of type affinity popup
+ */
+function BindAffinityDialog() {
+    $(document).on("click", "#type-affinity-link", function() {
+        OpenAffinityDialog();
+    });
+}
+
+/**
+ * Opens the dialog
+ */
+function OpenAffinityDialog() {
+    $("#overlay").addClass("active");
+    $("#type-affinity-popup").get(0).show();
+}
+
+/**
+ * Re-writes data in the Affinity Popup to display current context
+ */
+function UpdateAffinityDialog(enemy_params) {
+    const tbl = $("#affinity-table");
+    tbl.children(":gt(2)").remove();
+    
+    const total_damage = enemy_params.enemy_ys[0]["Any"].y_num ?? estimated_y_numerator;
+
+    for (const t of POKEMON_TYPES) {
+        const t_weakness = GetEffectivenessMultOfType(enemy_params.weakness, t);
+        const t_damage = enemy_params.enemy_ys[0][t] ? enemy_params.enemy_ys[0][t].y_num : 0;
+
+        tbl.append(`<span class='type-text bg-${t}'>${t}</span>`);
+        tbl.append(`<div class="bar-fg" style="width: ${t_weakness/2*100}%">
+            <span class="bar-txt">${FormatDecimal(t_weakness,1,2,2)}</span></div>`);
+        tbl.append(`<div class="bar-fg" style="width: ${(t_damage/total_damage*100*2)}%">
+            <span class="bar-txt">${FormatDecimal((t_damage/total_damage*100),2,1,1)}%</span></div>`);
+    }
 }

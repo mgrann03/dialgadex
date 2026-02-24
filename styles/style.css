@@ -1391,23 +1391,17 @@ th.vertical a.type-text {
  * Type Affinities
  */
 #affinity-table {
-    table-layout: fixed;
+    display: grid;
+    grid-template-columns: auto 1fr 1fr;
+    column-gap: 1em;
+    row-gap: 0.5em;
 }
-#affinity-table td {
-    text-align: left;
-    padding: 3px 5px;
-}
-#affinity-table span.type-text {
-    width: 100%;
-    display: inline-block;
-    text-align: center;
+.affinity-header {
+    font-weight: bold;
 }
 #type-affinity-link {
     color: var(--col-sitename-contrast);
     font-weight: bold;
-}
-#type-affinity-tooltip {
-    max-width: none;
 }
 
 /*

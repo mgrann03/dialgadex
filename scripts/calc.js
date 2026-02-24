@@ -603,7 +603,7 @@ function GetStrongestOfOneType(search_params) {
     let enemy_params;
     if (settings_type_affinity) {
         enemy_params = GetTypeAffinity(search_params.type, !search_params.versus);
-        UpdateAffinityTooltip(enemy_params);
+        UpdateAffinityDialog(enemy_params);
     }
     else {
         enemy_params = {

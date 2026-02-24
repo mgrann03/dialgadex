@@ -42,9 +42,9 @@
             "typed": "",
             "versus": "",
             "affinity": {
-                "prefix": "",
-                "link": "",
-                "suffix": "",
+                "prefix": "Lista de clasificación usa el",
+                "link": "promedio de los oponentes",
+                "suffix": "en este contexto.",
                 "»order": [
                     "#footnote-affinity-prefix",
                     "#type-affinity-link",
@@ -166,6 +166,11 @@
         "title": "Editar de Ataques",
         "reset": "Reiniciar",
         "apply": "Aplicar"
+    },
+    "type-affinity": {
+        "title": "Afinidad de Tipos",
+        "weakness": "§Debilidades\nde Oponentes",
+        "damage": "§Fortalezas\nde Oponentes"
     },
 
     "terms": {

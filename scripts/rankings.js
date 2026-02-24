@@ -773,32 +773,6 @@ function GetRankingRow(row_i) {
     }
 }
 
-function UpdateAffinityTooltip(enemy_params) {
-    const tbl = $("#affinity-table tbody");
-    tbl.empty();
-    
-    const total_damage = enemy_params.enemy_ys[0]["Any"].y_num ?? estimated_y_numerator;
-
-    for (const t of POKEMON_TYPES) {
-        const t_weakness = GetEffectivenessMultOfType(enemy_params.weakness, t);
-        const t_damage = enemy_params.enemy_ys[0][t] ? enemy_params.enemy_ys[0][t].y_num : 0;
-
-        const tr = $("<tr></tr>");
-        tr.append(`<td><span class='type-text bg-${t}'>${t}</span></td>`);
-        tr.append(`<td><div style="width: 50px">
-                <div class="bar-fg" style="width: ${t_weakness*50}px">
-                    <span class="bar-txt">${FormatDecimal(t_weakness,1,2,2)}</span>
-                </div>
-            </div></td>`);
-        tr.append(`<td><div style="width: 100px">
-                <div class="bar-fg" style="width: ${(t_damage/total_damage*100*2)}px">
-                    <span class="bar-txt">${FormatDecimal((t_damage/total_damage*100),2,1,1)}%</span>
-                </div>
-            </div></td>`);
-        tbl.append(tr);
-    }
-}
-
 /**
  * Look up a pokemon's tier ranking for a specific type
  */
