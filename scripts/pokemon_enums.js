@@ -289,7 +289,6 @@ function GetPokemonForms(pokemon_id) {
 
     switch (pokemon_id) {
         case 6: // Charizard
-        case 26: // Raichu
             return ["Normal", "Mega", "MegaY"];
         case 359: // Absol
         case 445: // Garchomp
@@ -378,6 +377,8 @@ function GetPokemonForms(pokemon_id) {
             return ["Normal", "Mega"]
         case 80: // Slowbro
             return [ "Normal", "Galarian", "Mega" ];
+        case 26: // Raichu
+            return ["Normal", "Alola", "Mega", "MegaY"];
         case 668: // Pyroar
         case 678: // Meowstic
             return [ "Normal", "Female", "Mega" ];
