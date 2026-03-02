@@ -12,20 +12,8 @@ let cur_sort = {
  * Bind event handlers for a move data table
  */
 function BindMoveData() {
-    // Enemy type
-    $("#chk-move-kind").change(function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        
-        urlParams.set('moves', this.checked ? "charged" : "fast");
-        cur_sort.sort_by = (this.checked ? "p2pes" : "peps2");
-        
-        window.history.pushState({}, "", "?" + urlParams.toString().replace(/=(?=&|$)/gm, ''));
-        
-        document.getElementById("move-type-links-bytype").setHrefs((type) => {
-            return`/?moves=` + (this.checked ? "charged" : "fast") + `&t=${type}`
-        });
-
-        CheckURLAndAct();
+    $("#chk-move-kind").on("change", function() {
+        LoadMovesAndUpdateURL(cur_sort.move_type)
     });
 
     // Update types based on selector

@@ -22,16 +22,8 @@ function BindRankings() {
     // Enemy type
     $("#chk-versus").change(function() {
         const urlParams = new URLSearchParams(window.location.search);
-        
-        if (this.checked && urlParams.has('t') 
-            && urlParams.get('t') != 'Each' && urlParams.get('t') != 'Any') {
-            urlParams.set('v', '');
-        }
-        else if (urlParams.has('v')) urlParams.delete('v');
-        
-        window.history.pushState({}, "", "?" + urlParams.toString().replace(/=(?=&|$)/gm, ''));
-
-        CheckURLAndAct();
+        const type = urlParams.has('t') ? urlParams.get('t') : "Any";
+        LoadStrongestAndUpdateURL(type, $(this).prop("checked"));
     });
 
     // Refresh list when any options change
@@ -183,7 +175,7 @@ function LoadStrongestAndUpdateURL(type = "Any", versus = null) {
         versus = !!versus;
 
     let url = "?strongest&t=" + type;
-    if ($("#chk-versus").prop("checked")) 
+    if ($("#chk-versus").prop("checked") && type != "Any" && type != "Each") 
         url += '&v';
 
     window.history.pushState({}, "", url);
@@ -894,7 +886,7 @@ function throttle(func, timeFrame) {
  * Builds a formatted anchor element to link back to a type ranking list
  */
 function GetTypeLink(type, versus) {
-    const anchor = $(`<a class='type-text bg-${type}' href='/?strongest&t=${type}${(versus ? "&v" : "")}'>${type}</a>`);
+    const anchor = $(`<a class='type-text bg-${type}' href='/?strongest&t=${type}${(versus ? "&v" : "")}'>${GetTranslation("terms.types.."+type)}</a>`);
     anchor.on("click", function (e) {
         e.preventDefault();
         LoadStrongestAndUpdateURL(type, versus);
