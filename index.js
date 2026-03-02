@@ -309,7 +309,7 @@ function CheckURLAndAct() {
  * Opens the Type Effectiveness Matrix and closes any other pages
  */
 function LoadTypeChartAndUpdateURL() {
-    window.history.pushState({}, "", "?typechart");
+    UpdateURL("?typechart");
     
     // sets the page title
     document.title = "Type Chart - DialgaDex";
@@ -325,7 +325,7 @@ function LoadTypeChartAndUpdateURL() {
  * Opens the FAQ and closes any other pages
  */
 function LoadFAQAndUpdateURL() {
-    window.history.pushState({}, "", "?faq");
+    UpdateURL("?faq");
     
     // sets the page title
     document.title = "FAQ - DialgaDex";
@@ -341,7 +341,7 @@ function LoadFAQAndUpdateURL() {
  * Opens the About Page and closes any other pages
  */
 function LoadAboutAndUpdateURL() {
-    window.history.pushState({}, "", "?about");
+    UpdateURL("?about");
     
     // sets the page title
     document.title = "About - DialgaDex";
@@ -554,4 +554,17 @@ function HasTouchScreen() {
         }
     }
     return has_touch_screen
+}
+
+/**
+ * Update browser history to push new url and persist locale
+ */
+function UpdateURL(url) {
+    if (currentLocale != 'en') {
+        const urlParams = new URLSearchParams(url);
+        urlParams.set("lang", currentLocale);
+        url = "?" + urlParams.toString();
+    }
+
+    window.history.pushState({}, "", url);
 }

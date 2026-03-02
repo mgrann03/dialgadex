@@ -79,7 +79,7 @@ function LoadMovesAndUpdateURL(type = "Any", move_kind) {
 
     let url = "?moves=" + move_kind + "&t=" + type;
 
-    window.history.pushState({}, "", url);
+    UpdateURL(url);
 
     return LoadMoves(type);
 }

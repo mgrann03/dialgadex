@@ -178,7 +178,7 @@ function LoadStrongestAndUpdateURL(type = "Any", versus = null) {
     if ($("#chk-versus").prop("checked") && type != "Any" && type != "Each") 
         url += '&v';
 
-    window.history.pushState({}, "", url);
+    UpdateURL(url);
     
     LoadStrongest(type, versus);
 }

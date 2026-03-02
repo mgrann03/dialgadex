@@ -126,7 +126,7 @@ function UpdatePokedexURL(pokedex_mon) {
             + String(pokedex_mon.ivs.hp).padStart(2, "0");
     }
 
-    window.history.pushState({}, "", url);
+    UpdateURL(url);
 }
 
 /**
