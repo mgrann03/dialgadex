@@ -197,6 +197,11 @@
             "Each": "Each type"
         },
         "type": "Type",
+        "attacking-type": "Attacking Type",
+        "defending-type": "Defending Type",
+        "attacker": "Attacker",
+        "defender": "Defender",
+        "type-matchups": "Type Matchups",
 
         "name": "Name",
         "power": "Power",
@@ -216,6 +221,11 @@
         "charged-moves": "Charged Moves",
 
         "enabled": "Enabled",
-        "disabled": "Disabled"
+        "disabled": "Disabled",
+
+        "supereffective": "Super Effective",
+        "resisted": "Resisted",
+        "immune": "Immune",
+        "damage-multiplier": "Damage Multiplier"
     }
 }

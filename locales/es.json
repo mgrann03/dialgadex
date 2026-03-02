@@ -197,6 +197,11 @@
             "Each": "Cada tipo"
         },
         "type": "Tipo",
+        "attacking-type": "Tipo Atacante",
+        "defending-type": "Tipo Defensor",
+        "attacker": "Atacante",
+        "defender": "Defensor",
+        "type-matchups": "Efectividades de los Tipos",
 
         "name": "Nombre",
         "power": "Potencia",
@@ -216,6 +221,11 @@
         "charged-moves": "Ataques Cargados",
 
         "enabled": "Activado",
-        "disabled": "Desactivado"
+        "disabled": "Desactivado",
+
+        "supereffective": "Super Eficaz",
+        "resisted": "Resistido",
+        "immune": "Inmune",
+        "damage-multiplier": "Multiplicador de Daño"
     }
 }

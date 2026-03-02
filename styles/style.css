@@ -1325,7 +1325,7 @@ sup.xl {
 }
 
 #type-matrix-table tr > th {
-    height: 7ch;
+    /*height: 7ch;*/
     line-height: 1.5em;
 }
 

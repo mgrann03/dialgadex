@@ -111,11 +111,8 @@ function BindFooter() {
 function BuildTypeChart() {
     // Build headers
     for (const def_type of POKEMON_TYPES) {
-        const th_defending = $(`<th class="vertical"><a class="type-text bg-${def_type}" href="/?strongest&t=${def_type}&v">${def_type}</a></th>`);
-        th_defending.on("click", function(e) {
-            e.preventDefault();
-            LoadStrongestAndUpdateURL(def_type, true);
-        })
+        const th_defending = $(`<th class="vertical"></th>`);
+        th_defending.append(GetTypeLink(def_type, true));
         $("#type-matrix-topaxis").append(th_defending);
     }
 

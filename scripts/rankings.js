@@ -886,7 +886,7 @@ function throttle(func, timeFrame) {
  * Builds a formatted anchor element to link back to a type ranking list
  */
 function GetTypeLink(type, versus) {
-    const anchor = $(`<a class='type-text bg-${type}' href='/?strongest&t=${type}${(versus ? "&v" : "")}'>${GetTranslation("terms.types.."+type)}</a>`);
+    const anchor = $(`<a class='type-text bg-${type}' href='/?strongest&t=${type}${(versus ? "&v" : "")}'>${GetTranslation("terms.types."+type)}</a>`);
     anchor.on("click", function (e) {
         e.preventDefault();
         LoadStrongestAndUpdateURL(type, versus);
