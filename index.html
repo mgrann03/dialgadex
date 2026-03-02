@@ -388,53 +388,53 @@
                     <div class="drawer-popup" id=settings >
                         <!--<div class=settings-title>Settings</div>-->
                         <div class=settings-list>
-                            <div class=settings-subtitle>Metric Settings</div>
-                            <span>PvE metric</span>
+                            <div class=settings-subtitle data-i18n="settings.calculation">Calculation Settings</div>
+                            <span data-i18n="settings.metric">PvE Metric</span>
                                 <div class="col">
                                     <span id=metric-dps class="settings-opt tooltip unselectable">DPS
                                         <span class="tooltiptext">
-                                            <div class="tooltip-title">Damage Per Second</div>
+                                            <div class="tooltip-title" data-i18n="settings.dps-tooltip.title">Damage Per Second</div>
                                             <ul>
-                                                <li>Speed of damage output</li>
-                                                <li>Favors glass cannons</li>
+                                                <li data-i18n="settings.dps-tooltip.explanation">Speed of damage output</li>
+                                                <li data-i18n="settings.dps-tooltip.characteristic">Favors glass cannons</li>
                                             </ul></span></span>
                                     <span id=metric-tdo class="settings-opt tooltip unselectable">TDO
                                         <span class="tooltiptext">
-                                            <div class="tooltip-title">Total Damage Output</div>
+                                            <div class="tooltip-title" data-i18n="settings.tdo-tooltip.title">Total Damage Output</div>
                                             <ul>
-                                                <li>Amount of damage done before fainting</li>
-                                                <li>Favors bulk</li>
+                                                <li data-i18n="settings.tdo-tooltip.explanation">Amount of damage done before fainting</li>
+                                                <li data-i18n="settings.tdo-tooltip.characteristic">Favors bulk</li>
                                             </ul></span></span>
                                     <span id=metric-edps class="settings-opt tooltip settings-opt-sel unselectable">eDPS
                                         <span class="tooltiptext">
-                                            <div class="tooltip-title">Effective DPS</div>
-                                            <p>In an infinite-length raid, this is the actual DPS that would be
+                                            <div class="tooltip-title" data-i18n="settings.edps-tooltip.title">Effective DPS</div>
+                                            <p data-i18n="settings.edps-tooltip.characteristic">In an infinite-length raid, this is the actual DPS that would be
                                                 achieved when accounting for the time lost relobbying.
                                             </p></span></span>
                                 </div>
-                            <span>Pokémon Level</span>
+                            <span data-i18n="settings.level">Pokémon Level</span>
                                 <div class="col">
                                     <div class="setting-value">
                                         <span id=lvl-30 class="settings-opt unselectable">30</span>
                                         <span id=lvl-40 class="settings-opt settings-opt-sel unselectable">40</span>
                                         <span id=lvl-50 class="settings-opt unselectable">50</span>
                                     </div>
-                                    <span id=lvl-xl-budget class="settings-opt unselectable tooltip">Budget50
+                                    <span id=lvl-xl-budget class="settings-opt unselectable tooltip"><span data-i18n="settings.budget50-tooltip.title">Budget50</span>
                                         <span class="tooltiptext">
-                                            <div class="tooltip-title">Level 50 for Budget Pokémon</div>
+                                            <div class="tooltip-title" data-i18n="settings.budget50-tooltip.explanation">Level 50 for Budget Pokémon</div>
                                             <ul>
-                                                <li>Use stats at Level 40 for Legendaries</li>
-                                                <li>Use stats at Level 50 for non-Legendaries</li>
-                                                <li>Helps adjust for the scarcity of rare XL candies</li>
+                                                <li data-i18n="settings.budget50-tooltip.lv40">Use stats at Level 40 for Legendaries</li>
+                                                <li data-i18n="settings.budget50-tooltip.lv50">Use stats at Level 50 for non-Legendaries</li>
+                                                <li data-i18n="settings.budget50-tooltip.characteristic">Helps adjust for the scarcity of rare XL candies</li>
                                             </ul></span></span>
                                 </div>
                                 <!--<span id=lvl-both class="settings-opt unselectable tooltip">40+50
                                     <span class="tooltiptext">Shows both level 40 and level 50 entries in type ranks, otherwise uses level 40 for PokeDex</span></span>-->
                             <!--<div class=settings-subtitle><i>Beta</i> Features</div>-->
-                            <span class="tooltip tooltip-left">Party Power
+                            <span class="tooltip tooltip-left"><span data-i18n="settings.pp-tooltip.title">Party Power</span>
                                 <span class="tooltiptext">
-                                    <p>Size of Party for party power boosts</p>
-                                    <p><i>Boosts charged damage based on the ratio of fast:charged moves</i></p></span>
+                                    <p data-i18n="settings.pp-tooltip.explanation">Size of Party for party power boosts</p>
+                                    <p><i data-i18n="settings.pp-tooltip.characteristic">Boosts charged damage based on the ratio of fast:charged moves</i></p></span>
                             </span>
                                 <div class=setting-value>
                                     <span id=pp-1 class="settings-opt settings-opt-sel unselectable">1</span>
@@ -442,39 +442,39 @@
                                     <span id=pp-3 class="settings-opt unselectable">3</span>
                                     <span id=pp-4 class="settings-opt unselectable">4</span>
                                 </div>
-                            <span class="tooltip tooltip-left">Type Affinity
+                            <span class="tooltip tooltip-left"><span data-i18n="settings.affinity-tooltip.title">Type Affinity</span>
                                 <span class="tooltiptext">
-                                    <p>Use real high-tier raid bosses when calculating rankings</p>
-                                    <p>Takes into account the actual types, attack types, attack strengths, and stats of
+                                    <p data-i18n="settings.affinity.explanation">Use real high-tier raid bosses when calculating rankings</p>
+                                    <p data-i18n="settings.pp-tooltip.characteristic">Takes into account the actual types, attack types, attack strengths, and stats of
                                         raid bosses based on the current scenario.</p></span>
                             </span>
                                 <label class="switch">
                                     <input type="checkbox" value="affinity" id="settings-affinity" checked>
                                     <span class="slider"></span>
                                 </label>
-                            <span class="tooltip tooltip-left" id="settings-teamsize-header">Raid Team Size
+                            <span class="tooltip tooltip-left" id="settings-teamsize-header"><span  data-i18n="settings.team.title">Raid Team Size</span>
                                 <span class="tooltiptext">
-                                    <p>Size of battle team for computing eDPS</p>
-                                    <p><i>Computes eDPS as if N identical copies of the Pokémon were in a battle team, and relobbying only occurred after each Nth death</i></p></span>
+                                    <p data-i18n="settings.team.explanation">Size of battle team for computing eDPS</p>
+                                    <p><i data-i18n="settings.team.characteristic">Computes eDPS as if N identical copies of the Pokémon were in a battle team, and relobbying only occurred after each Nth death</i></p></span>
                             </span>
                                 <div class="col" id="settings-teamsize">
                                     <span id=rt-6 class="settings-opt settings-opt-sel unselectable">6-Stack</span>
                                     <span id=rt-1 class="settings-opt unselectable">Solo</span>
-                                    <span id=rt-m1 class="settings-opt unselectable tooltip">MegaSolo
+                                    <span id=rt-m1 class="settings-opt unselectable tooltip"><span data-i18n="settings.megasolo.title">MegaSolo</span>
                                         <span class="tooltiptext">
-                                        <p>Use a 6-mon team for everything but Megas, which fight solo</p></span></span>
+                                        <p data-i18n="settings.megasolo.explanation">Use a 6-mon team for everything but Megas, which fight solo</p></span></span>
                                 </div>
-                            <span class="tooltip tooltip-left" id="settings-relobby-header">Relobby Time
+                            <span class="tooltip tooltip-left" id="settings-relobby-header"><span  data-i18n="settings.relobby.title">Relobby Time</span>
                                 <span class="tooltiptext">Time spent max reviving a full raid team and rejoining the battle</span>
                             </span>
                                 <input type="number" id=relobby-time class="settings-num" value="10" min="0" max="300" step="1">
-                            <div class=settings-subtitle>Site Settings</div>
-                            <span>Data Preview</span>
+                            <div class=settings-subtitle data-i18n="settings.site">Site Settings</div>
+                            <span data-i18n="settings.preview">Data Preview</span>
                                 <label class="switch">
                                     <input type="checkbox" value="speculative" id="settings-speculative" checked>
                                     <span class="slider"></span>
                                 </label>
-                            <span>Dark Mode</span>
+                            <span data-i18n="settings.darkmode">Dark Mode</span>
                                 <label class="switch">
                                     <input type="checkbox" value="theme" id="settings-darkmode" checked>
                                     <span class="slider"></span>

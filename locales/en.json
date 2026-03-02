@@ -114,6 +114,59 @@
             }
         }
     },
+    
+    "settings": {
+        "calculation": "Calculation Settings",
+        "metric": "PvE Metric",
+        "dps-tooltip": {
+            "title": "Damage Per Second",
+            "explanation": "Speed of damage output",
+            "characteristic": "Favors glass cannons"
+        },
+        "tdo-tooltip": {
+            "title": "Total Damage Output",
+            "explanation": "Amount of damage done before fainting",
+            "characteristic": "Favors bulk"
+        },
+        "edps-tooltip": {
+            "title": "Effective DPS",
+            "explanation": "In an infinite-length raid, this is the actual DPS that would be achieved when accounting for the time lost relobbying."
+        },
+        "level": "Pokémon Level",
+        "budget50-tooltip": {
+            "title": "Budget50",
+            "explanation": "Level 50 for Budget Pokémon",
+            "lv40": "Use stats at Level 40 for Legendaries",
+            "lv50": "Use stats at Level 50 for non-Legendaries",
+            "characteristic": "Helps adjust for the scarcity of rare XL candies"
+        },
+        "pp-tooltip": {
+            "title": "Party Power",
+            "explanation": "Size of Party for party power boosts",
+            "characteristic": "Boosts charged damage based on the ratio of fast:charged moves"
+        },
+        "afinity-tooltip": {
+            "title": "Type Affinity",
+            "explanation": "Use real high-tier raid bosses when calculating rankings",
+            "characteristic": "Takes into account the actual types, attack types, attack strengths, and stats of raid bosses based on the current scenario."
+        },
+        "team-tooltip": {
+            "title": "Raid Team Size",
+            "explanation": "Size of battle team for computing eDPS",
+            "characteristic": "Computes eDPS as if N identical copies of the Pokémon were in a battle team, and relobbying only occurred after each Nth death"
+        },
+        "megasolo-tooltip": {
+            "title": "MegaSolo",
+            "explanation": "Use a 6-mon team for everything but Megas, which fight solo"
+        },
+        "relobby-tooltip": {
+            "title": "Relobby Time",
+            "explanation": "Time spent max reviving a full raid team and rejoining the battle"
+        },
+        "site": "Site Settings",
+        "preview": "Data Preview",
+        "darkmode": "Dark Mode"
+    },
 
     "moves": {
         "type-helper": "type",

@@ -115,6 +115,59 @@
         }
     },
     
+    "settings": {
+        "calculation": "Opciones de Cálculo",
+        "metric": "PvE Métrica",
+        "dps-tooltip": {
+            "title": "Daño por Segundo",
+            "explanation": "",
+            "characteristic": ""
+        },
+        "tdo-tooltip": {
+            "title": "Daño Total",
+            "explanation": "",
+            "characteristic": ""
+        },
+        "edps-tooltip": {
+            "title": "DPS Efectivo",
+            "explanation": ""
+        },
+        "level": "Nivel de Pokémon",
+        "budget50-tooltip": {
+            "title": "Econo50",
+            "explanation": "Nivel 50 por Pokémon económicos",
+            "lv40": "",
+            "lv50": "",
+            "characteristic": ""
+        },
+        "pp-tooltip": {
+            "title": "Mejora de Equipo",
+            "explanation": "",
+            "characteristic": ""
+        },
+        "afinity-tooltip": {
+            "title": "Afinidad de Tipos",
+            "explanation": "",
+            "characteristic": ""
+        },
+        "team-tooltip": {
+            "title": "Tamaño del Equipo",
+            "explanation": "",
+            "characteristic": ""
+        },
+        "megasolo-tooltip": {
+            "title": "MegaSolo",
+            "explanation": ""
+        },
+        "relobby-tooltip": {
+            "title": "Tiempo Reviviendo",
+            "explanation": ""
+        },
+        "site": "Opciones del Sitio",
+        "preview": "Vista Previa",
+        "darkmode": "Modo Oscuro"
+    },
+
     "moves": {
         "type-helper": "del tipo",
         "move-data": "Datos del Ataques",
