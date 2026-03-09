@@ -280,5 +280,19 @@
         "resisted": "Resistido",
         "immune": "Inmune",
         "damage-multiplier": "Multiplicador de Daño"
+    },
+
+    "site": {
+        "disclaimer": "§DialgaDex is not affiliated with The Pokémon Company, Niantic, Scopely, Pokémon Go, or any other such entities.\nPokémon is a trademark of Nintendo. All such trademarks are the property of their respective owners.",
+
+        "links": {
+            "rankings": "Lista de Clasificación",
+            "moves": "Datos del Ataques",
+            "types": "Efectividades de los Tipos",
+            "FAQ": "PF",
+            "contact": "Contacto",
+            "credits": "Créditos",
+            "privacy": "Privacidad"
+        }
     }
 }
