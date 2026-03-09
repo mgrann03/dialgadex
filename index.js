@@ -11,8 +11,6 @@ $(document).ready(Main);
 //        whatever asynchronous operations were being done on the previous mon
 //        should be cancelled
 
-// whether pokemon go table moves are currently being loaded asynchronously
-let loading_pogo_moves = false;
 // whether pokemon go counters are currently being loaded asynchronously
 let loading_counters = false;
 

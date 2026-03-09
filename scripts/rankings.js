@@ -768,9 +768,9 @@ function GetRankingRow(row_i) {
 /**
  * Look up a pokemon's tier ranking for a specific type
  */
-function GetTypeTier(type, pkm_obj) {
+async function GetTypeTier(type, pkm_obj) {
     if (!POKEMON_TYPES.has(type)) return {pure: "F", shadow: "F"};
-    BuildTypeTier(type);
+    await BuildTypeTier(type);
 
     let tiers = {
         pure: type_tiers[type][GetUniqueIdentifier({
@@ -793,7 +793,7 @@ function GetTypeTier(type, pkm_obj) {
 /**
  * If not already built, create a lookup for tier rankings of mons' typed movesets
  */
-function BuildTypeTier(type) {
+async function BuildTypeTier(type) {
     if (type_tiers && type_tiers[type]) return; // Already built
     
     let search_params = {

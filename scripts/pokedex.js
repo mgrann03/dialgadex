@@ -5,7 +5,7 @@ let atk_dist, def_dist, hp_dist, cp_dist;
  */
 async function LoadPokedex(pokedex_mon) {
 
-    if (loading_pogo_moves || loading_counters)
+    if (loading_counters)
         return;
 
     if (!pokedex_mon || pokedex_mon.pokemon_id == 0) {
@@ -99,7 +99,7 @@ async function LoadPokedex(pokedex_mon) {
  */
 function LoadPokedexAndUpdateURL(pokedex_mon) {
 
-    if (loading_pogo_moves || loading_counters)
+    if (loading_counters)
         return false;
 
     LoadPokedex(pokedex_mon);
@@ -132,7 +132,7 @@ function UpdatePokedexURL(pokedex_mon) {
 /**
  * Loads one pokemon data for the Pokemon GO section.
  */
-function LoadPokedexData(pokedex_mon) {
+async function LoadPokedexData(pokedex_mon) {
     let pkm_obj = jb_pkm.find(entry =>
             entry.id == pokedex_mon.pokemon_id && entry.form == pokedex_mon.form);
     let released = true && pkm_obj;
@@ -243,7 +243,7 @@ function GetPokedexStatBars(stats) {
 /**
  * Recalculates stats and movesets (for the stat calculator)
  */
-function UpdateStats(pkm_obj, pokedex_mon) {
+async function UpdateStats(pkm_obj, pokedex_mon) {
     const stats = GetPokemonStats(pkm_obj, pokedex_mon.level, pokedex_mon.ivs);
     const max_stats = GetPokemonStats(pkm_obj, pokedex_mon.level);
     const max_stats_50 = GetPokemonStats(pkm_obj, 50);
@@ -565,8 +565,7 @@ function ShowCountersPopup(hover_element, show, counter = null) {
  * percentage of the specific stats against the max stats (15/15/15 ivs)
  * of all movesets. This percentage is then displayed on the CP section.
  */
-function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
-
+async function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
     // sets movesets title
     //$("#movesets-title").html("<b>" + pkm_obj.name + "'s movesets</b>");
 
@@ -624,7 +623,7 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
     /**
      * Lookup the tier ranking for this mon for the given type (only once each)
      */
-    function GetPokemonTypeTier(type) {
+    async function GetPokemonTypeTier(type) {
         if (!!attackTiers[type]) {
             return;
         }
@@ -635,15 +634,18 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
     // appends new table rows asynchronously (so that Mew loads fast)
     // each chunk of moves combinations with a specific fast move
     // is appended in a different frame
+    async function yieldToMain() {
+        return new Promise(resolve => setTimeout(resolve, 0));
+    }
 
     /**
      * Appends all the rows containing a specific fast move.
      * Receives the index of the fast move and the callback function
      * for when all chunks have been appended as arguments.
      */
-    function AppendFMChunk(fm_i, callback) {
+    for (let fm of all_fms) {
+        await yieldToMain();
 
-        const fm = all_fms[fm_i];
         const fm_is_elite = elite_fms.includes(fm);
 
         // gets the fast move object
@@ -669,7 +671,6 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
         if (settings_type_affinity) fm_mult = GetEffectivenessMultOfType(enemy_params.weakness, fm_obj.type);
 
         for (let cm of all_cms) {
-
             const cm_is_elite = elite_cms.includes(cm);
 
             // gets the charged move object
@@ -748,85 +749,75 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
 
             $("#pokedex-move-table tbody").append(tr);
         }
-        // if necessary, calculates average rating percentage of specific stats
-        // against max stats of all movesets and displays it on the CP section
-        if (max_stats) {
-            let avg_rat_pct_vs_max = 100 * rat_pcts_vs_max / num_movesets;
-            let pct_str = FormatDecimal(avg_rat_pct_vs_max, 3, 2) + "%";
-            if (isNaN(avg_rat_pct_vs_max))
-                pct_str = "??";
-            $("#rat-pct-vs-max").html(pct_str + " of Perfect " + settings_metric);
-        }
-
-        // if can be shadow, calculates average rating percentage of shadow stats
-        // against max stats of all movesets and displays it on the CP section
-        if (can_be_shadow) {
-            let avg_rat_sh_pct_vs_max = 100 * rat_sh_pcts_vs_max / num_movesets;
-            let pct_str = FormatDecimal(avg_rat_sh_pct_vs_max, 3, 2) + "%";
-            if (isNaN(avg_rat_sh_pct_vs_max))
-                pct_str = "??";
-            $("#sh-rat-pct-vs-max").css("display", "");
-            $("#sh-rat-pct-vs-max").html(pct_str + " of Perfect " + settings_metric + " when Shadow");
-        }
-        else {
-            $("#sh-rat-pct-vs-max").css("display", "none");
-        }
-
-        // appends the next fast move chunk, if there is more
-        fm_i++;
-        if (fm_i < all_fms.length)
-            setTimeout(function() {AppendFMChunk(fm_i, callback);}, 0);
-        else
-            callback();
     }
 
-    loading_pogo_moves = true;
-    // appends the first fast move chunk
-    AppendFMChunk(0, function() {
-        SortPokedexTable(6, 7);
-        BuildTypeTiers(attackTiers);
-        loading_pogo_moves = false;
-    });
+    // if necessary, calculates average rating percentage of specific stats
+    // against max stats of all movesets and displays it on the CP section
+    if (max_stats) {
+        let avg_rat_pct_vs_max = 100 * rat_pcts_vs_max / num_movesets;
+        let pct_str = FormatDecimal(avg_rat_pct_vs_max, 3, 2) + "%";
+        if (isNaN(avg_rat_pct_vs_max))
+            pct_str = "??";
+        $("#rat-pct-vs-max").html(pct_str + " of Perfect " + settings_metric);
+    }
+
+    // if can be shadow, calculates average rating percentage of shadow stats
+    // against max stats of all movesets and displays it on the CP section
+    if (can_be_shadow) {
+        let avg_rat_sh_pct_vs_max = 100 * rat_sh_pcts_vs_max / num_movesets;
+        let pct_str = FormatDecimal(avg_rat_sh_pct_vs_max, 3, 2) + "%";
+        if (isNaN(avg_rat_sh_pct_vs_max))
+            pct_str = "??";
+        $("#sh-rat-pct-vs-max").css("display", "");
+        $("#sh-rat-pct-vs-max").html(pct_str + " of Perfect " + settings_metric + " when Shadow");
+    }
+    else {
+        $("#sh-rat-pct-vs-max").css("display", "none");
+    }
+
+    SortPokedexTable(6,7);
+    BuildTypeTiers(attackTiers);
 }
 
 /**
  * Builds the tier ranking elements based on the lookups
  */
-function BuildTypeTiers(attackTiers) {
-    const types = Object.entries(attackTiers)
-        .filter(e=>e[1].pure!="F"||(e[1].shadow&&e[1].shadow!="F"))
-        .map(e=>e[0])
-        .sort((a, b) => 
-            TierToInt(attackTiers[b].pure)-TierToInt(attackTiers[a].pure) ||
-            TierToInt(attackTiers[b].shadow)-TierToInt(attackTiers[a].shadow)
-        )
+async function BuildTypeTiers(attackTiers) {
+    let has_reset_tiers = false;
 
-    if (types.length > 0) {
-        $("#attack-tiers").css("display", "");
-        $("#attack-tier-results .dex-layout-content").empty();
-        $("#attack-tier-results-shadow .dex-layout-content").empty();
-        $("#attack-tier-shadow-header").css("display", "none");
-        $("#attack-tier-results-shadow").css("display", "none");
-        $("#attack-tier-results").css("flex-basis", "100%");
-        $("#attack-tier-results").addClass("rounded-bottom");
+    // Iterate in a predictable order for consistency
+    for (const type of POKEMON_TYPES) {
+        if (attackTiers.hasOwnProperty(type)) {
+            const attackTier = await attackTiers[type];
 
-        for (let type of types) {
-            const attackTier = attackTiers[type];
+            if (attackTier.pure!="F"||
+             (attackTier.shadow&&attackTier.shadow!="F")) {
+                if (!has_reset_tiers) {
+                    $("#attack-tiers").css("display", "");
+                    $("#attack-tier-results .dex-layout-content").empty();
+                    $("#attack-tier-results-shadow .dex-layout-content").empty();
+                    $("#attack-tier-shadow-header").css("display", "none");
+                    $("#attack-tier-results-shadow").css("display", "none");
+                    $("#attack-tier-results").css("flex-basis", "100%");
+                    $("#attack-tier-results").addClass("rounded-bottom");
+                    has_reset_tiers = true;
+                }
 
-            if (attackTier.pure != "F")
-                $("#dex-tier-"+(attackTier.pure == "MRay" ? "S" : attackTier.pure[0])).append(GetTypeLink(type));
-            if (attackTier.shadow && attackTier.shadow != "F") {
-                $("#dex-tier-"+(attackTier.shadow == "MRay" ? "S" : attackTier.shadow[0])+"-shadow").append(GetTypeLink(type));
-                $("#attack-tier-shadow-header").css("display", "");
-                $("#attack-tier-results-shadow").css("display", "");
-                $("#attack-tier-results").css("flex-basis", "50%");
-                $("#attack-tier-results").removeClass("rounded-bottom");
+                if (attackTier.pure != "F")
+                    $("#dex-tier-"+(attackTier.pure == "MRay" ? "S" : attackTier.pure[0])).append(GetTypeLink(type));
+                if (attackTier.shadow && attackTier.shadow != "F") {
+                    $("#dex-tier-"+(attackTier.shadow == "MRay" ? "S" : attackTier.shadow[0])+"-shadow").append(GetTypeLink(type));
+                    $("#attack-tier-shadow-header").css("display", "");
+                    $("#attack-tier-results-shadow").css("display", "");
+                    $("#attack-tier-results").css("flex-basis", "50%");
+                    $("#attack-tier-results").removeClass("rounded-bottom");
+                }
             }
         }
     }
-    else {
+
+    if (!has_reset_tiers)
         $("#attack-tiers").css("display", "none");
-    }
 }
 
 /**
@@ -970,7 +961,7 @@ function ParsePokedexURL(params) {
  * Callback function for when pokemon stats are updated (level or/and IVs).
  * Reloads the pokemon page and the url with the new specified stats.
  */
-function UpdatePokemonStatsAndURL() {
+async function UpdatePokemonStatsAndURL() {
     const params = new URLSearchParams(location.search);
 
     // if url has pokemon params...
