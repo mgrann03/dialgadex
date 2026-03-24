@@ -618,6 +618,7 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
     const atk = stats.atk;
     const def = stats.def;
     const hp = Math.floor(stats.hp);
+    if (max_stats && max_stats.hp) max_stats.hp = Math.floor(max_stats.hp);
 
     // cache attack tiers
     const attackTiers = {};
