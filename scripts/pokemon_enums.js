@@ -538,7 +538,7 @@ function GetPokemonForms(pokemon_id) {
         case 778: // Mimikyu
             return [ "Disguised", "Busted" ];
         case 800: // Necrozma
-            return [ "Normal", "Dawn_wings", "Dusk_mane" ];
+            return [ "Normal", "Dawn_wings", "Dusk_mane", "Ultra" ];
         case 849: // Toxtricity
             return [ "Amped", "Low_key" ];
         case 854: // Sinistea
@@ -815,6 +815,8 @@ function GetFormText(pokemon_id, form) {
             return "Dawn Wings";
         case "Dusk_mane":
             return "Dusk Mane";
+        case "Ultra":
+            return "Ultra";
         case "Low_key":
             return "Low Key Form";
         case "Ice":
