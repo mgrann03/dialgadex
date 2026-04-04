@@ -387,13 +387,17 @@ function ResetPokedexCounters() {
 function LoadPokedexCounters() {
     // Move filters for display
     MoveFilterPopup("#counters-filters");
-
-    let search_params = GetSearchParms("Any", false);
-    search_params.real_damage = true;
+    
+    const moves = GetPokemonMoves(current_pkm_obj, "Type-Match");
+    if (moves.length != 6)
+        return;
 
     // array of counters pokemon and movesets found so far
-    if (current_pkm_obj.fm && current_pkm_obj.cm) {
-        if (current_pkm_obj.fm.length*current_pkm_obj.cm.length <= 40) { // Mew
+    if (moves[0].length > 0 && moves[1].length > 0) { // has non-elite moves
+        let search_params = GetSearchParms("Any", false);
+        search_params.real_damage = true;
+        
+        if (moves[0].length * moves[1].length <= 40) { // Is not Mew
             let counters = GetStrongestVersus(GetEnemyParams(current_pkm_obj), search_params);
             ProcessAndSetCountersFromArray(counters);
             counters_loaded = true;
@@ -408,10 +412,12 @@ function LoadPokedexCounters() {
             });
             $("#counters-loading").append(load_button);
         }
+        
+        $("#counters").css("display", "revert");
     }
-    else { // Smeargle
+    else { // Smeargle, invalid bosses
         $("#counters-loading").empty();
-        $("#counters-loading").text("Pokémon has no valid movesets to calculate against.");
+        $("#counters").css("display", "none");
     }
 }
 
@@ -1100,6 +1106,8 @@ function BindPokeDex() {
             ClearTypeTiers();
             ClearMoveUserMap();
             UpdatePokemonStatsAndURL();
+            ResetPokedexCounters();
+            LoadPokedexCounters();
             
             $("#overlay").removeClass("active");
         }
