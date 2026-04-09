@@ -985,13 +985,25 @@ function GetPokemonIconCoords(pokemon_id, form) {
                 26, // Raichu X
                 26, // Raichu Y
                 358, // Chimecho
-                0, // RESERVED - Absol Z?
-                0, // RESERVED - Staraptor?
-                0, // RESERVED - Garchomp Z?
+                359, // Absol Z
+                398, // Staraptor
+                445, // Garchomp Z
                 448, // Lucario Z
-                0, // RESERVED
+                485, // Heatran
                 491, // Darkrai
-                0, // RESERVED
+                623, // Golurk
+                478, // Froslass
+                740, // Crabominable
+                768, // Golisopod
+                801, // Magearna
+                    801, // Magearna (Original Color)
+                807, // Zeraora
+                952, // Scovillain
+                970, // Glimmora
+                978, // Tatsugiri (Curly)
+                    978, // Tatsugiri (Droopy)
+                    978, // Tatsugiri (Stretchy)
+                998, // Baxcalibur
             ];
 
             if (megaZALookup.includes(pokemon_id)) { // new Megas without sprites use base form
@@ -1002,8 +1014,15 @@ function GetPokemonIconCoords(pokemon_id, form) {
     }
     else if (form == "MegaZ") {
         switch (pokemon_id) {
+            case 359:
+                offsetID = 1433;
+                break;
+            case 445:
+                offsetID = 1435;
+                break;
             case 448:
                 offsetID = 1436;
+                break;
         }
     }
     else if (form == "Alola") {
