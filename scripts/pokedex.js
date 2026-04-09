@@ -1198,8 +1198,10 @@ function GetStatDistributions() {
     if (!!atk_dist && !!def_dist && !!hp_dist && !!cp_dist)
         return;
 
-    atk_dist = CalcDistribution((jb_pkm.map(e=>e.stats.baseAttack)));
-    def_dist = CalcDistribution((jb_pkm.map(e=>e.stats.baseDefense)));
-    hp_dist = CalcDistribution((jb_pkm.map(e=>e.stats.baseStamina)));
-    cp_dist = CalcDistribution((jb_pkm.map(e=>GetPokemonCP(GetPokemonStats(e, 50)))));
+    const pkm_w_stats = jb_pkm.filter(e=>e.stats && e.stats.baseAttack && e.stats.baseDefense && e.stats.baseStamina);
+
+    atk_dist = CalcDistribution((pkm_w_stats.map(e=>e.stats.baseAttack)));
+    def_dist = CalcDistribution((pkm_w_stats.map(e=>e.stats.baseDefense)));
+    hp_dist = CalcDistribution((pkm_w_stats.map(e=>e.stats.baseStamina)));
+    cp_dist = CalcDistribution((pkm_w_stats.map(e=>GetPokemonCP(GetPokemonStats(e, 50)))));
 }
