@@ -1,5 +1,5 @@
 const JB_URL = "https://raw.githubusercontent.com/mgrann03/pokemon-resources/main/";
-const CDN_URL = "https://cdn.statically.io/gh/mgrann03/pokemon-resources/main/";
+const CDN_URL = "https://pokemon-resources.mgrann03.workers.dev/";
 const GIFS_PATH = "graphics/ani/";
 const SHINY_GIFS_PATH = "graphics/ani-shiny/";
 const POGO_PNGS_PATH = "graphics/pogo-256/"
