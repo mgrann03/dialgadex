@@ -1252,6 +1252,11 @@ sup.xl {
 #pokedex-move-table tr > *:nth-child(1) { width: 18%; }
 #pokedex-move-table tr > *:nth-child(2) { width: 18%; }
 
+.moveset-title {
+    font-size: 18px;
+    display: inline-block;
+    padding: 0.25em 0;
+}
 #move-data-table {
     table-layout: fixed;
 }

@@ -143,16 +143,6 @@ dialog.card .card-body {
     }
 
     /* rename moveset column */
-    #pokedex-move-table thead tr > *:nth-child(1) {
-        font-size: 0;
-    }
-    #pokedex-move-table thead tr > *:nth-child(1):before {
-        content: "Moveset";
-        font-size: 18px;
-        display: inline-block;
-        padding: 0.25em 0;
-    }
-
     #pokedex-move-table thead tr > *:nth-child(2), #pokedex-move-table thead tr > *:nth-child(2n+3) {
         display: none;
     }

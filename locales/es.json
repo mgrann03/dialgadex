@@ -342,6 +342,7 @@
         "charged-plural": "Cargados",
         "move": "Ataque",
         "moves": "Ataques",
+        "moveset": "Ataques",
         "fast-move": "Ataque Rápido",
         "fast-move-plural": "Ataques Rápidos",
         "charged-move": "Ataque Cargado",
