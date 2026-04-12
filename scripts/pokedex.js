@@ -14,13 +14,16 @@ async function LoadPokedex(pokedex_mon) {
 
     // sets the page title
     const pokemon_name = jb_names[pokedex_mon.pokemon_id];
-    document.title = "#" + pokedex_mon.pokemon_id + " " + pokemon_name
-        + " - DialgaDex";
+    document.title = FormatTranslation("meta.pokedex.title", {
+        id: pokedex_mon.pokemon_id,
+        name: pokemon_name
+    });
 
     // sets description
     $('meta[name=description]').attr('content',
-        "Best movesets, base stats, and raid counters for " + pokemon_name +
-        " in Pokémon Go.");
+        FormatTranslation("meta.pokedex.description", {
+            name: pokemon_name
+        }));
 
     // sets level input value
     $("#input-lvl").val(pokedex_mon.level);
@@ -252,7 +255,7 @@ async function UpdateStats(pkm_obj, pokedex_mon) {
         + GetTranslation("dex.stats.percent-perfect-ivs","% of Perfect IVs"));
     $("#eff-stat-compare").html(
         FormatDecimal(100*(stats.atk*stats.def*stats.hp)/(max_stats.atk*max_stats.def*max_stats.hp), 3, 2, 2)
-        + GetTranslation("dex.stats.percent-perfect-ivs","% of Perfect Stat Product"));
+        + GetTranslation("dex.stats.percent-perfect-product","% of Perfect Stat Product"));
     if (pokedex_mon.ivs.atk!=15||pokedex_mon.ivs.def!=15||pokedex_mon.ivs.hp!=15) {
         $("[data-vis-nonhundo]").css("display", "revert");
     }

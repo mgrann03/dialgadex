@@ -366,7 +366,8 @@
 
         "tier": "Tier",
 
-        "shadow": "Shadow"
+        "shadow": "Shadow",
+        "not-shadow": "Not "
     },
 
     "site": {
@@ -380,6 +381,41 @@
             "contact": "Contact",
             "credits": "Credits",
             "privacy": "Privacy"
+        }
+    },
+
+    "search-string": {
+        "missing": "Missing: ",
+        "copy": "Copy",
+        "copied": "Copied!"
+    },
+
+    "meta": {
+        "rankings": {
+            "title": "Best {type} Attackers - DialgaDex",
+            "title-each": "Best Attackers of Each type - DialgaDex",
+            "title-versus": "Best Attackers against {type}-type Bosses - DialgaDex",
+            "description": "The best {type} attackers {versus} in Pokémon Go, using the new eDPS metric."
+        },
+        "moves": {
+            "title": "{type} {kind} Moves - DialgaDex",
+            "description": "All the hidden move data attributes for {type} {kind} moves in Pokémon Go. Includes metrics which evaluate how effective each move is."
+        },
+        "pokedex": {
+            "title": "#{id} {name} - DialgaDex",
+            "description": "Best movesets, base stats, and raid counters for {name} in Pokémon Go."
+        },
+        "typechart": {
+            "title": "Type Chart - DialgaDex",
+            "description": "Each attacking type's effectiveness against raid bosses in Pokémon Go."
+        },
+        "faq": {
+            "title": "FAQ - DialgaDex",
+            "description": "Answers to common questions about DialgaDex."
+        },
+        "about": {
+            "title": "About - DialgaDex",
+            "description": "Credits, references, contact info, and details about DialgaDex."
         }
     }
 }

@@ -366,7 +366,8 @@
 
         "tier": "Grada",
 
-        "shadow": "Oscuro"
+        "shadow": "Oscuro",
+        "not-shadow": "No "
     },
 
     "site": {
@@ -380,6 +381,41 @@
             "contact": "Contacto",
             "credits": "Créditos",
             "privacy": "Privacidad"
+        }
+    },
+
+    "search-string": {
+        "missing": "Faltante: ",
+        "copy": "Copiar",
+        "copied": "¡Copiado!"
+    },
+
+    "meta": {
+        "rankings": {
+            "title": "Mejores Atacantes {type} - DialgaDex",
+            "title-each": "Mejores Atacantes de Cada Tipo - DialgaDex",
+            "title-versus": "Mejores Atacantes contra Oponentes de tipo {type} - DialgaDex",
+            "description": "Mejores atacantes {type} {versus} en Pokémon Go, usando la nueva métrica eDPS."
+        },
+        "moves": {
+            "title": "Ataques {kind} {type} - DialgaDex",
+            "description": "Todos los atributos de datos de ataques ocultos para ataques {kind} {type} en Pokémon Go. Incluye métricas que evalúan qué tan efectivo es cada ataque."
+        },
+        "pokedex": {
+            "title": "#{id} {name} - DialgaDex",
+            "description": "Mejores sets de ataques, estadísticas base y contrarios de incursión para {name} en Pokémon Go."
+        },
+        "typechart": {
+            "title": "Efectividades de los Tipos - DialgaDex",
+            "description": "La efectividad de cada tipo de ataque contra los jefes de incursión en Pokémon Go."
+        },
+        "faq": {
+            "title": "PF - DialgaDex",
+            "description": "Respuestas a preguntas comunes sobre DialgaDex."
+        },
+        "about": {
+            "title": "Sobre - DialgaDex",
+            "description": "Créditos, referencias, información de contacto y detalles sobre DialgaDex."
         }
     }
 }

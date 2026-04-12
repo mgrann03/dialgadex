@@ -83,12 +83,13 @@ async function LoadStrongest(type = "Any", versus) {
     }
 
     // sets titles
-    let title = "Best " + (type == "Any" || type == "Each" || versus ? "" : type + "-type ") + "Attackers";
-    if (type == "Each")
-        title = title + " of Each type";
-    if (versus)
-        title = title + " against " + type + "-type Bosses";
-    document.title = title + " - DialgaDex"; // page title
+    let titleKey = "meta.rankings.title";
+    if (type == "Each") titleKey = "meta.rankings.title-each";
+    else if (versus) titleKey = "meta.rankings.title-versus";
+
+    document.title = FormatTranslation(titleKey, {
+        type: GetTranslation("terms.types." + type, type)
+    });
 
     if (type == "Any") {
         $("#strongest-type-title").attr("data-i18n", "strongest.any.type-text");
@@ -110,10 +111,10 @@ async function LoadStrongest(type = "Any", versus) {
 
     // sets description
     $('meta[name=description]').attr('content', 
-        "Best " + (type == "Any" || type == "Each" || versus ? "" : type + "-type ") + 
-        "raid counters " + 
-        (type != "Any" && type != "Each" && versus ? "against " + type + "-type bosses ": "") + 
-        "in Pokémon Go, using the new eDPS metric.");
+        FormatTranslation("meta.rankings.description", {
+            type: (type == "Any" || type == "Each" ? "" : GetTranslation("terms.types." + type, type)),
+            versus: (versus ? FormatTranslation("meta.rankings.title-versus", {type: GetTranslation("terms.types." + type, type)}) : "")
+        }));
 
     // removes previous table rows
     $("#strongest-table tbody tr").remove();
@@ -734,7 +735,7 @@ function GetRankingRow(row_i) {
             + coords.y + "px'></span>"
             + " <span class='strongest-name'>"
             + ((p.shadow)
-                ? "<span class=shadow-text>Shadow</span> " : "")
+                ? "<span class=shadow-text>" + GetTranslation("terms.shadow", "Shadow") + "</span> " : "")
             + name
             + ((p.level == 50) ? "<sup class='xl'>XL</sup>" : "")
             +"</span>"

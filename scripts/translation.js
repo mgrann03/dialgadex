@@ -61,6 +61,8 @@ async function InitializeLocalization() {
         
         if (newLocale != 'en')
             TranslateEverything();
+        
+        document.documentElement.lang = currentLocale;
     }
     catch (err) {
         console.error("No translation context found");
@@ -90,6 +92,19 @@ function GetTranslation(key, fallback) {
 
     return (typeof ret === 'string') ? ret : fallback;
 } 
+
+/**
+ * Get a translated template string, replacing {key} placeholders with values.
+ * Example: FormatTranslation("meta.rankings-title", {type: "Fire"})
+ *   with template "Best {type}-type Attackers - DialgaDex"
+ */
+function FormatTranslation(key, params = {}, fallback = "") {
+    let template = GetTranslation(key, fallback);
+    for (const [k, v] of Object.entries(params)) {
+        template = template.replaceAll(`{${k}}`, v);
+    }
+    return template;
+}
 
 /**
  * Scan DOM for translatable elements and perform updates to live document

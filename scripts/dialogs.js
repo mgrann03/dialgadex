@@ -646,8 +646,8 @@ function BindSearchStringDialog() {
     $("#search-string-copy").click(async function (e) {
         try {
             await navigator.clipboard.writeText($("#search-string-result").text());
-            $("#search-string-copy").attr("value", "Copied!");
-            setTimeout(()=>{$("#search-string-copy").attr("value", "Copy")}, 1000);
+            $("#search-string-copy").attr("value", GetTranslation("search-string.copied", "Copied!"));
+            setTimeout(()=>{$("#search-string-copy").attr("value", GetTranslation("search-string.copy", "Copy"))}, 1000);
         } catch (err) {
             console.error('Failed to copy text: ', err);
         }
@@ -682,7 +682,7 @@ function GetMonSearchIssue(parent, pkm_obj, form_issue = false, shadow_issue = f
         + coords.y + "px'></span>");
     leftside.append(" <span class='strongest-name'>"
         + ((pkm_obj.shadow)
-            ? "<span class=shadow-text>Shadow</span> " : "")
+            ? "<span class=shadow-text>" + GetTranslation("terms.shadow", "Shadow") + "</span> " : "")
         + pkm_obj.name
         +"</span>");
     
@@ -695,18 +695,18 @@ function GetMonSearchIssue(parent, pkm_obj, form_issue = false, shadow_issue = f
     if (form_text.length > 0 && form_issue)
         rightside.append(`<span class='poke-form-name issue-highlight'> (${form_text})</span>`);
     if (shadow_issue)
-        rightside.append(`<span class='poke-form-name issue-highlight'> (${pkm_obj.shadow ? '' : 'Not '}Shadow)</span>`);
+        rightside.append(`<span class='poke-form-name issue-highlight'> (${pkm_obj.shadow ? '' : GetTranslation("terms.not-shadow", "Not ")}${GetTranslation("terms.shadow", "Shadow")})</span>`);
 
     if (fm_issue) {
         const fm_obj = jb_fm.find(e=>e.name == fm_issue.move);
         if (fm_issue.issue == "missing") 
-            rightside.append("<span class='issue-highlight'>Missing: </span>");
+            rightside.append("<span class='issue-highlight'>" + GetTranslation("search-string.missing", "Missing: ") + "</span>");
         rightside.append(`<span class="type-text bg-${fm_obj.type}">${fm_issue.move}</span>`);
     }
     if (cm_issue) {
         const cm_obj = jb_cm.find(e=>e.name == cm_issue.move);
         if (cm_issue.issue == "missing") 
-            rightside.append("<span class='issue-highlight'>Missing: </span>");
+            rightside.append("<span class='issue-highlight'>" + GetTranslation("search-string.missing", "Missing: ") + "</span>");
         rightside.append(`<span class="type-text bg-${cm_obj.type}">${cm_issue.move}</span>`);
     }
     parent.append(rightside);
@@ -743,7 +743,7 @@ function UpdateAffinityDialog(enemy_params) {
         const t_weakness = GetEffectivenessMultOfType(enemy_params.weakness, t);
         const t_damage = enemy_params.enemy_ys[0][t] ? enemy_params.enemy_ys[0][t].y_num : 0;
 
-        tbl.append(`<span class='type-text bg-${t}'>${t}</span>`);
+        tbl.append(`<span class='type-text bg-${t}'>${GetTranslation("terms.types." + t, t)}</span>`);
         tbl.append(`<div class="bar-fg" style="width: ${t_weakness/2*100}%">
             <span class="bar-txt">${FormatDecimal(t_weakness,1,2,2)}</span></div>`);
         tbl.append(`<div class="bar-fg" style="width: ${(t_damage/total_damage*100*2)}%">

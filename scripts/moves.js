@@ -43,18 +43,19 @@ async function LoadMoves(type = "Any", kind) {
     });
 
     // sets titles
-    let title = (cur_sort.move_type == "Any" ? "" : cur_sort.move_type + "-type ") + 
-        cur_sort.move_kind + " Moves";
-    document.title = title + " - DialgaDex"; // page title
+    document.title = FormatTranslation("meta.moves.title", {
+        type: (cur_sort.move_type == "Any" ? "" : GetTranslation("terms.types." + cur_sort.move_type, cur_sort.move_type)),
+        kind: GetTranslation("terms." + cur_sort.move_kind.toLowerCase())
+    });
     $("#move-type-title").text(cur_sort.move_type == "Any" ? "" : GetTranslation("terms.types." + cur_sort.move_type));
     $("#move-type-helper").text(cur_sort.move_type == "Any" ? "" : GetTranslation("moves.type-helper"));
 
     // sets description
     $('meta[name=description]').attr('content', 
-        "All the hidden move data attributes for " + 
-        (type == "Any" ? "" : type + " ") + cur_sort.move_kind + 
-        " moves in Pokémon Go. " + 
-        "Includes metrics which evaluate how effective each move is.");
+        FormatTranslation("meta.moves.description", {
+            type: (type == "Any" ? "" : GetTranslation("terms.types." + type, type)),
+            kind: GetTranslation("terms." + cur_sort.move_kind.toLowerCase())
+        }));
 
     BuildMoveUserMap();
     cur_sort.move_data = GetMoveData(cur_sort.move_type, cur_sort.move_kind);
@@ -283,8 +284,7 @@ function SetMoveTable(sort_info) {
 
         if (sort_info.move_kind == "Charged") {
             $("#move-ppe").css("display", "");
-            tr.append(MoveDataTD(
-                md.ppe.toLocaleString("en", { maximumFractionDigits: 2 }),
+            tr.append(MoveDataTD(FormatDecimal(md.ppe,3,0,2),
                 sort_info.sort_by=="ppe"));
             $("#move-p2pes").css("display", "");
             tr.append(MoveDataTD(FormatDecimal(md.p2pes,3,0,2), 

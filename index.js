@@ -301,11 +301,11 @@ function LoadTypeChartAndUpdateURL() {
     UpdateURL("?typechart");
     
     // sets the page title
-    document.title = "Type Chart - DialgaDex";
+    document.title = GetTranslation("meta.typechart.title", "Type Chart - DialgaDex");
 
     // sets description
     $('meta[name=description]').attr('content', 
-        "Each attacking type's effectiveness against raid bosses in Pokémon Go.");
+        GetTranslation("meta.typechart.description", "Each attacking type's effectiveness against raid bosses in Pokémon Go."));
 
     LoadPage("type-matrix");
 }
@@ -317,11 +317,11 @@ function LoadFAQAndUpdateURL() {
     UpdateURL("?faq");
     
     // sets the page title
-    document.title = "FAQ - DialgaDex";
+    document.title = GetTranslation("meta.faq.title", "FAQ - DialgaDex");
 
     // sets description
     $('meta[name=description]').attr('content', 
-        "Answers to common questions about DialgaDex.");
+        GetTranslation("meta.faq.description", "Answers to common questions about DialgaDex."));
 
     LoadPage("faq");
 }
@@ -333,11 +333,11 @@ function LoadAboutAndUpdateURL() {
     UpdateURL("?about");
     
     // sets the page title
-    document.title = "About - DialgaDex";
+    document.title = GetTranslation("meta.about.title", "About - DialgaDex");
 
     // sets description
     $('meta[name=description]').attr('content', 
-        "Credits, references, contact info, and details about DialgaDex.");
+        GetTranslation("meta.about.description", "Credits, references, contact info, and details about DialgaDex."));
 
     LoadPage("about");
 }
