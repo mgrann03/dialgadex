@@ -217,7 +217,7 @@
             "explanation": "Size of Party for party power boosts",
             "characteristic": "Boosts charged damage based on the ratio of fast:charged moves"
         },
-        "afinity-tooltip": {
+        "affinity-tooltip": {
             "title": "Type Affinity",
             "explanation": "Use real high-tier raid bosses when calculating rankings",
             "characteristic": "Takes into account the actual types, attack types, attack strengths, and stats of raid bosses based on the current scenario."
