@@ -96,7 +96,9 @@
             "perfect": "Perfect",
             "when-shadow": "when Shadow",
             "percent-perfect-ivs": "% of Perfect IVs",
-            "percent-perfect-product": "% of Perfect Stat Product"
+            "percent-perfect-product": "% of Perfect Stat Product",
+            "calculate": "Calculate",
+            "reset": "Reset"
         },
         "types": {
             "title": "Type Matchups",
@@ -285,7 +287,8 @@
             "action": "Delete",
             "confirm": "Deleted!"
         },
-        "clear": "Clear"
+        "clear": "Clear",
+        "apply": "Apply"
     },
     "moveset-editor": {
         "title": "Edit Moveset",
@@ -385,6 +388,16 @@
     },
 
     "search-string": {
+        "title": "Generate Search String",
+        "settings": "Settings",
+        "incl-moves": "Check Movesets",
+        "elite-only": "Check Elite Moves Only",
+        "min-tier": "Minimum Tier",
+        "result-title": "Search String",
+        "issues": "Possible Issues",
+        "length-issue": "§Generated search string exceeds the 5000 character limit.\nTry tweaking the settings to be more restrictive.",
+        "incl-msg": "Incorrectly Included",
+        "excl-msg": "Incorrectly Excluded",
         "missing": "Missing: ",
         "copy": "Copy",
         "copied": "Copied!"

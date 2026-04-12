@@ -299,7 +299,7 @@
     </div>
     <div class="card-footer buttons">
         <input type="button" value="Clear" id="move-edit-clear" data-i18n="move-editor.clear">
-        <input type="button" value="Apply" id="move-edit-apply" style="background-color: var(--col-widget);" autofocus>
+        <input type="button" value="Apply" id="move-edit-apply" style="background-color: var(--col-widget);" autofocus data-i18n="move-editor.apply">
         <input type="button" value="Delete" id="move-edit-delete" data-i18n="move-editor.delete.action" style="background-color: var(--col-red);" hidden>
     </div>
 </form>
@@ -307,7 +307,7 @@
 <dialog class="card" id="search-string-popup" style="white-space: nowrap;">
 <form autocomplete=off>
     <div class="card-header">
-        <div class="card-title">Generate Search String</div>
+        <div class="card-title" data-i18n="search-string.title">Generate Search String</div>
         <div class="drawer absolute-right v-middle dialog-close">
             <img class="drawer-icon" src="imgs/close.svg" alt="X Button to close the dialog" />
         </div>
@@ -315,19 +315,19 @@
     <div class="card-body">
         <div class="row">
             <div class="column-l">
-                <h3>Settings</h3>
+                <h3 data-i18n="search-string.settings">Settings</h3>
                 <div class="settings-list">
-                    <span>Check Movesets</span>
+                    <span data-i18n="search-string.incl-moves">Check Movesets</span>
                         <label class="switch">
                             <input type=checkbox value=include-movesets id=chk-include-movesets>
                             <span class="slider"></span>
                         </label>
-                    <span>Check Elite Moves Only</span>
+                    <span data-i18n="search-string.elite-only">Check Elite Moves Only</span>
                         <label class="switch">
                             <input type=checkbox value=elite-movesets id=chk-elite-movesets checked disabled>
                             <span class="slider"></span>
                         </label>
-                    <span class="settings-span">Minimum Tier</span>
+                    <span class="settings-span" data-i18n="search-string.min-tier">Minimum Tier</span>
                     <div class="tier-selector settings-span">
                         <label class="tier-C tier-label">
                             <input type=radio name=min-tier value=C />C
@@ -345,27 +345,27 @@
                 </div>
             </div>
             <div class="column-r col">
-                <h3>Search String</h3>
+                <h3 data-i18n="search-string.result-title">Search String</h3>
                 <textarea id=search-string-result readonly></textarea>
             </div>
         </div>
         <details id="search-string-issues">
-            <summary><h3>Possible Issues</h3></summary>
-            <div id="string-length-issue" class="issue-highlight">Generated search string exceeds the 5000 character limit.<br/>Try tweaking the settings to be more restrictive.</div>
+            <summary><h3 data-i18n="search-string.issues">Possible Issues</h3></summary>
+            <div id="string-length-issue" class="issue-highlight" data-i18n="search-string.length-issue">Generated search string exceeds the 5000 character limit.<br/>Try tweaking the settings to be more restrictive.</div>
             <div class="row">
                 <div class="column-l col" id="search-string-included-col">
-                    <h4>Incorrectly Included</h4>
+                    <h4 data-i18n="search-string.incl-msg">Incorrectly Included</h4>
                     <div class="pkm-list" id="search-string-included"></div>
                 </div>
                 <div class="column-r col" id="search-string-excluded-col">
-                    <h4>Incorrectly Excluded</h4>
+                    <h4 data-i18n="search-string.excl-msg">Incorrectly Excluded</h4>
                     <div class="pkm-list" id="search-string-excluded"></div>
                 </div>
             </div>
         </details>
     </div>
     <div class="card-footer buttons">
-        <input type="button" value="Copy" id="search-string-copy" style="background-color: var(--col-widget);" autofocus>
+        <input type="button" value="Copy" id="search-string-copy" style="background-color: var(--col-widget);" autofocus data-i18n="search-string.copy">
     </div>
 </form>
 </dialog>

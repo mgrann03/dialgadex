@@ -96,7 +96,9 @@
             "perfect": "Perfecto",
             "when-shadow": "como Oscuro",
             "percent-perfect-ivs": "% de Potencial Perfecto",
-            "percent-perfect-product": "% de Stat Producto Perfecto"
+            "percent-perfect-product": "% de Stat Producto Perfecto",
+            "calculate": "Calcular",
+            "reset": "Reiniciar"
         },
         "types": {
             "title": "Efectividades de los Tipos",
@@ -285,7 +287,8 @@
             "action": "Eliminar",
             "confirm": "¡Eliminado!"
         },
-        "clear": "Limpiar"
+        "clear": "Clear",
+        "apply": "Aplicar"
     },
     "moveset-editor": {
         "title": "Editar de Ataques",
@@ -385,6 +388,16 @@
     },
 
     "search-string": {
+        "title": "Generar Cadena de Búsqueda",
+        "settings": "Ajustes",
+        "incl-moves": "Verificar Ataques",
+        "elite-only": "Verificar Ataques Élite",
+        "min-tier": "Grada Mínima",
+        "result-title": "Cadena de Búsqueda",
+        "issues": "Posibles Problemas",
+        "length-issue": "",
+        "incl-msg": "Incluido Incorrectamente",
+        "excl-msg": "Excluido Incorrectamente",
         "missing": "Faltante: ",
         "copy": "Copiar",
         "copied": "¡Copiado!"
