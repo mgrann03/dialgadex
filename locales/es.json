@@ -113,6 +113,8 @@
         },
         "counters": {
             "title": "Contrarios",
+            "mega-abbrev": "(M)",
+            "shadow-abbrev": "(Os)",
             "notes": {
                 "method": "",
                 "disclaimer": ""
@@ -361,7 +363,9 @@
         "ivs": "Potencial",
         "cp": "PC",
 
-        "tier": "Grada"
+        "tier": "Grada",
+
+        "shadow": "Oscuro"
     },
 
     "site": {

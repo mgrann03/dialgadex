@@ -113,6 +113,8 @@
         },
         "counters": {
             "title": "Raid Counters",
+            "mega-abbrev": "(M)",
+            "shadow-abbrev": "(Sh)",
             "notes": {
                 "method": "Calculations take into account the counter's damage against this Pokémon and the counter's resistance to incoming damage from this Pokémon.",
                 "disclaimer": "Disclaimer: Calculations cannot capture some of the nuances of real raid battles. These calculations are best used to gauge overall attacker strength, not performance against any single raid boss. For the most accurate list of raid counters, please reference simulations instead."
@@ -361,7 +363,9 @@
         "ivs": "IVs",
         "cp": "CP",
 
-        "tier": "Tier"
+        "tier": "Tier",
+
+        "shadow": "Shadow"
     },
 
     "site": {

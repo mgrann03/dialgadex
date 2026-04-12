@@ -407,8 +407,8 @@ function ProcessAndSetCountersFromArray(counters,
             rat_pct_td.append("<b>" + rat_pct.toFixed(0) + "</b><span style='font-size: 0.9em'>%</span>");
 
             const rat_info_td = $("<td class=counters-rat-info></td>");
-            rat_info_td.html(((counter.mega)?"&nbsp;(M)":"")
-                + ((counter.shadow)?"&nbsp;(Sh)":""));
+            rat_info_td.html(((counter.mega)?"&nbsp;"+GetTranslation("dex.counters.mega-abbrev", " (M)"):"")
+                + ((counter.shadow)?"&nbsp;"+GetTranslation("dex.counters.shadow-abbrev", " (Sh)"):""));
             if (rat_info_td.html() == "") rat_info_td.css("width", "25%");
             
             const rat_tr = $("<tr class=counters-rat-row></tr>");
@@ -498,7 +498,7 @@ function ShowCountersPopup(hover_element, show, counter = null) {
         const form_text = GetFormText(counter.id, counter.form);
 
         const name = "<p class='counter-name'>"
-            + ((counter.shadow) ? "<span class=shadow-text>Shadow</span> " : "")
+            + ((counter.shadow) ? "<span class=shadow-text>"+GetTranslation("terms.shadow", "Shadow")+"</span> " : "")
             + counter.name
             + ((form_text.length > 0)
                 ? " <span class=small-text>(" + form_text + ")</span>" : "")
