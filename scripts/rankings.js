@@ -122,7 +122,7 @@ async function LoadStrongest(type = "Any", versus) {
     search_params.real_damage = false;
 
     if (type == "Each") {
-        str_pokemons = GetStrongestOfEachType(search_params);
+        str_pokemons = await GetStrongestOfEachType(search_params);
         tier_stops = [];
         let i=0;
         for (const t of POKEMON_TYPES) {
@@ -139,7 +139,7 @@ async function LoadStrongest(type = "Any", versus) {
         show_pct = false;
         highlight_suboptimal = false;
     } else {
-        str_pokemons = GetStrongestOfOneType(search_params);
+        str_pokemons = await GetStrongestOfOneType(search_params);
 
         display_numbered = true;
         show_pct = true;
@@ -801,7 +801,7 @@ async function BuildTypeTier(type) {
         type
     };
 
-    let strongest = GetStrongestOfOneType(search_params);
+    let strongest = await GetStrongestOfOneType(search_params);
     ProcessAndGroup(strongest, type);
     SetTypeTier(type, strongest);
 }

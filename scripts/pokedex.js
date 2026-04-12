@@ -4,26 +4,22 @@ let atk_dist, def_dist, hp_dist, cp_dist;
  * Loads a Pokémon page.
  */
 async function LoadPokedex(pokedex_mon) {
-
-    if (loading_counters)
-        return;
-
     if (!pokedex_mon || pokedex_mon.pokemon_id == 0) {
         LoadPokedexAndUpdateURL(GetPokeDexMon(1, "Normal", null, null));
         return;
     }
-    
+
     // displays what should be displayed
     await LoadPage("pokedex-page");
 
     // sets the page title
     const pokemon_name = jb_names[pokedex_mon.pokemon_id];
     document.title = "#" + pokedex_mon.pokemon_id + " " + pokemon_name
-            + " - DialgaDex";
+        + " - DialgaDex";
 
     // sets description
-    $('meta[name=description]').attr('content', 
-        "Best movesets, base stats, and raid counters for " + pokemon_name + 
+    $('meta[name=description]').attr('content',
+        "Best movesets, base stats, and raid counters for " + pokemon_name +
         " in Pokémon Go.");
 
     // sets level input value
@@ -45,7 +41,7 @@ async function LoadPokedex(pokedex_mon) {
 
     const forms = GetPokemonForms(pokedex_mon.pokemon_id);
     const def_form = forms[0];
-    
+
     window.scrollTo(0,0);
 
     // sets main pokemon container
@@ -92,16 +88,11 @@ async function LoadPokedex(pokedex_mon) {
     return false;
 }
 
-
 /**
  * Calls the 'LoadPokemon' function and updates the url to match the
  * pokemon being loaded.
  */
 function LoadPokedexAndUpdateURL(pokedex_mon) {
-
-    if (loading_counters)
-        return false;
-
     LoadPokedex(pokedex_mon);
     UpdatePokedexURL(pokedex_mon);
 
@@ -134,7 +125,7 @@ function UpdatePokedexURL(pokedex_mon) {
  */
 async function LoadPokedexData(pokedex_mon) {
     let pkm_obj = jb_pkm.find(entry =>
-            entry.id == pokedex_mon.pokemon_id && entry.form == pokedex_mon.form);
+        entry.id == pokedex_mon.pokemon_id && entry.form == pokedex_mon.form);
     let released = true && pkm_obj;
 
     // if this pokemon is not released in pokemon go yet...
@@ -324,7 +315,7 @@ function LoadPokedexEffectiveness(pkm_obj) {
 /**
  * Resets the pokemon go counters section for the current selected pokemon.
  */
-function ResetPokedexCounters() {    
+function ResetPokedexCounters() {
     // shows cell with loading image in the counters table
     $("#counters-grid").empty();
     let div = $("<div id='counters-loading'></div>");
@@ -334,8 +325,6 @@ function ResetPokedexCounters() {
     div.css("grid-column", "1 / 11")
     div.css("margin", "0 auto");
     $("#counters-grid").append(div);
-
-    counters_loaded = false;
 }
 
 
@@ -345,7 +334,7 @@ function ResetPokedexCounters() {
  * the best counters taking into account their effectiveness against the selected
  * mon and their resistance to the average of the selected mon's movesets.
  */
-function LoadPokedexCounters() {
+async function LoadPokedexCounters() {
     // Move filters for display
     MoveFilterPopup("#counters-filters");
 
@@ -354,21 +343,9 @@ function LoadPokedexCounters() {
 
     // array of counters pokemon and movesets found so far
     if (current_pkm_obj.fm && current_pkm_obj.cm) {
-        if (current_pkm_obj.fm.length*current_pkm_obj.cm.length <= 40) { // Mew
-            let counters = GetStrongestVersus(GetEnemyParams(current_pkm_obj), search_params);
-            ProcessAndSetCountersFromArray(counters);
-            counters_loaded = true;
-        }
-        else {
-            $("#counters-loading").empty();
-            let load_button = $("<input type='button' value='Click to Load' />");
-            load_button.click(function (e) {
-                let counters = GetStrongestVersus(GetEnemyParams(current_pkm_obj), search_params);
-                ProcessAndSetCountersFromArray(counters);
-                counters_loaded = true;
-            });
-            $("#counters-loading").append(load_button);
-        }
+        const enemy_params = GetEnemyParams(current_pkm_obj);
+        const counters = await GetStrongestVersus(enemy_params, search_params);
+        ProcessAndSetCountersFromArray(counters);
     }
     else { // Smeargle
         $("#counters-loading").empty();
@@ -586,8 +563,11 @@ async function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
     const atk_sh = atk * Math.fround(1.2); // 6/5, from GM
     const def_sh = def * Math.fround(0.8333333); // 5/6, from GM
 
-    // removes previous table rows
+    // removes previous table rows and hides tiers
     $("#pokedex-move-table tbody tr").remove();
+    $("#attack-tiers").css("display", "none");
+    $("#attack-tier-results .dex-layout-content").empty();
+    $("#attack-tier-results-shadow .dex-layout-content").empty();
 
     const moves = GetPokemonMoves(pkm_obj, "Type-Match");
     if (moves.length != 6)
@@ -615,7 +595,7 @@ async function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
     if (settings_type_affinity) {
         enemy_params = GetTypeAffinity("Any");
         enemy_def = enemy_params.stats.def;
-        
+
         const effectiveness = GetTypesEffectivenessAgainstTypes(types);
         y = AvgYAgainst(enemy_params.enemy_ys[0], effectiveness);
     }
@@ -627,37 +607,21 @@ async function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
         if (!!attackTiers[type]) {
             return;
         }
-        
+
         attackTiers[type] = GetTypeTier(type, pkm_obj);
     }
 
     // appends new table rows asynchronously (so that Mew loads fast)
     // each chunk of moves combinations with a specific fast move
     // is appended in a different frame
-    async function yieldToMain() {
-        return new Promise(resolve => setTimeout(resolve, 0));
-    }
-
-    /**
-     * Appends all the rows containing a specific fast move.
-     * Receives the index of the fast move and the callback function
-     * for when all chunks have been appended as arguments.
-     */
     for (let fm of all_fms) {
-        await yieldToMain();
+        await tryYieldToMain();
 
         const fm_is_elite = elite_fms.includes(fm);
 
         // gets the fast move object
         const fm_obj = jb_fm.find(entry => entry.name == fm);
-        if (!fm_obj) {
-            fm_i++;
-            if (fm_i < all_fms.length)
-                setTimeout(function() {AppendFMChunk(fm_i, callback);}, 0);
-            else
-                callback();
-            return;
-        }
+        if (!fm_obj) continue;
 
         const fm_type = fm_obj.type;
         GetPokemonTypeTier(fm_type);
@@ -686,9 +650,9 @@ async function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
             // calculates the data
 
             const dps = GetDPS(types, atk, def, hp, fm_obj, cm_obj,
-                    fm_mult, cm_mult, enemy_def, y);
+                fm_mult, cm_mult, enemy_def, y);
             const dps_sh = GetDPS(types, atk_sh, def_sh, hp, fm_obj, cm_obj,
-                    fm_mult, cm_mult, enemy_def, y);
+                fm_mult, cm_mult, enemy_def, y);
             const tdo = GetTDO(dps, hp, def, y);
             const tdo_sh = GetTDO(dps_sh, hp, def_sh, y);
             const rat = GetEDPS(dps, tdo, pkm_obj, enemy_params);
@@ -697,7 +661,7 @@ async function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
             // calculates average rating percentages against max stats
             if (max_stats) {
                 const max_dps = GetDPS(types, max_stats.atk, max_stats.def, max_stats.hp, fm_obj, cm_obj,
-                     fm_mult, cm_mult, enemy_def, y);
+                    fm_mult, cm_mult, enemy_def, y);
                 const max_tdo = GetTDO(max_dps, max_stats.hp, max_stats.def, y);
                 const max_rat = GetEDPS(max_dps, max_tdo, pkm_obj, enemy_params);
 
@@ -848,9 +812,9 @@ function SortPokedexTable(column_i, sec_column_j) {
     let rows_array = Array.from(table.tBodies[0].rows);
     rows_array = MergeSortPokedexTable(rows_array, column_i, sec_column_j);
     for (let i = 0; i < rows_array.length; i++) {
-        if (i % 2) 
+        if (i % 2)
             rows_array[i].className = "even";
-        else 
+        else
             rows_array[i].className = "odd";
         table.tBodies[0].append(rows_array[i]);
     }
@@ -881,13 +845,13 @@ function MergeRows(a, b, column_i, sec_column_j) {
 
     function GetRowValue(row) {
         const col_i_val = parseFloat(
-                row.getElementsByTagName("TD")[column_i]
+            row.getElementsByTagName("TD")[column_i]
                 .innerHTML.toLowerCase());
         if (!isNaN(col_i_val)) return col_i_val;
-        
+
         return parseFloat(
             row.getElementsByTagName("TD")[sec_column_j]
-            .innerHTML.toLowerCase());
+                .innerHTML.toLowerCase());
     }
 
     let c = [];
@@ -949,7 +913,7 @@ function ParsePokedexURL(params) {
             return (Number.isInteger(val) && val >= 0 && val <= 15);
         }
         if (!IsValidIV(ivs.atk) || !IsValidIV(ivs.def)
-                || !IsValidIV(ivs.hp)) {
+            || !IsValidIV(ivs.hp)) {
             ivs = null;
         }
     }
@@ -986,7 +950,7 @@ async function UpdatePokemonStatsAndURL() {
 
         const pokedex_mon = GetPokeDexMon(GetPokemonId(pkm), form, level, ivs);
         const pkm_obj = jb_pkm.find(entry =>
-                entry.id == pokedex_mon.pokemon_id && entry.form == pokedex_mon.form);
+            entry.id == pokedex_mon.pokemon_id && entry.form == pokedex_mon.form);
         UpdateStats(pkm_obj, pokedex_mon);
         UpdatePokedexURL(pokedex_mon);
     }

@@ -560,7 +560,7 @@ function GetMovesetYs(types, atk, fms, cms, total_incoming_dps = 50) {
  * Searches the strongest pokemon of each type and returns the strongest
  * pokemon per type.
  */
-function GetStrongestOfEachType(search_params) {
+async function GetStrongestOfEachType(search_params) {
     // map of strongest pokemon and moveset found so far for each type
     let str_pokemons = new Map();
 
@@ -580,7 +580,7 @@ function GetStrongestOfEachType(search_params) {
             };
         }
 
-        const str_pok = GetStrongestVersus(enemy_params, search_params, 1)[0];
+        const str_pok = await GetStrongestVersus(enemy_params, search_params, 1)[0];
         str_pokemons.set(type, str_pok);
     }
 
@@ -597,7 +597,7 @@ function GetStrongestOfEachType(search_params) {
  * Searches the strongest pokemon of one type and returns the strongest
  * pokemon of that type.
  */
-function GetStrongestOfOneType(search_params) {
+async function GetStrongestOfOneType(search_params) {
 
     // build a basic enemy to "sim" against
     let enemy_params;
@@ -616,7 +616,7 @@ function GetStrongestOfOneType(search_params) {
     }
 
     // array of strongest pokemon and moveset found so far
-    let str_pokemons = GetStrongestVersus(enemy_params, search_params);
+    let str_pokemons = await GetStrongestVersus(enemy_params, search_params);
 
     // reverses strongest pokemon array
     str_pokemons.reverse();
@@ -627,14 +627,14 @@ function GetStrongestOfOneType(search_params) {
 /**
  * Find all strongest counters to this pokemon, filtering based on params
  */
-function GetStrongestVersus(enemy_params, search_params, num_counters = 100000) {
+async function GetStrongestVersus(enemy_params, search_params, num_counters = 100000) {
     const counters = [];
 
     /**
      * Checks if any of the movesets of a specific pokemon is stronger than any
      * of the current counters. If it is, updates the counters arrays.
      */
-    function UpdateIfStronger(pkm_obj, shadow, level, search_params) {
+    async function UpdateIfStronger(pkm_obj, shadow, level, search_params) {
         const movesets = GetStrongestAgainstSpecificEnemy(pkm_obj, shadow, level, enemy_params, search_params);
         if (movesets.length == 0)
             return;
@@ -656,7 +656,7 @@ function GetStrongestVersus(enemy_params, search_params, num_counters = 100000) 
             }
 
             if (is_strong_enough) {
-
+                
                 // adds pokemon to array of counters
                 const counter = {
                     rat: moveset.rat, dps: moveset.dps, tdo: moveset.tdo,
@@ -685,7 +685,7 @@ function GetStrongestVersus(enemy_params, search_params, num_counters = 100000) 
         }
     }
 
-    SearchAll(search_params, UpdateIfStronger);
+    await SearchAll(search_params, UpdateIfStronger);
 
     // sorts array
     counters.sort(function compareFn(a , b) {

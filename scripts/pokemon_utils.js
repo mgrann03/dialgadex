@@ -313,53 +313,54 @@ function CleanPokeName(string) {
  * 
  * 'f_process_pokemon' hs signature function(pkm_obj, is_shadow, search_params)
  */
-function SearchAll(search_params, f_process_pokemon) {
+async function SearchAll(search_params, f_process_pokemon) {
     for (let id = 1; id <= jb_max_id; id++) {
+        await tryYieldToMain();
         const forms = GetPokemonForms(id);
         const def_form = forms[0];
-    
+
         let pkm_obj = jb_pkm.find(entry =>
-                entry.id == id && entry.form == def_form);
-    
+            entry.id == id && entry.form == def_form);
+
         // checks whether pokemon should be skipped
         // (not released or legendary when not allowed)
         if (!pkm_obj || (!search_params.unreleased && !pkm_obj.released)
-                || (!search_params.legendary && pkm_obj.class)) {
+            || (!search_params.legendary && pkm_obj.class)) {
             continue;
         }
-    
+
         for (let level of settings_default_level) {
             if (pkm_obj.class == undefined && settings_xl_budget)
                 level = 50;
 
             // default form
-            f_process_pokemon(pkm_obj, false, level, search_params);
-        
+            await f_process_pokemon(pkm_obj, false, level, search_params);
+
             // shadow (except not released when it shouldn't)
             if (search_params.shadow && pkm_obj.shadow) {
-                    f_process_pokemon(pkm_obj, true, level, search_params);
+                await f_process_pokemon(pkm_obj, true, level, search_params);
             }
-        
+
             // other forms
             for (let form_i = 1; form_i < forms.length; form_i++) {
-        
+
                 pkm_obj = jb_pkm.find(entry =>
-                        entry.id == id && entry.form == forms[form_i]);
-        
+                    entry.id == id && entry.form == forms[form_i]);
+
                 // checks whether pokemon should be skipped (form not released or unwanted)
                 if (!pkm_obj || (!search_params.unreleased && !pkm_obj.released)
                     || (!search_params.mega && (pkm_obj.form == "Mega" || pkm_obj.form == "MegaY" || pkm_obj.form == "MegaZ")))
                     continue;
-        
-                f_process_pokemon(pkm_obj, false, level, search_params);                                                    
+
+                await f_process_pokemon(pkm_obj, false, level, search_params);
                 // other forms and shadow (except not released when it shouldn't)
                 if (search_params.shadow && pkm_obj.shadow) {
-                        f_process_pokemon(pkm_obj, true, level, search_params);
+                    await f_process_pokemon(pkm_obj, true, level, search_params);
                 }
             }
         }
     }
-    
+
 }
 
 /**
@@ -382,10 +383,10 @@ function GetRaidBosses(has_type = null, weak_to_type = null) {
     for (const pkm_obj of jb_pkm) {
         if (!pkm_obj.raid_tier || pkm_obj.raid_tier < 4) // Not a high-tier boss
             continue;
-        
+
         if (has_type) { // Find Pokemon with this type
             if (!pkm_obj.types.includes(has_type))
-                continue;            
+                continue;
         }
         if (weak_to_type) { // Find Pokemon weak to this type
             if (GetEffectivenessMultAgainst(weak_to_type, pkm_obj.types) <= 1.01) // Not exactly 1.0 because effective*resisted>1
@@ -866,4 +867,13 @@ function GetHiddenPowerSearch(pkm_id, all_fms) {
     }
 
     return str;
+}
+
+let lastYieldTime = performance.now();
+
+async function tryYieldToMain(threshold = 16) {
+    if (performance.now() - lastYieldTime > threshold) {
+        await new Promise(resolve => setTimeout(resolve, 0));
+        lastYieldTime = performance.now();
+    }
 }

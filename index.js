@@ -11,13 +11,7 @@ $(document).ready(Main);
 //        whatever asynchronous operations were being done on the previous mon
 //        should be cancelled
 
-// whether pokemon go counters are currently being loaded asynchronously
-let loading_counters = false;
-
 let current_pkm_obj = null; // current pokedex pokemon's pkm_obj
-
-// whether counters of current pokemon have been loaded yet
-let counters_loaded = false;
 
 /**
  * Main function.
