@@ -144,10 +144,10 @@ function TranslateElement(element) {
 function MarkdownToHTML(str) {
     let html = str;
 
-    // *Italics*
-    html = html.replace(/(\*|_)(.+?)\1/gm, '<em>$2</em>');
     // **Bold**
     html = html.replace(/(\*\*|__)(.+?)\1/gm, '<strong>$2</strong>');
+    // *Italics*
+    html = html.replace(/(\*|_)(.+?)\1/gm, '<em>$2</em>');
     // Super^Script^
     html = html.replace(/\^(.+?)\^/gm, '<sup>$1</sup>');
     // New Line

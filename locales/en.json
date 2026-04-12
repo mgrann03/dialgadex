@@ -54,6 +54,58 @@
         }
     },
 
+    "dex": {
+        "unreleased": "§This species/form is not in the **Pokémon GO** files yet",
+        "tier-title": "Raid Attacker Rankings",
+        "shadow-title": "When Shadow",
+        "stats": {
+            "title": "Stats, IVs, and CP",
+            "base": "Base Stats",
+            "base-tooltip": "§Pokémon stats as found in the Game Master\nfor this species/form",
+            "max": "Lv50 Stats",
+            "max-tooltip": "§Real in-game stats for a\nPerfect-IV Level 50 Pokémon",
+            "calc-title": "Stats Calculator",
+            "level-tooltip": {
+                "cpm": "Determines the Multiplier (CPM) used when calculating effective stats",
+                "levelup": "Can be raised by one half-level per \"Power-up\"",
+                "max": "Maximum level is 50 (+1 if Best Buddy)",
+                "hidden": "Never displayed directly in game; represented by a white arc in the Pokémon screen"
+            },
+            "iv-tooltip": {
+                "title": "\"Individual Values\"",
+                "explanation": "Additional points in each stat, as displayed in the Appraisal screen"
+            },
+            "hundo": "100% Stats",
+            "hundo-tooltip": "Real in-game stats for a Perfect-IV Pokémon\nat the specified Level",
+            "effective": "Effective Stats",
+            "effective-tooltip": "Real in-game stats for a Pokémon with the specified Level and IVs"
+        },
+        "types": {
+            "title": "Type Matchups",
+            "3r": "3x Resistance",
+            "3r-tooltip": "Damage Multiplier x0.244",
+            "2r": "2x Resistance",
+            "2r-tooltip": "Damage Multiplier x0.391",
+            "1r": "1x Resistance",
+            "1r-tooltip": "Damage Multiplier x0.625",
+            "1w": "1x Weakness",
+            "1w-tooltip": "Damage Multiplier x1.60",
+            "2w": "2x Weakness",
+            "2w-tooltip": "Damage Multiplier x2.56"
+        },
+        "counters": {
+            "title": "Raid Counters",
+            "notes": {
+                "method": "Calculations take into account the counter's damage against this Pokémon and the counter's resistance to incoming damage from this Pokémon.",
+                "disclaimer": "Disclaimer: Calculations cannot capture some of the nuances of real raid battles. These calculations are best used to gauge overall attacker strength, not performance against any single raid boss. For the most accurate list of raid counters, please reference simulations instead."
+            }
+        },
+        "moves": {
+            "title": "Best Movesets",
+            "shadow-header": "(Shadow)"
+        }
+    },
+
     "filters": {
         "species": {
             "title": "Species Filters",
@@ -270,8 +322,10 @@
         "charged-plural": "Charged",
         "move": "Move",
         "moves": "Moves",
-        "fast-moves": "Fast Moves",
-        "charged-moves": "Charged Moves",
+        "fast-move": "Fast Move",
+        "fast-move-plural": "Fast Moves",
+        "charged-move": "Charged Move",
+        "charged-move-plural": "Charged Moves",
 
         "enabled": "Enabled",
         "disabled": "Disabled",
@@ -279,7 +333,16 @@
         "supereffective": "Super Effective",
         "resisted": "Resisted",
         "immune": "Immune",
-        "damage-multiplier": "Damage Multiplier"
+        "damage-multiplier": "Damage Multiplier",
+
+        "attack": "Attack",
+        "defense": "Defense",
+        "stamina": "HP",
+
+        "level": "Level",
+        "ivs": "IVs",
+
+        "tier": "Tier"
     },
 
     "site": {
