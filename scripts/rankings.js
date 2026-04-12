@@ -187,6 +187,8 @@ function LoadStrongestAndUpdateURL(type = "Any", versus = null) {
  * Find the "baseline" mon to compare against for tier-making
  */
 function GetComparisonMon(str_pokemons, type = null) {
+    if (!Array.isArray(str_pokemons) || str_pokemons.length == 0) return 0;
+
     let top_compare;
     const best_mon = str_pokemons[0].rat;
     
@@ -237,6 +239,8 @@ function GetComparisonMon(str_pokemons, type = null) {
  * Else build tiers and calculate ratings relative to a baseline.
  */
 function ProcessAndGroup(str_pokemons, type) {
+    if (!Array.isArray(str_pokemons) || str_pokemons.length == 0) return;
+
     const display_grouped = $("#chk-grouped").is(":checked") && $("#chk-suboptimal").is(":checked");
         
     const top_compare = GetComparisonMon(str_pokemons, 

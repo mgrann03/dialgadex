@@ -337,19 +337,24 @@ function ResetPokedexCounters() {
 async function LoadPokedexCounters() {
     // Move filters for display
     MoveFilterPopup("#counters-filters");
-
-    let search_params = GetSearchParms("Any", false);
-    search_params.real_damage = true;
+    const moves = GetPokemonMoves(current_pkm_obj, "Type-Match");
+    if (moves.length != 6)
+        return;
 
     // array of counters pokemon and movesets found so far
-    if (current_pkm_obj.fm && current_pkm_obj.cm) {
+    if (moves[0].length > 0 && moves[1].length > 0) { // has non-elite moves
+        let search_params = GetSearchParms("Any", false);
+        search_params.real_damage = true;
+
         const enemy_params = GetEnemyParams(current_pkm_obj);
         const counters = await GetStrongestVersus(enemy_params, search_params);
         ProcessAndSetCountersFromArray(counters);
+        
+        $("#counters").css("display", "revert");
     }
-    else { // Smeargle
+    else { // Smeargle, invalid bosses
         $("#counters-loading").empty();
-        $("#counters-loading").text("Pokémon has no valid movesets to calculate against.");
+        $("#counters").css("display", "none");
     }
 }
 
@@ -555,6 +560,7 @@ async function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
     const atk = stats.atk;
     const def = stats.def;
     const hp = Math.floor(stats.hp);
+    if (max_stats && max_stats.hp) max_stats.hp = Math.floor(max_stats.hp);
 
     // cache attack tiers
     const attackTiers = {};
@@ -1013,8 +1019,10 @@ function GetStatDistributions() {
     if (!!atk_dist && !!def_dist && !!hp_dist && !!cp_dist)
         return;
 
-    atk_dist = CalcDistribution((jb_pkm.map(e=>e.stats.baseAttack)));
-    def_dist = CalcDistribution((jb_pkm.map(e=>e.stats.baseDefense)));
-    hp_dist = CalcDistribution((jb_pkm.map(e=>e.stats.baseStamina)));
-    cp_dist = CalcDistribution((jb_pkm.map(e=>GetPokemonCP(GetPokemonStats(e, 50)))));
+    const pkm_w_stats = jb_pkm.filter(e=>e.stats && e.stats.baseAttack && e.stats.baseDefense && e.stats.baseStamina);
+
+    atk_dist = CalcDistribution((pkm_w_stats.map(e=>e.stats.baseAttack)));
+    def_dist = CalcDistribution((pkm_w_stats.map(e=>e.stats.baseDefense)));
+    hp_dist = CalcDistribution((pkm_w_stats.map(e=>e.stats.baseStamina)));
+    cp_dist = CalcDistribution((pkm_w_stats.map(e=>GetPokemonCP(GetPokemonStats(e, 50)))));
 }

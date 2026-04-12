@@ -472,6 +472,8 @@ function BindMoveSetEditor() {
             ClearTypeTiers();
             ClearMoveUserMap();
             UpdatePokemonStatsAndURL();
+            ResetPokedexCounters();
+            LoadPokedexCounters();
             
             $("#overlay").removeClass("active");
         }
