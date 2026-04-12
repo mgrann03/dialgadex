@@ -78,7 +78,25 @@
             "hundo": "100% Stats",
             "hundo-tooltip": "",
             "effective": "Stats Efectivas",
-            "effective-tooltip": ""
+            "effective-tooltip": "",
+            "»percent-perfect-metric": [
+                "#rat-pct-val",
+                "#rat-pct-oftxt",
+                "#rat-pct-metric",
+                "#rat-pct-perftxt"
+            ],
+            "»percent-perfect-metric-sh": [
+                "#sh-rat-pct-val",
+                "#sh-rat-pct-oftxt",
+                "#sh-rat-pct-metric",
+                "#sh-rat-pct-perftxt",
+                "#sh-rat-pct-shadowtxt"
+            ],
+            "of": "de",
+            "perfect": "Perfecto",
+            "when-shadow": "como Oscuro",
+            "percent-perfect-ivs": "% de Potencial Perfecto",
+            "percent-perfect-product": "% de Stat Producto Perfecto"
         },
         "types": {
             "title": "Efectividades de los Tipos",
@@ -341,6 +359,7 @@
 
         "level": "Nivel",
         "ivs": "Potencial",
+        "cp": "PC",
 
         "tier": "Grada"
     },

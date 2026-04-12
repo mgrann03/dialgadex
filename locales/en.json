@@ -78,7 +78,25 @@
             "hundo": "100% Stats",
             "hundo-tooltip": "Real in-game stats for a Perfect-IV Pokémon\nat the specified Level",
             "effective": "Effective Stats",
-            "effective-tooltip": "Real in-game stats for a Pokémon with the specified Level and IVs"
+            "effective-tooltip": "Real in-game stats for a Pokémon with the specified Level and IVs",
+            "»percent-perfect-metric": [
+                "#rat-pct-val",
+                "#rat-pct-oftxt",
+                "#rat-pct-perftxt",
+                "#rat-pct-metric"
+            ],
+            "»percent-perfect-metric-sh": [
+                "#sh-rat-pct-val",
+                "#sh-rat-pct-oftxt",
+                "#sh-rat-pct-metric",
+                "#sh-rat-pct-perftxt",
+                "#sh-rat-pct-shadowtxt"
+            ],
+            "of": "of",
+            "perfect": "Perfect",
+            "when-shadow": "when Shadow",
+            "percent-perfect-ivs": "% of Perfect IVs",
+            "percent-perfect-product": "% of Perfect Stat Product"
         },
         "types": {
             "title": "Type Matchups",
@@ -341,6 +359,7 @@
 
         "level": "Level",
         "ivs": "IVs",
+        "cp": "CP",
 
         "tier": "Tier"
     },

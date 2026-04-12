@@ -227,7 +227,7 @@ function GetPokedexStatBars(stats) {
         GetBarHTML(Clamp(CalcZScore(stats.atk, atk_dist), -2.8, 3) + 3, FormatDecimal(stats.atk,1,1,1), 6, 6),
         GetBarHTML(Clamp(CalcZScore(stats.def, def_dist), -2.8, 3) + 3, FormatDecimal(stats.def,1,1,1), 6, 6),
         GetBarHTML(Clamp(CalcZScore(stats.hp, hp_dist), -2.8, 3) + 3, FormatDecimal(stats.hp,1,10,10).slice(0,-9), 6, 6),
-        GetBarHTML(cp_zscore + 3, cp + " CP", 6, 6, "tier-" + cp_tier)
+        GetBarHTML(cp_zscore + 3, cp + " " + GetTranslation("terms.cp", "CP"), 6, 6, "tier-" + cp_tier)
     ];
 }
 
@@ -248,11 +248,11 @@ async function UpdateStats(pkm_obj, pokedex_mon) {
     DrawStats(GetPokedexStatBars(stats), 
         ["#eff-stat-atk", "#eff-stat-def", "#eff-stat-hp", "#eff-cp"]);
     $("#eff-iv-compare").html(
-        FormatDecimal(100*(pokedex_mon.ivs.atk+pokedex_mon.ivs.def+pokedex_mon.ivs.hp)/45, 3, 2)
-        + "% of Perfect IVs");
+        FormatDecimal(100*(pokedex_mon.ivs.atk+pokedex_mon.ivs.def+pokedex_mon.ivs.hp)/45, 3, 2, 2)
+        + GetTranslation("dex.stats.percent-perfect-ivs","% of Perfect IVs"));
     $("#eff-stat-compare").html(
-        FormatDecimal(100*(stats.atk*stats.def*stats.hp)/(max_stats.atk*max_stats.def*max_stats.hp), 3, 2)
-        + "% of Perfect Stat Product");
+        FormatDecimal(100*(stats.atk*stats.def*stats.hp)/(max_stats.atk*max_stats.def*max_stats.hp), 3, 2, 2)
+        + GetTranslation("dex.stats.percent-perfect-ivs","% of Perfect Stat Product"));
     if (pokedex_mon.ivs.atk!=15||pokedex_mon.ivs.def!=15||pokedex_mon.ivs.hp!=15) {
         $("[data-vis-nonhundo]").css("display", "revert");
     }
@@ -719,21 +719,23 @@ async function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
     // against max stats of all movesets and displays it on the CP section
     if (max_stats) {
         let avg_rat_pct_vs_max = 100 * rat_pcts_vs_max / num_movesets;
-        let pct_str = FormatDecimal(avg_rat_pct_vs_max, 3, 2) + "%";
+        let pct_str = FormatDecimal(avg_rat_pct_vs_max, 3, 2, 2) + "%";
         if (isNaN(avg_rat_pct_vs_max))
             pct_str = "??";
-        $("#rat-pct-vs-max").html(pct_str + " of Perfect " + settings_metric);
+        $("#rat-pct-val").html(pct_str);
+        $("#rat-pct-metric").text(settings_metric);
     }
 
     // if can be shadow, calculates average rating percentage of shadow stats
     // against max stats of all movesets and displays it on the CP section
     if (can_be_shadow) {
         let avg_rat_sh_pct_vs_max = 100 * rat_sh_pcts_vs_max / num_movesets;
-        let pct_str = FormatDecimal(avg_rat_sh_pct_vs_max, 3, 2) + "%";
+        let pct_str = FormatDecimal(avg_rat_sh_pct_vs_max, 3, 2, 2) + "%";
         if (isNaN(avg_rat_sh_pct_vs_max))
             pct_str = "??";
         $("#sh-rat-pct-vs-max").css("display", "");
-        $("#sh-rat-pct-vs-max").html(pct_str + " of Perfect " + settings_metric + " when Shadow");
+        $("#sh-rat-pct-val").html(pct_str);
+        $("#sh-rat-pct-metric").text(settings_metric);
     }
     else {
         $("#sh-rat-pct-vs-max").css("display", "none");
