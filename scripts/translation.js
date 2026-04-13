@@ -231,7 +231,7 @@ function TranslatedTypeName(type) {
  */
 function AddMoveNameToLocale(id, name) {
     //TODO: Persist this data past a locale swap
-    translationMap.pokedata[id] = name;
+    translationMap.pokedata.moves[id] = name;
 }
 
 

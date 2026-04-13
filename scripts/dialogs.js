@@ -107,6 +107,7 @@ function BindMoveEditor() {
         }
     });
     $("#any-search-box").on("input", function(e) {
+        $("#move-edit-name").val($("#any-search-box").val());
         UpdateMoveEditor($("#any-search-box").val(), false);
     });
     $("#move-edit-clear").click(function() {
@@ -125,7 +126,7 @@ function BindMoveEditor() {
         }
     });
     $("#move-edit-delete").click(function() {
-        DeleteMove($("#any-search-box").val());
+        DeleteMove($("#move-edit-name").val());
 
         $("#move-edit-delete").attr("value", GetTranslation("move-editor.delete.confirm"));
         $("#move-edit-delete").prop("disabled", true);
@@ -214,11 +215,17 @@ function LoadMoveInputs() {
  * (or the window for adding a new move, by default)
  */
 function UpdateMoveEditor(move_name, clear_fields = true) {
+    const collator = new Intl.Collator(undefined, {
+        sensitivity: 'base'
+    });
+
     let move_obj, move_kind = "fm";
-    move_obj = jb_fm.find(e=>e.name==move_name);
-    if (!move_obj) {
-        move_obj = jb_cm.find(e=>e.name==move_name);
-        move_kind = "cm";
+    if (typeof move_name === 'string' || move_name instanceof String) {
+        move_obj = jb_fm.find(e=>e.name.toLowerCase()==move_name.toLowerCase() || collator.compare(TranslatedMoveName(e.id, e.type), move_name)===0);
+        if (!move_obj) {
+            move_obj = jb_cm.find(e=>e.name.toLowerCase()==move_name.toLowerCase() || collator.compare(TranslatedMoveName(e.id, e.type), move_name)===0);
+            move_kind = "cm";
+        }
     }
 
     // Editing existing move
@@ -227,6 +234,7 @@ function UpdateMoveEditor(move_name, clear_fields = true) {
         $("#move-edit-title").text(GetTranslation("move-editor.edit.title"));
         
         $("#any-search-box").val(TranslatedMoveName(move_obj.id, move_obj.type));
+        $("#move-edit-name").val(move_obj.name);
         $("#move-edit-type").val(move_obj.type);
         $("#move-edit-type").trigger("change");
 
@@ -249,6 +257,7 @@ function UpdateMoveEditor(move_name, clear_fields = true) {
         
         if (clear_fields) {
             $("#any-search-box").val("");
+            $("#move-edit-name").val("");
             $("#move-edit-type").val("Normal");
             $("#move-edit-kind").prop("checked", false);
             $("#move-edit-power").val(10);
@@ -272,7 +281,7 @@ function UpdateMoveEditor(move_name, clear_fields = true) {
  */
 function GetMoveEditorMove() {
     return { 
-        name: $("#any-search-box").val(),
+        name: $("#move-edit-name").val(),
         type: $("#move-edit-type").val(),
         power: $("#move-edit-power").val(),
         energy_delta: $("#move-edit-energy").val(),
@@ -347,7 +356,7 @@ function AddEditMove() {
     else { // Adding
         const new_id = Math.max(jb_fm.at(-1).id, jb_cm.at(-1).id)+1; // next available id
         dest_move_obj.id = new_id;
-        AddMoveNameToLocale(new_id, move_obj.name);
+        AddMoveNameToLocale(new_id, dest_move_obj.name);
         //TODO: Persist new moves past locale swaps! The configured move name would need to still be saved somehow?
         if (move_kind == "fm") 
             jb_fm.push(dest_move_obj);

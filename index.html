@@ -242,8 +242,9 @@
         <div class="move-form">
             <label for="any-search-box"><span data-i18n="terms.name">Name</span>:</label>
                 <div style="position: relative;">
-                    <input type=text class=search-box name="name" id="any-search-box" aria-label="Move Name">
+                    <input type=text class=search-box name="display_name" id="any-search-box" aria-label="Move Name">
                     <img class="inlaid-icon search-icon" src="imgs/search.svg" alt="" />
+                    <input type=hidden name="name" id="move-edit-name">
                 </div>
             <label for="move-edit-type"><span data-i18n="terms.type">Type</span>:</label>
                 <div class="row" style="gap: 1em; white-space-collapse: collapse;">
