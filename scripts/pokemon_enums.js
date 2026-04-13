@@ -590,7 +590,7 @@ function GetPokemonDefaultForm(pokemon_id) {
  * The name varies depending on the pokemon's form and whether it's a mega.
  */
 function GetPokemonImgSrcName(pokemon_id, form) {
-    let poke_name = CleanPokeName(jb_names[pokemon_id]);
+    let poke_name = CleanPokeName(UntranslatedSpeciesName(pokemon_id));
 
     // checks for stupid nidoran
     if (pokemon_id == 29)

@@ -18,9 +18,9 @@ let jb_names, jb_pkm, jb_max_id, jb_fm, jb_cm, jb_spec, jb_unpatch;
 async function LoadJSONData() {
     let jsonLoadReqs = [];
     
-    jsonLoadReqs.push(FetchJSONPokeData("pogo_pkm_names.json",
-        function(response) { 
-            jb_names = response; 
+    jsonLoadReqs.push(FetchJSON("/locales/pokedata/en.json", null, 
+        (json) => {
+            jb_names = json.species;
             IncreaseLoadingVal();
         })
     );

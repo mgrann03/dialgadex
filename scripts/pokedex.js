@@ -13,7 +13,7 @@ async function LoadPokedex(pokedex_mon) {
     await LoadPage("pokedex-page");
 
     // sets the page title
-    const pokemon_name = jb_names[pokedex_mon.pokemon_id];
+    const pokemon_name = TranslatedSpeciesName(pokedex_mon.pokemon_id);
     document.title = FormatTranslation("meta.pokedex.title", {
         id: pokedex_mon.pokemon_id,
         name: pokemon_name

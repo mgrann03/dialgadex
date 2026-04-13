@@ -207,7 +207,7 @@ function GetPokemonId(in_str) {
     const clean_input = CleanPokeName(in_str);
 
     // checks for a name
-    let pokemon_id = jb_names.findIndex(e=>CleanPokeName(e) == clean_input);
+    let pokemon_id = GetAllSpeciesNames().findIndex(e=>CleanPokeName(e) == clean_input);
 
     if (pokemon_id > jb_max_id || pokemon_id < 1)
         return 0;
@@ -229,7 +229,7 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal") {
         can_be_shadow = poke_obj.shadow;
     }
     else {
-        pokemon_name = jb_names[pokemon_id];
+        pokemon_name = TranslatedSpeciesName(pokemon_id);
     }
     
     const img_src_name = GetPokemonImgSrcName(pokemon_id, form);

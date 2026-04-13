@@ -397,12 +397,16 @@ async function LoadPage(pageName) {
 function InitializePokemonSearch() {
     let search_values = jb_pkm.slice();
 
-    // Add entries for mons completely missing from game data
-    const all_names = search_values.map(e => e.name);
-    jb_names.forEach((e, idx) => {
-        if (!all_names.includes(e) && idx <= jb_max_id && idx >= 1)
-            search_values.push({id: idx, name: e, form: 'Normal', types: []});
+    let idSet = new Set(Array.from({ length: jb_max_id }, (_, i) => i + 1));
+    search_values.forEach(e => { 
+        e.name = TranslatedSpeciesName(e.id, e.name);
+        idSet.delete(e.id);
     });
+
+    // Add entries for mons completely missing from game data
+    for (const idx of idSet) {
+        search_values.push({id: idx, name: TranslatedSpeciesName(idx), form: 'Normal', types: []});
+    }
 
     const pokemonSearch = new autoComplete({
         selector: "#poke-search-box",

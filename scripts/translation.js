@@ -157,6 +157,27 @@ function TranslateElement(element) {
     });
 }
 
+/**
+ * Get the name of this Pokemon species, by id
+ */
+function TranslatedSpeciesName(id, fallback) {
+    return GetTranslation("pokedata.species."+id, fallback);
+}
+
+/**
+ * Get the name of this Pokemon species IN ENGLISH, by id
+ * Used for lookups into base data (GM JSON, graphics)
+ */
+function UntranslatedSpeciesName(id) {
+    return jb_names[id];
+}
+
+/**
+ * Get the names of every Pokemon species from our map
+ */
+function GetAllSpeciesNames() {
+    return translationMap.pokedata.species.slice();
+}
 
 
 
