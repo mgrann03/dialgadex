@@ -229,6 +229,8 @@
             "explanation": "",
             "characteristic": ""
         },
+        "6stack": "6-Stack",
+        "solo": "Solo",
         "megasolo-tooltip": {
             "title": "MegaSolo",
             "explanation": ""

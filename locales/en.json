@@ -229,6 +229,8 @@
             "explanation": "Size of battle team for computing eDPS",
             "characteristic": "Computes eDPS as if N identical copies of the Pokémon were in a battle team, and relobbying only occurred after each Nth death"
         },
+        "6stack": "6-Stack",
+        "solo": "Solo",
         "megasolo-tooltip": {
             "title": "MegaSolo",
             "explanation": "Use a 6-mon team for everything but Megas, which fight solo"
