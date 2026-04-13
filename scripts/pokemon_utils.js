@@ -111,12 +111,12 @@ function GetPokemonMoves(pkm_obj, hidden_power_filter = "Type-Match") {
     // Add moves to Apex Forms
     if (pkm_obj.form == "S") {
         if (pkm_obj.id == 249) { // Apex Lugia
-            shadow_only_cm.push('Aeroblast+');
-            pure_only_cm.push('Aeroblast++');
+            shadow_only_cm.push('Aeroblast Plus');
+            pure_only_cm.push('Aeroblast Plus Plus');
         }
         if (pkm_obj.id == 250) { // Apex Ho-Oh
-            shadow_only_cm.push('Sacred Fire+');
-            pure_only_cm.push('Sacred Fire++');
+            shadow_only_cm.push('Sacred Fire Plus');
+            pure_only_cm.push('Sacred Fire Plus Plus');
         }
     }
 

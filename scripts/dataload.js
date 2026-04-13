@@ -46,9 +46,9 @@ async function LoadJSONData() {
     jsonLoadReqs.push(FetchJSONPokeData("pogo_cm.json",
         function(response) { 
             jb_cm = response; 
-            jb_cm.forEach(cm => {
+            /*jb_cm.forEach(cm => {
                 cm.name = cm.name.replaceAll(" Plus", "+");
-            });
+            });*/
             IncreaseLoadingVal();
         })
     );

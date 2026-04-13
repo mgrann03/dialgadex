@@ -120,11 +120,13 @@ function GetMoveData(type = "Any", move_kind = "Fast") {
             e.name!="Hidden Power")
         .map(e=> ({...e, kind: "Fast"})));
         
-    all_move_data.sort((a,b)=>(a.name.localeCompare(b.name)));
+    all_move_data.sort((a,b)=>(a.name.localeCompare(b.name, currentLocale)));
     //all_move_data.sort((a,b)=>(a.type.localeCompare(b.type)));
         
     all_move_data = all_move_data.map(e=>({
+        id: e.id,
         name: e.name,
+        display_name: TranslatedMoveName(e.id, e.type),
         kind: e.kind,
         type: e.type,
         power: e.power,
@@ -238,7 +240,7 @@ function SetMoveTable(sort_info) {
         sort_info.sort_by = (sort_info.move_kind == "Charged" ? "p2pes" : "peps2");
 
     if (sort_info.sort_by == "name") // sort as string
-        sort_info.move_data.sort((a,b)=>(a.name.localeCompare(b.name)));
+        sort_info.move_data.sort((a,b)=>(a.display_name.localeCompare(b.display_name, currentLocale)));
     else
         sort_info.move_data.sort((a,b)=>(b[sort_info.sort_by]-a[sort_info.sort_by]));
 
@@ -261,7 +263,7 @@ function SetMoveTable(sort_info) {
         const td_move_name = $("<td></td>");
         if (sort_info.sort_by == "name")
             td_move_name.addClass("selected");
-        const span_move_name = $(`<span class='type-text'>${md.name}</span>`);
+        const span_move_name = $(`<span class='type-text'>${md.display_name}</span>`);
         span_move_name.addClass("bg-" + ((md.name == "Hidden Power") ? "any-type" : md.type));
         span_move_name.on("click", function() { OpenMoveEditor(md.name) });
         td_move_name.append(span_move_name);
@@ -336,10 +338,10 @@ function SetMoveTable(sort_info) {
 function GetMovesOfKind(moveKind = "any") {
     let moveList = [];
     if (moveKind == "fm" || moveKind == "any")
-        jb_fm.forEach(e => moveList.push(e.name));
+        jb_fm.forEach(e => moveList.push({...e, display_name: TranslatedMoveName(e.id, e.type)}));
     if (moveKind == "cm" || moveKind == "any")
-        jb_cm.forEach(e => moveList.push(e.name));
-    moveList = moveList.sort();
+        jb_cm.forEach(e => moveList.push({...e, display_name: TranslatedMoveName(e.id, e.type)}));
+    moveList = moveList.sort((a,b)=>(a.display_name.localeCompare(b.display_name, currentLocale)));;
 
     return moveList;
 }

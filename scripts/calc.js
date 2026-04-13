@@ -475,8 +475,10 @@ function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow, level,
             const moveset = {
                 rat: avg_rating.rat, dps: avg_rating.dps, tdo: avg_rating.tdo,
                 all_rat: all_ratings,
-                fm: fm, fm_is_elite: fm_is_elite, fm_type: fm_obj.type,
-                cm: cm, cm_is_elite: cm_is_elite, cm_type: cm_obj.type
+                fm: fm, fm_is_elite: fm_is_elite, 
+                fm_type: fm_obj.type, fm_id: fm_obj.id,
+                cm: cm, cm_is_elite: cm_is_elite, 
+                cm_type: cm_obj.type, cm_id: cm_obj.id
             };
             // if the array of movesets isn't full
             // or the current moveset is stronger than the weakest in the array,
@@ -666,9 +668,9 @@ async function GetStrongestVersus(enemy_params, search_params, num_counters = 10
                     shadow: shadow, class: pkm_obj.class,
                     level: level,
                     fm: moveset.fm, fm_is_elite: moveset.fm_is_elite,
-                    fm_type: moveset.fm_type,
+                    fm_type: moveset.fm_type, fm_id: moveset.fm_id,
                     cm: moveset.cm, cm_is_elite: moveset.cm_is_elite,
-                    cm_type: moveset.cm_type
+                    cm_type: moveset.cm_type, cm_id: moveset.cm_id,
                 };
 
                 

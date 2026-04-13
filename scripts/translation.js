@@ -204,6 +204,35 @@ function TranslatedFormName(form_key) {
     return GetTranslation("pokedata.forms."+form_key, "");
 }
 
+/**
+ * Get the localized version of this attack, by id
+ * If "type" is supplied (Hidden Power) append it
+ */
+function TranslatedMoveName(id, type) {
+    let trans = GetTranslation("pokedata.moves."+id, "");
+
+    if (id == 281 && type) {
+        trans = trans + " " + GetTranslation("pokedata.types."+type, type);
+    }
+
+    return trans;
+}
+
+/**
+ * Get the localized version of this move type
+ */
+function TranslatedTypeName(type) {
+    return GetTranslation("pokedata.types."+type, type);
+}
+
+/**
+ * Get the localized version of this attack, by id
+ * If "type" is supplied (Hidden Power) append it
+ */
+function AddMoveNameToLocale(id, name) {
+    //TODO: Persist this data past a locale swap
+    translationMap.pokedata[id] = name;
+}
 
 
 /**

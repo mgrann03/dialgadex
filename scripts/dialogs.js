@@ -202,9 +202,9 @@ let move_searchs_loaded = false;
  */
 function LoadMoveInputs() {
     if (!move_searchs_loaded) {
-        InitMoveInput("fm", function (e) {AddPokemonMove(current_pkm_obj, e.detail.selection.value, "fm");});
-        InitMoveInput("cm", function (e) {AddPokemonMove(current_pkm_obj, e.detail.selection.value, "cm");});
-        InitMoveInput("any", function (e) {UpdateMoveEditor(e.detail.selection.value);});
+        InitMoveInput("fm", function (e) {AddPokemonMove(current_pkm_obj, e.detail.selection.value.name, "fm");});
+        InitMoveInput("cm", function (e) {AddPokemonMove(current_pkm_obj, e.detail.selection.value.name, "cm");});
+        InitMoveInput("any", function (e) {UpdateMoveEditor(e.detail.selection.value.name);});
         move_searchs_loaded = true;
     }
 }
@@ -226,7 +226,7 @@ function UpdateMoveEditor(move_name, clear_fields = true) {
         editor_action = "edit";
         $("#move-edit-title").text(GetTranslation("move-editor.edit.title"));
         
-        $("#any-search-box").val(move_obj.name);
+        $("#any-search-box").val(TranslatedMoveName(move_obj.id, move_obj.type));
         $("#move-edit-type").val(move_obj.type);
         $("#move-edit-type").trigger("change");
 
@@ -345,6 +345,10 @@ function AddEditMove() {
         move_obj.duration = dest_move_obj.duration;
     }
     else { // Adding
+        const new_id = Math.max(jb_fm.at(-1).id, jb_cm.at(-1).id)+1; // next available id
+        dest_move_obj.id = new_id;
+        AddMoveNameToLocale(new_id, move_obj.name);
+        //TODO: Persist new moves past locale swaps! The configured move name would need to still be saved somehow?
         if (move_kind == "fm") 
             jb_fm.push(dest_move_obj);
         else 
@@ -369,9 +373,10 @@ function DeleteMove(move_name) {
  * Builds a formatted span element to open the move editor
  */
 function GetMoveLink(move_name, move_type, is_elite) {
+    let move_obj = jb_fm.find(e=>e.name==move_name);
+    if (!move_obj) move_obj = jb_cm.find(e=>e.name==move_name);
+
     if (move_type === undefined) {
-        let move_obj = jb_fm.find(e=>e.name==move_name);
-        if (!move_obj) move_obj = jb_cm.find(e=>e.name==move_name);
         move_type = move_obj.type;
     }
     if (move_type == "None") 
@@ -379,7 +384,7 @@ function GetMoveLink(move_name, move_type, is_elite) {
 
     const span = $("<span class='type-text'></a>");
     span.addClass("bg-" + move_type);
-    span.text(move_name + (is_elite ? "*" : ""));
+    span.text(TranslatedMoveName(move_obj.id, move_obj.type) + (is_elite ? "*" : ""));
     span.on("click", function (e) {
         e.preventDefault();
         OpenMoveEditor(move_name);
@@ -403,13 +408,24 @@ function InitMoveInput(moveKind, onSelect) {
             filter: (list) => {
                 const inputValue = moveSearch.input.value.toLowerCase();
                 return list.sort((a, b) => {
-                    if (a.value.toLowerCase().startsWith(inputValue)) 
-                        return b.value.toLowerCase().startsWith(inputValue) ? a.value.localeCompare(b.value) : -1;
-                    else if (b.value.toLowerCase().startsWith(inputValue))
+                    if (a.value.display_name.toLowerCase().startsWith(inputValue)) 
+                        return b.value.display_name.toLowerCase().startsWith(inputValue) ? a.value.display_name.localeCompare(b.value, currentLocale) : -1;
+                    else if (b.value.display_name.toLowerCase().startsWith(inputValue))
                         return 1;
 
-                    return a.value.localeCompare(b.value);
+                    return a.value.display_name.localeCompare(b.value.display_name, currentLocale);
                 });
+            }
+        },
+        searchEngine: (query, record) => {
+            const sanitize = (str) => String(str).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[\u2018-\u2019]/g, "'").normalize("NFC");
+
+            const sanQuery = sanitize(query);
+            const sanPokeName = sanitize(record.display_name);
+            let match = sanPokeName.indexOf(sanQuery);
+            if (~match) {
+                const matchPart = record.display_name.substring(match, match + query.length);
+                return {match_type: 'name', match_value: record.display_name.replace(matchPart, "<mark>" + matchPart + "</mark>")};
             }
         },
         resultsList: {
@@ -419,16 +435,11 @@ function InitMoveInput(moveKind, onSelect) {
         resultItem: {
             highlight: true,
             element: (item, data) => {
-                let type = 'any-type';
-                let move = jb_fm.find(e => e.name == data.value);
-                if (!move) move = jb_cm.find(e => e.name == data.value);
-                if (move) type = move.type;
-
-                const moveTag = $('<span></span>');
-                moveTag.html($(item).html());
                 $(item).html('');
+                const moveTag = $('<span></span>');
+                moveTag.html(data.match.match_value);
                 moveTag.addClass('type-text');
-                moveTag.addClass('bg-' + type);
+                moveTag.addClass('bg-' + data.value.type);
                 $(item).append(moveTag);
                 $(item).addClass('move-search-result');
             }
@@ -496,7 +507,7 @@ function UpdateMovesetEditor() {
         if (!move_obj) return;
 
         const li = $("<li class='move-select-move'><span class='type-text bg-"+(move_obj.type=="None" ? "any-type" : move_obj.type)+"'>"
-            +move_name+(is_elite ? "*" : "")+"</span></li>");
+            +TranslatedMoveName(move_obj.id, move_obj.type)+(is_elite ? "*" : "")+"</span></li>");
         const img = $("<img class='absolute-right delete-icon' src='imgs/delete.svg' alt='Delete Button' />");
         img.click(function(e) {
             // default move; add to _rem
