@@ -354,7 +354,9 @@
         "tier": "Grada",
 
         "shadow": "Oscuro",
-        "not-shadow": "No "
+        "not-shadow": "No ",
+        "mega": "Mega",
+        "primal": "Primigenio"
     },
 
     "site": {

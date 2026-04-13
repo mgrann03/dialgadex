@@ -399,13 +399,13 @@ function InitializePokemonSearch() {
 
     let idSet = new Set(Array.from({ length: jb_max_id }, (_, i) => i + 1));
     search_values.forEach(e => { 
-        e.name = TranslatedSpeciesName(e.id, e.name);
+        e.search_name = TranslatedSpeciesName(e.id, e.name);
         idSet.delete(e.id);
     });
 
     // Add entries for mons completely missing from game data
     for (const idx of idSet) {
-        search_values.push({id: idx, name: TranslatedSpeciesName(idx), form: 'Normal', types: []});
+        search_values.push({id: idx, search_name: TranslatedSpeciesName(idx), form: 'Normal', types: []});
     }
 
     const pokemonSearch = new autoComplete({
@@ -415,9 +415,9 @@ function InitializePokemonSearch() {
             filter: (list) => {
                 const inputValue = pokemonSearch.input.value.toLowerCase();
                 return list.sort((a, b) => {
-                    if (a.value.name.toLowerCase().startsWith(inputValue)) 
-                        return b.value.name.toLowerCase().startsWith(inputValue) ? a.value.id - b.value.id : -1;
-                    else if (b.value.name.toLowerCase().startsWith(inputValue))
+                    if (a.value.search_name.toLowerCase().startsWith(inputValue)) 
+                        return b.value.search_name.toLowerCase().startsWith(inputValue) ? a.value.id - b.value.id : -1;
+                    else if (b.value.search_name.toLowerCase().startsWith(inputValue))
                         return 1;
 
                     return a.value.id - b.value.id;
@@ -428,7 +428,7 @@ function InitializePokemonSearch() {
             const sanitize = (str) => String(str).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[\u2018-\u2019]/g, "'").normalize("NFC");
 
             const sanQuery = sanitize(query);
-            const pokeName = record.name + ((record.form !== "Normal") ? " (" + GetFormText(record.id, record.form).replace(/\s+Forme?/,"") + ")" : "");
+            const pokeName = record.search_name + ((record.form !== "Normal") ? " (" + GetFormText(record.id, record.form).replace(/\s+Forme?/,"") + ")" : "");
 
             const idSearch = sanQuery.match(/#?(\d+).*/);
             if (idSearch && idSearch.length >= 2) {
@@ -438,11 +438,11 @@ function InitializePokemonSearch() {
                 }
             }
             else { // string search
-                const sanPokeName = sanitize(record.name);
+                const sanPokeName = sanitize(record.search_name);
                 let match = sanPokeName.indexOf(sanQuery);
                 if (~match) {
-                    const matchPart = record.name.substring(match, match + query.length);
-                    return {match_type: 'name', match_value: record.name.replace(matchPart, "<mark>" + matchPart + "</mark>")};
+                    const matchPart = record.search_name.substring(match, match + query.length);
+                    return {match_type: 'name', match_value: record.search_name.replace(matchPart, "<mark>" + matchPart + "</mark>")};
                 }
 
                 if (record.form !== "Normal") {
@@ -482,7 +482,7 @@ function InitializePokemonSearch() {
 
                 // Add Name
                 const nameTD = $("<td class='poke-search-name'></td>");
-                nameTD.html((data.match.match_type == "name") ? data.match.match_value : data.value.name);
+                nameTD.html((data.match.match_type == "name") ? data.match.match_value : data.value.search_name);
                 $(item).append(nameTD);
 
                 // Add Form

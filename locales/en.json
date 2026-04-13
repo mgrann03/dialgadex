@@ -354,7 +354,9 @@
         "tier": "Tier",
 
         "shadow": "Shadow",
-        "not-shadow": "Not "
+        "not-shadow": "Not ",
+        "mega": "Mega",
+        "primal": "Primal"
     },
 
     "site": {

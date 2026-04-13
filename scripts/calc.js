@@ -662,7 +662,7 @@ async function GetStrongestVersus(enemy_params, search_params, num_counters = 10
                     rat: moveset.rat, dps: moveset.dps, tdo: moveset.tdo,
                     all_rat: moveset.all_rat,
                     id: pkm_obj.id,
-                    name: TranslatedSpeciesName(pkm_obj.id, pkm_obj.name), form: pkm_obj.form,
+                    name: pkm_obj.name, form: pkm_obj.form,
                     shadow: shadow, class: pkm_obj.class,
                     level: level,
                     fm: moveset.fm, fm_is_elite: moveset.fm_is_elite,
