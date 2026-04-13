@@ -516,10 +516,10 @@ function ShowCountersPopup(hover_element, show, counter = null) {
             + "<p class='counter-metric'>" + settings_metric + " " + FormatDecimal(counter.rat,1,2,2) + "</p>"
             + "<p class='counter-types'><span class='type-text bg-"
                 + ((counter.fm == "Hidden Power") ? "any-type" : counter.fm_type) + "'>"
-                + counter.fm + ((counter.fm_is_elite) ? "*" : "")
+                + TranslatedMoveName(counter.fm_id, counter.fm_type) + ((counter.fm_is_elite) ? "*" : "")
             + "</span> "
             + "<span class='type-text bg-" + counter.cm_type + "'>"
-                + counter.cm + ((counter.cm_is_elite) ? "*" : "") 
+                + TranslatedMoveName(counter.cm_id, counter.cm_type) + ((counter.cm_is_elite) ? "*" : "") 
             + "</span></p>");
 
         // sets popup's click callback for touch devices
