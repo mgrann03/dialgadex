@@ -91,7 +91,7 @@ async function InitializeLocalization() {
  *     }
  */
 function GetTranslation(key, fallback) {
-    if (!fallback) fallback = "Localization Failure";
+    if (!fallback && fallback !== "") fallback = "Localization Failure";
 
     if (!translationMap) return fallback;
     
@@ -195,6 +195,13 @@ function UntranslatedSpeciesName(id) {
  */
 function GetAllSpeciesNames() {
     return translationMap.pokedata.species.slice();
+}
+
+/**
+ * Get the localized version of this Pokemon form, by key (from GM usually)
+ */
+function TranslatedFormName(form_key) {
+    return GetTranslation("pokedata.forms."+form_key, "");
 }
 
 

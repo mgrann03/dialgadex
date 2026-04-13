@@ -372,7 +372,6 @@ function GetPokemonForms(pokemon_id) {
         case 870: // Falinks
         case 952: // Scovillain
         case 970: // Glimmora
-        case 978: // Tatsugiri
         case 998: // Baxcalibur
             return ["Normal", "Mega"]
         case 80: // Slowbro
@@ -568,6 +567,10 @@ function GetPokemonForms(pokemon_id) {
             return [ "Family_of_four", "Family_of_three" ]
         case 964: // Palafin
             return [ "Zero", "Hero" ]
+        case 978: // Tatsugiri
+            return [ "Curly", "Droopy", "Stretchy", "Mega" ]
+        case 982: // Dudunsparce
+            return [ "Two", "Three" ]
         case 1012: // Poltchageist
             return [ "Counterfeit", "Artisan" ];
         case 1013: // Sinistcha
@@ -618,267 +621,106 @@ function GetPokemonImgSrcName(pokemon_id, form) {
  */
 function GetFormText(pokemon_id, form) {
 
-    if (pokemon_id == 493 || pokemon_id == 773 // Arceus or Silvally
-            || pokemon_id == 201 && form != "Exclamation_point" && form != "Question_mark") { // Unown letters
+    if (pokemon_id == 493) { // Arceus
+        return TranslatedFormName(form+"-type");
+    }
+    if (pokemon_id == 773) { // Silvally
+        return TranslatedFormName("Type_"+form);
+    }
+
+    if (pokemon_id == 201) { // Unown letters
+        switch (form) {
+            case "Exclamation_point":
+                return "!";
+            case "Question_mark":
+                return "?";
+        }
+        
         return form;
+    }
+
+    if (pokemon_id == 555) { // Darmanitan
+        switch (form) {
+            //case "Standard":
+            //    return "Standard Mode";
+            case "Zen":
+                return TranslatedFormName("Zen");
+            case "Galarian_standard":
+                return TranslatedFormName("Galarian");
+            case "Galarian_zen":
+                return TranslatedFormName("Galarian") + TranslatedFormName("Zen");
+        }
+
+        return "";
+    }
+    
+    if (pokemon_id == 649) { // Genesect
+        return TranslatedFormName(form+"_drive");
+    }
+
+    if (pokemon_id == 666) { // Vivillon
+        return TranslatedFormName(form+"_pattern");
+    }
+
+    if (pokemon_id == 669 || pokemon_id == 670 || pokemon_id == 671) { // Flabebe/Floette/Florges
+        return TranslatedFormName(form+"_flower");
+    }
+
+    if (pokemon_id == 676) { // Furfrou
+        if (form == "Natural")
+            return TranslatedFormName("Natural");
+        
+        return TranslatedFormName(form+"_trim");
     }
 
     if (pokemon_id == 774) // TODO Minior not handled yet
         return "";
 
+    if (pokemon_id == 875) { // Eiscue
+        return TranslatedFormName(form+"_face");
+    }
+
     switch (form) {
         case "Normal":
             switch (pokemon_id) {
                 case 351: // Castform
+                    return TranslatedFormName("Castform_normal");
                 case 386: // Deoxys
-                return "Normal Form";
-                case 479: // Rotom
-                    return "Rotom";
+                    return TranslatedFormName("Normal");
                 case 592: // Frillish
                 case 593: // Jellicent
                 case 678: // Meowstic
                 case 668: // Pyroar
                 case 902: // Basculegion
                 case 916: // Oinkologne
-                    return "Male";
-                case 649: // Genesect
-                    return "Normal";
+                    return TranslatedFormName("Male");
                 case 681: // Aegislash
-                    return "Shield";
+                    return TranslatedFormName("Shield");
                 //case 890: // Eternatus
                 //    return "Eternatus";
             }
-            break;
-        case "Alola":
-            return "Alolan Form";
-        case "Paldea":
-            return "Paldean Form";
-        case "Paldea_combat":
-            return "Paldean Combat Breed";
-        case "Paldea_aqua":
-            return "Paldean Aqua Breed";
-        case "Paldea_blaze":
-            return "Paldean Blaze Breed";
-        case "Exclamation_point":
-            return "!";
-        case "Question_mark":
-            return "?";
-        case "Plant":
-        case "Sandy":
-        case "Trash":
-            return form + " Cloak";
-        case "Galarian":
-        case "Hisuian":
-        case "Rainy":
-        case "Snowy":
-        case "Overcast":
-        case "Spring":
-        case "Autumn":
-        case "Winter":
-        case "Summer":
-        case "Ordinary":
-        case "Resolute":
-        case "Natural":
-        case "Midday":
-        case "Midnight":
-        case "Dusk":
-        case "Solo":
-        case "School":
-        case "Disguised":
-        case "Busted":
-        case "Amped":
-        case "Phony":
-        case "Antique":
-            return form + " Form";
+            return "";
         case "Sunny":
             if (pokemon_id == 421) // Cherrim
-                return "Sunshine Form";
-            else
-                return "Sunny Form";
-        case "West_sea":
-            return "West Sea";
-        case "East_sea":
-            return "East Sea";
-        case "Heat":
-        case "Wash":
-        case "Frost":
-        case "Fan":
-        case "Mow":
-            return form + " Rotom";
-        case "Attack":
-        case "Defense":
-        case "Speed":
-        case "Altered":
-        case "Origin":
-        case "Land":
-        case "Sky":
-        case "Incarnate":
-        case "Therian":
-        case "Aria":
-        case "Pirouette":
-            return form + " Form";
+                return TranslatedFormName("Sunshine");
+            else // Castform
+                return TranslatedFormName("Sunny");
         case "White":
-            switch (pokemon_id) {
-                case 646: // Kyurem
-                    return "White";
-                case 669: // Flabebe
-                case 670: // Floette
-                case 671: // Florges
-                    return "White Flower";
-            }
-            break;
+            return TranslatedFormName("White_kyurem");
         case "Black":
-            return "Black";
-        case "Shock":
-        case "Burn":
-        case "Chill":
-        case "Douse":
-            return form + " Drive";
-        case "Red_striped":
-            return "Red-Striped Form";
-        case "Blue_striped":
-            return "Blue-Striped Form";
-        case "White_striped":
-            return "White-Striped Form";
-        //case "Standard":
-        //    return "Standard Mode";
-        case "Zen":
-            return "Zen";
-        case "Galarian_standard":
-            return "Galarian";
-        case "Galarian_zen":
-            return "Galarian Zen";
-        case "Archipelago":
-        case "Continental":
-        case "Elegant":
-        case "Fancy":
-        case "Garden":
-        case "Jungle":
-        case "Marine":
-        case "Meadow":
-        case "Modern":
-        case "Monsoon":
-        case "Ocean":
-        case "Polar":
-        case "River":
-        case "Sandstorm":
-        case "Savanna":
-        case "Sun":
-        case "Tundra":
-            return form + " Pattern";
-        case "High_plains":
-            return "High Plains Pattern";
-        case "Icy_snow":
-            return "Icy Snow Pattern";
-        case "Poke_ball":
-            return "Poké Ball Pattern";
-        case "Red":
-        case "Yellow":
-        case "Orange":
-        case "Blue":
-            return form + " Flower";
-        case "Heart":
-        case "Star":
-        case "Diamond":
-        case "Debutante":
-        case "Matron":
-        case "Dandy":
-        case "Kabuki":
-        case "Pharaoh":
-            return form + " Trim";
-        case "La_reine":
-            return "La Reine Trim";
-        case "Average":
-        case "Small":
-        case "Large":
-        case "Super":
-            return form + " Size";
-        case "Fifty_percent":
-            return "50% Form";
-        case "Ten_percent":
-            return "10% Form";
-        case "Complete":
-            return "Complete Form";
-        case "Confined":
-            return "Confined";
-        case "Unbound":
-            return "Unbound";
-        case "Baile":
-            return "Baile Style";
-        case "Pompom":
-            return "Pom-Pom Style";
-        case "Pau":
-            return "Pa'u Style";
-        case "Sensu":
-            return "Sensu Style";
-        case "Dawn_wings":
-            return "Dawn Wings";
-        case "Dusk_mane":
-            return "Dusk Mane";
-        case "Ultra":
-            return "Ultra";
-        case "Low_key":
-            return "Low Key Form";
-        case "Ice":
-        case "Noice":
-            return form + " Face";
-        case "Male":
-        case "Female":
-            return form;
-        case "Full_belly":
-            return "Full Belly Mode";
-        case "Hangry":
-            return "Hangry Mode";
+            return TranslatedFormName("Black_kyurem");
         case "Hero":
             switch (pokemon_id) {
                 case 888: // Zacian
                 case 889: // Zamazenta
-                    return "Hero of Many Battles";
+                    return TranslatedFormName("Hero_of_many_battles");
                 case 964: // Palafin
-                    return "Hero";
+                    return TranslatedFormName("Hero");
             }
             break;
-        case "Zero":
-            return "Zero";
-        case "Crowned_sword":
-            return "Crowned Sword";
-        case "Crowned_shield":
-            return "Crowned Shield";
-        case "Eternamax":
-            return "Eternamax"; // Eternatus";
-        case "Single_strike":
-            return "Single Strike";
-        case "Rapid_strike":
-            return "Rapid Strike";
-        case "Ice_rider":
-            return "Ice Rider";
-        case "Shadow_rider":
-            return "Shadow Rider";
-        case "Family_of_four":
-            return "Family of Four";
-        case "Family_of_three":
-            return "Family of Three";
-        case "S":
-            return "Apex";
-        case "A":
-            return "Armored";
-        case "Blade":
-            return "Blade";
-        case "Flying_01":
-            return "Flying";
-        case "Doctor":
-            return "PhD";
-        case "Horizons":
-            return "Captain";
-        case "Pop_star":
-            return "Pop Star";
-        case "Rock_star":
-            return "Rock Star";
-        case "Vs_2019":
-            return "Libre";
     }
 
-    return "";
+    return TranslatedFormName(form);
 }
 
 /**
@@ -1280,7 +1122,6 @@ function GetPokemonIconCoords(pokemon_id, form) {
         if (form == "Normal") offsetID = pokemon_id;
         else offsetID = calyrexOffset + calyrexLookup.indexOf(form);
     }
-    
     else if (pokemon_id == 128) { // Tauros
         const taurosOffset = 1256;
         const taurosLookup = ['Paldea_combat','Paldea_blaze','Paldea_aqua'];
@@ -1291,7 +1132,13 @@ function GetPokemonIconCoords(pokemon_id, form) {
     else if (pokemon_id == 194 && form == "Paldea") offsetID = 1259 // Wooper
     else if (pokemon_id == 964 && form == "Hero") offsetID = 1261 // Palafin
     else if (pokemon_id == 925 && form == "Family_of_four") offsetID = 1262 // Maushold
-    // Tatsugiri
+    else if (pokemon_id == 978) { // Tatsugiri
+        const tatsugiriOffset = 1263;
+        const tatsugiriLookup = ['Droopy','Stretchy'];
+
+        if (form == "Curly") offsetID = pokemon_id;
+        else offsetID = tatsugiriOffset + tatsugiriLookup.indexOf(form);
+    }
     // Squawkabilly
     // Ursaloon Blood Moon
     // Ogerpon
