@@ -225,7 +225,7 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal") {
     let pokemon_name;
     let can_be_shadow = false;
     if (poke_obj) {
-        pokemon_name = poke_obj.name;
+        pokemon_name = TranslatedSpeciesName(pokemon_id, poke_obj.name);
         can_be_shadow = poke_obj.shadow;
     }
     else {

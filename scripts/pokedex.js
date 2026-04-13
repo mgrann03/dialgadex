@@ -453,7 +453,7 @@ function ProcessAndSetCountersFromArray(counters,
         img.attr("src", img_src);
 
         let form_name = GetFormText(counter_0.id, counter_0.form);
-        img.attr("alt", counter_0.name + (form_name.length > 0 ? " " + form_name : ""));
+        img.attr("alt", TranslatedSpeciesName(counter_0.id, counter_0.name) + (form_name.length > 0 ? " " + form_name : ""));
         const div = $("<div></div>");
 
         const div_align_baseline = $("<div class='align-base'></div>");
@@ -507,7 +507,7 @@ function ShowCountersPopup(hover_element, show, counter = null) {
 
         const name = "<p class='counter-name'>"
             + ((counter.shadow) ? "<span class=shadow-text>"+GetTranslation("terms.shadow", "Shadow")+"</span> " : "")
-            + counter.name
+            + TranslatedSpeciesName(counter.id, counter.name)
             + ((form_text.length > 0)
                 ? " <span class=small-text>(" + form_text + ")</span>" : "")
             + "</p>"

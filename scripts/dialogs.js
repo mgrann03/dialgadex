@@ -683,7 +683,7 @@ function GetMonSearchIssue(parent, pkm_obj, form_issue = false, shadow_issue = f
     leftside.append(" <span class='strongest-name'>"
         + ((pkm_obj.shadow)
             ? "<span class=shadow-text>" + GetTranslation("terms.shadow", "Shadow") + "</span> " : "")
-        + pkm_obj.name
+        + TranslatedSpeciesName(pkm_obj.id, pkm_obj.name)
         +"</span>");
     
     if (form_text.length > 0 && !form_issue)

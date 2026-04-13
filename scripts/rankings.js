@@ -690,7 +690,7 @@ function GetRankingRow(row_i) {
     if (row_i < str_pokemons.length) {
         const p = str_pokemons[row_i];
 
-        const name = p.name;
+        const name = TranslatedSpeciesName(p.id, p.name);
         const coords = GetPokemonIconCoords(p.id, p.form);
         const form_text = GetFormText(p.id, p.form).replace(/\s+Forme?/,"");
         const legendary = p.class !== undefined;
