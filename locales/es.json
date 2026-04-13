@@ -339,6 +339,10 @@
         "duration": "Tiempo",
         "duration-short": "TMP",
 
+        "dps": "DPS",
+        "tdo": "TDO",
+        "edps": "eDPS",
+
         "fast": "Rápido",
         "charged": "Cargado",
         "fast-plural": "Rápidos",

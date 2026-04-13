@@ -339,6 +339,10 @@
         "duration": "Duration",
         "duration-short": "DUR",
 
+        "dps": "DPS",
+        "tdo": "TDO",
+        "edps": "eDPS",
+
         "fast": "Fast",
         "charged": "Charged",
         "fast-plural": "Fast",

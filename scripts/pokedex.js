@@ -732,7 +732,7 @@ async function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
         if (isNaN(avg_rat_pct_vs_max))
             pct_str = "??";
         $("#rat-pct-val").html(pct_str);
-        $("#rat-pct-metric").text(settings_metric);
+        $("#rat-pct-metric").text(GetTranslation("terms."+settings_metric, settings_metric));
     }
 
     // if can be shadow, calculates average rating percentage of shadow stats
@@ -744,7 +744,7 @@ async function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
             pct_str = "??";
         $("#sh-rat-pct-vs-max").css("display", "");
         $("#sh-rat-pct-val").html(pct_str);
-        $("#sh-rat-pct-metric").text(settings_metric);
+        $("#sh-rat-pct-metric").text(GetTranslation("terms."+settings_metric, settings_metric));
     }
     else {
         $("#sh-rat-pct-vs-max").css("display", "none");

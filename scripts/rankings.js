@@ -748,7 +748,7 @@ function GetRankingRow(row_i) {
         td_fm.append(GetMoveLink(p.fm, p.fm_type, p.fm_is_elite));
         const td_cm = $("<td></td>");
         td_cm.append(GetMoveLink(p.cm, p.cm_type, p.cm_is_elite));
-        const td_rat = "<td>" + settings_metric + " <b>"
+        const td_rat = "<td>" + GetTranslation("terms."+settings_metric, settings_metric) + " <b>"
             + FormatDecimal(p.rat,2,2,2) + "</b></td>";
         const td_pct = ((show_pct && p.pct) ? "<td>" + GetBarHTML(p.pct, FormatDecimal(p.pct,3,1,1) + "%", 100, best_pct, ((Math.abs(p.pct - 100) < 0.000001) ? "contrast" : "")) + "</td>" : "");
 
