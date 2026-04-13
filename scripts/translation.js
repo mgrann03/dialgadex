@@ -47,6 +47,7 @@ function SelectLocale() {
  * Load locale in preparation for translation
  */
 async function InitializeLocalization() {
+    const oldLocale = currentLocale;
     const newLocale = SelectLocale();
 
     try {
@@ -58,8 +59,14 @@ async function InitializeLocalization() {
                 console.warn("Unsupported language or translation map unable to load. Falling back to English.")
                 currentLocale = 'en';
             });
+        translationMap.pokedata = await FetchJSON("/locales/pokedata/" + currentLocale + ".json", "/locales/pokedata/en.json", 
+            () => {},
+            () => {
+                console.warn("Unsupported language or pokedata map unable to load. Falling back to English.")
+                currentLocale = 'en';
+            });
         
-        if (newLocale != 'en')
+        if (currentLocale != oldLocale)
             TranslateEverything();
         
         document.documentElement.lang = currentLocale;

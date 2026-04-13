@@ -44,16 +44,16 @@ async function LoadMoves(type = "Any", kind) {
 
     // sets titles
     document.title = FormatTranslation("meta.moves.title", {
-        type: (cur_sort.move_type == "Any" ? "" : GetTranslation("terms.types." + cur_sort.move_type, cur_sort.move_type)),
+        type: (cur_sort.move_type == "Any" ? "" : GetTranslation("pokedata.types." + cur_sort.move_type, cur_sort.move_type)),
         kind: GetTranslation("terms." + cur_sort.move_kind.toLowerCase())
     });
-    $("#move-type-title").text(cur_sort.move_type == "Any" ? "" : GetTranslation("terms.types." + cur_sort.move_type));
+    $("#move-type-title").text(cur_sort.move_type == "Any" ? "" : GetTranslation("pokedata.types." + cur_sort.move_type));
     $("#move-type-helper").text(cur_sort.move_type == "Any" ? "" : GetTranslation("moves.type-helper"));
 
     // sets description
     $('meta[name=description]').attr('content', 
         FormatTranslation("meta.moves.description", {
-            type: (type == "Any" ? "" : GetTranslation("terms.types." + type, type)),
+            type: (type == "Any" ? "" : GetTranslation("pokedata.types." + type, type)),
             kind: GetTranslation("terms." + cur_sort.move_kind.toLowerCase())
         }));
 

@@ -743,7 +743,7 @@ function UpdateAffinityDialog(enemy_params) {
         const t_weakness = GetEffectivenessMultOfType(enemy_params.weakness, t);
         const t_damage = enemy_params.enemy_ys[0][t] ? enemy_params.enemy_ys[0][t].y_num : 0;
 
-        tbl.append(`<span class='type-text bg-${t}'>${GetTranslation("terms.types." + t, t)}</span>`);
+        tbl.append(`<span class='type-text bg-${t}'>${GetTranslation("pokedata.types." + t, t)}</span>`);
         tbl.append(`<div class="bar-fg" style="width: ${t_weakness/2*100}%">
             <span class="bar-txt">${FormatDecimal(t_weakness,1,2,2)}</span></div>`);
         tbl.append(`<div class="bar-fg" style="width: ${(t_damage/total_damage*100*2)}%">

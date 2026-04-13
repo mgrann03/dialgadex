@@ -88,7 +88,7 @@ async function LoadStrongest(type = "Any", versus) {
     else if (versus) titleKey = "meta.rankings.title-versus";
 
     document.title = FormatTranslation(titleKey, {
-        type: GetTranslation("terms.types." + type, type)
+        type: GetTranslation("pokedata.types." + type, type)
     });
 
     if (type == "Any") {
@@ -102,7 +102,7 @@ async function LoadStrongest(type = "Any", versus) {
         $("#strongest-title").attr("data-i18n-reorder", "strongest.each.»order");
     }
     else {
-        $("#strongest-type-title").attr("data-i18n", "terms.types."+type);
+        $("#strongest-type-title").attr("data-i18n", "pokedata.types."+type);
         $("#strongest-type-helper").attr("data-i18n", "strongest.types.helper-text");
         $("#strongest-title").attr("data-i18n-reorder", "strongest.types.»order");
     }
@@ -112,8 +112,8 @@ async function LoadStrongest(type = "Any", versus) {
     // sets description
     $('meta[name=description]').attr('content', 
         FormatTranslation("meta.rankings.description", {
-            type: (type == "Any" || type == "Each" ? "" : GetTranslation("terms.types." + type, type)),
-            versus: (versus ? FormatTranslation("meta.rankings.title-versus", {type: GetTranslation("terms.types." + type, type)}) : "")
+            type: (type == "Any" || type == "Each" ? "" : GetTranslation("pokedata.types." + type, type)),
+            versus: (versus ? FormatTranslation("meta.rankings.title-versus", {type: GetTranslation("pokedata.types." + type, type)}) : "")
         }));
 
     // removes previous table rows
@@ -891,7 +891,7 @@ function throttle(func, timeFrame) {
  * Builds a formatted anchor element to link back to a type ranking list
  */
 function GetTypeLink(type, versus) {
-    const anchor = $(`<a class='type-text bg-${type}' href='/?strongest&t=${type}${(versus ? "&v" : "")}'>${GetTranslation("terms.types."+type)}</a>`);
+    const anchor = $(`<a class='type-text bg-${type}' href='/?strongest&t=${type}${(versus ? "&v" : "")}'>${GetTranslation("pokedata.types."+type)}</a>`);
     anchor.on("click", function (e) {
         e.preventDefault();
         LoadStrongestAndUpdateURL(type, versus);

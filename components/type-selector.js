@@ -41,7 +41,7 @@ class TypeSelector extends HTMLElement {
         typeLink.dataset["type"] = type;
         typeLink.classList.add("type-text");
         typeLink.classList.add("bg-"+type);
-        typeLink.innerText = innerText ?? GetTranslation("terms.types."+type);
+        typeLink.innerText = innerText ?? GetTranslation("pokedata.types."+type);
 
         typeNode.appendChild(typeLink);
         this.appendChild(typeNode);
@@ -56,15 +56,15 @@ class TypeSelector extends HTMLElement {
         if (showAny || showEach) { // Check if we need a header line
             if (showAny && showEach) { // Show both
                 this.#newTextNode("\u00A0");
-                this.#newTypeNode("Any", GetTranslation("terms.types.Any","All types"), "span2");
-                this.#newTypeNode("Each", GetTranslation("terms.types.Each","Each type"), "span2");
+                this.#newTypeNode("Any", GetTranslation("pokedata.types.Any","All types"), "span2");
+                this.#newTypeNode("Each", GetTranslation("pokedata.types.Each","Each type"), "span2");
                 this.#newTextNode("\u00A0");
             }
             else { // Show one
                 this.#newTextNode("\u00A0");
                 this.#newTextNode("\u00A0");
-                if (showAny) this.#newTypeNode("Any", GetTranslation("terms.types.Any","All types"), "span2");
-                if (showEach) this.#newTypeNode("Each", GetTranslation("terms.types.Each","Each type"), "span2");
+                if (showAny) this.#newTypeNode("Any", GetTranslation("pokedata.types.Any","All types"), "span2");
+                if (showEach) this.#newTypeNode("Each", GetTranslation("pokedata.types.Each","Each type"), "span2");
                 this.#newTextNode("\u00A0");
                 this.#newTextNode("\u00A0");
             }

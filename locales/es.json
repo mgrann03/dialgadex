@@ -304,28 +304,6 @@
     },
 
     "terms": {
-        "types": {
-            "Normal": "Normal",
-            "Fire": "Fuego",
-            "Water": "Agua",
-            "Grass": "Planta",
-            "Electric": "Eléctrico",
-            "Ice": "Hielo",
-            "Fighting": "Pelea",
-            "Poison": "Veneno",
-            "Ground": "Tierra",
-            "Flying": "Volador",
-            "Psychic": "Psíquico",
-            "Bug": "Insecto",
-            "Rock": "Roca",
-            "Ghost": "Fantasma",
-            "Dragon": "Dragón",
-            "Dark": "Siniestro",
-            "Steel": "Acero",
-            "Fairy": "Hada",
-            "Any": "Todos tipos",
-            "Each": "Cada tipo"
-        },
         "type": "Tipo",
         "attacking-type": "Tipo Atacante",
         "defending-type": "Tipo Defensor",
