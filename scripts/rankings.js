@@ -116,8 +116,6 @@ async function LoadStrongest(type = "Any", versus) {
             versus: (versus ? FormatTranslation("meta.rankings.title-versus", {type: GetTranslation("pokedata.types." + type, type)}) : "")
         }));
 
-    // removes previous table rows
-    $("#strongest-table tbody tr").remove();
 
     const search_params = GetSearchParms(type, versus);
     search_params.real_damage = false;
@@ -150,9 +148,11 @@ async function LoadStrongest(type = "Any", versus) {
 
         if (IsDefaultSearchParams(search_params))
             SetTypeTier(type, str_pokemons);
-
-        RecalcViewport(null,0);
     }
+    
+    // remove previous table rows and replace from str_pokemons
+    $("#strongest-table tbody tr").remove();
+    RecalcViewport(null,0);
 
     // Display relevant footnotes
     //$("#footnote-elite").css('display', search_params.elite ? 'block' : 'none');
@@ -651,8 +651,10 @@ function RenderLabels(indices) {
         let label = $(`<div class="tier-label floating-label">${tier.tier}</div>`);
         if (tier.tier == "MRay") 
             label.addClass("tier-MRay");
-        if (tier.type)
+        if (tier.type) {
             label.addClass("bg-"+tier.type);
+            label.text(TranslatedTypeName(tier.type));
+        }
 
         label.css("top", ((endRow + startRow - 1) / 2 * ROW_HEIGHT) + "px");
         $("#tier-label-container").append(label);

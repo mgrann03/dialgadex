@@ -582,7 +582,7 @@ async function GetStrongestOfEachType(search_params) {
             };
         }
 
-        const str_pok = await GetStrongestVersus(enemy_params, search_params, 1)[0];
+        const str_pok = (await GetStrongestVersus(enemy_params, search_params, 1))[0];
         str_pokemons.set(type, str_pok);
     }
 
