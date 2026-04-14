@@ -1613,5 +1613,10 @@
         "492": "Trommelschläge",
         "493": "Feuerball",
         "494": "Riesenhammer"
+    },
+    "special_moves": {
+        "Weather Ball": "Meteorologe",
+        "Aura Wheel": "Aura-Rad",
+        "Techno Blast": "Techblaster"
     }
 }

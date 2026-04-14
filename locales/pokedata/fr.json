@@ -1613,5 +1613,10 @@
         "492": "Tambour Battant",
         "493": "Ballon Brûlant",
         "494": "Marteau Mastoc"
+    },
+    "special_moves": {
+        "Weather Ball": "Ball'Météo",
+        "Aura Wheel": "Roue Libre",
+        "Techno Blast": "Techno-Buster"
     }
 }

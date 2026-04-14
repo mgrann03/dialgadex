@@ -386,7 +386,10 @@
         "excl-msg": "Excluido Incorrectamente",
         "missing": "Faltante: ",
         "copy": "Copiar",
-        "copied": "¡Copiado!"
+        "copied": "¡Copiado!",
+
+        "costume": "disfraz",
+        "research": "investigación"
     },
 
     "meta": {

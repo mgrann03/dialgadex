@@ -1613,5 +1613,10 @@
         "492": "Batería Asalto",
         "493": "Balón Ígneo",
         "494": "Martillo Colosal"
+    },
+    "special_moves": {
+        "Weather Ball": "Meteorobola",
+        "Aura Wheel": "Rueda Aural",
+        "Techno Blast": "Tecno Shock"
     }
 }

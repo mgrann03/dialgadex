@@ -1613,5 +1613,10 @@
         "492": "Tamburattacco",
         "493": "Palla Infuocata",
         "494": "Granmartello"
+    },
+    "special_moves": {
+        "Weather Ball": "Palla Clima",
+        "Aura Wheel": "Ruota d'Aura",
+        "Techno Blast": "Tecnobotto"
     }
 }

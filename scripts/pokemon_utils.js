@@ -441,24 +441,24 @@ function GetSearchString(pkm_arr,
     // Shadow forms
     const has_shadow_forms = pkm_arr.some(e=>e.shadow);
     if (has_shadow_forms) {
-        str = str + "&" + GetUnique(pkm_arr.filter(e=>!e.shadow).map(e=>e.id)).join(",") + ",shadow";
+        str = str + "&" + GetUnique(pkm_arr.filter(e=>!e.shadow).map(e=>e.id)).join(",") + "," + GetTranslation("pokemon.terms.shadow", "shadow");
     }
     else {
-        str = str + "&!shadow"
+        str = str + "&!" + GetTranslation("pokemon.terms.shadow", "shadow");
     }
 
     // Pure only (never shadow)
     const pure_only = (new Set(pkm_arr.filter(e=>!e.shadow&&jb_pkm.find(p=>p.id==e.id&&p.form==e.form).shadow).map(e=>e.id))).difference(new Set(pkm_arr.filter(e=>e.shadow).map(e=>e.id)));
     if (pure_only.size > 0) {
         for (const p_id of pure_only) {
-            str = str + "&!" + p_id + ",!shadow";
+            str = str + "&!" + p_id + ",!" + GetTranslation("pokemon.terms.shadow", "shadow");
         }
     }
 
     // Mega forms
     const has_mega_forms = pkm_arr.some(e=>e.form=="Mega"||e.form=="MegaY"||e.form=="MegaZ");
     if (has_mega_forms) {
-        str = str + "&" + GetUnique(pkm_arr.filter(e=>e.form!="Mega"&&e.form!="MegaY"&&e.form!="MegaZ").map(e=>e.id)).join(",") + ",mega1-";
+        str = str + "&" + GetUnique(pkm_arr.filter(e=>e.form!="Mega"&&e.form!="MegaY"&&e.form!="MegaZ").map(e=>e.id)).join(",") + "," + GetTranslation("pokemon.terms.mega", "mega") + "-";
     }
     /* Disabled - If we set filters to remove megas, still include the base pokemon
     else {
@@ -469,7 +469,7 @@ function GetSearchString(pkm_arr,
     //const has_pure_forms = pkm_arr.some(e=>!(e.shadow||e.form=="Mega"||e.form=="MegaY"||e.form=="MegaZ"));
     if (has_shadow_forms && has_mega_forms) {
         str = str + "&" + GetUnique(pkm_arr.filter(e=>e.form!="Mega"&&e.form!="MegaY"&&e.form!="MegaZ"&&!e.shadow).map(e=>e.id)).join(",") 
-            + ",shadow,mega1-";
+            + "," + GetTranslation("pokemon.terms.shadow", "shadow") + "," + GetTranslation("pokemon.terms.mega", "mega") + "-";
     }
 
     // Alternate (non-Mega) forms
@@ -499,9 +499,9 @@ function GetSearchString(pkm_arr,
             if (pkm_id == 150) {
                 str = str + "&!150,";
                 if (filtered_in_forms.has('A'))
-                    str = str + "costume";
+                    str = str + GetTranslation("search-string.costume", "costume");
                 else 
-                    str = str + "!costume";
+                    str = str + "!" + GetTranslation("search-string.costume", "costume");
                 continue;
             }
 
@@ -510,9 +510,9 @@ function GetSearchString(pkm_arr,
             if (pkm_id == 249 || pkm_id == 250) {
                 str = str + "&!" + pkm_id + ",";
                 if (filtered_in_forms.has('S'))
-                    str = str + "research";
+                    str = str + GetTranslation("search-string.research", "research")
                 else 
-                    str = str + "!research";
+                    str = str + "!" + GetTranslation("search-string.research", "research");
                 continue;
             }
 
@@ -593,11 +593,8 @@ function GetSearchString(pkm_arr,
                 for (const cm of cms) {
                     str = str + ",@" + SanitizeMoveNameSearch(cm);
                 }
-                if (cms.includes("Psychic") &&
-                    jb_pkm.some(j=>j.id==p.id&&j.cm&&j.cm.includes("Psychic Fangs")) && // some form learns psychic fangs
-                    !cms.includes("Psychic Fangs")) { // psychic fangs isn't filtered in
-                    str = str + "&!" + p.id + ",!@Psychic Fangs";
-                }
+
+                str = str + FixPsychicCollision(p.id,null,cms);
 
                 all_ps.all.length = 0; // Prevent duplicating when we encounter the other forms
             }
@@ -607,10 +604,7 @@ function GetSearchString(pkm_arr,
                 if (p.cm_is_elite||!check_elite_only)
                     str = str + "&!" + p.id + ",@" + SanitizeMoveNameSearch(p.cm); 
 
-                if (p.cm == "Psychic" && 
-                    jb_pkm.find(j=>j.id==p.id&&j.form==p.form).cm.includes("Psychic Fangs")) { // can learn psychic fangs
-                    str = str + "&!" + p.id + ",!@Psychic Fangs";
-                }
+                str = str + FixPsychicCollision(p.id,p.form,[p.cm])
             }
             // else length == 0, which means we've seen it before
         }
@@ -837,33 +831,57 @@ function GetDarmanitanFilters(filtered_in_forms) {
 }
 
 /* Handle special cases for weird move names */
-function SanitizeMoveNameSearch(moveName) {
-    if (moveName == "Psychic") 
-        moveName = "Psychi";
+function SanitizeMoveNameSearch(move_name) {
+    let move_obj = jb_fm.find(e=>e.name==move_name);
+    if (!move_obj) move_obj = jb_cm.find(e=>e.name==move_name);
 
-    if (moveName.startsWith("Weather Ball") 
-        || moveName.startsWith("Aura Wheel")) {
-        for (const t of POKEMON_TYPES) {
-            moveName = moveName.replace(" "+t, "");
-        }
-    }
-    if (moveName.startsWith("Techno Blast")) {
-        for (const t of ["Normal", "Shock", "Burn", "Chill", "Water"]) {
-            moveName = moveName.replace(" "+t, "");
-        }
+    const transName = TranslatedMoveName(move_obj.id, "None"); // Sanitize to "untyped" base names as they appear in-game
+
+    if (move_name == "Psychic") {
+        if (currentLocale == "en" || currentLocale == "es") // technically also hindi, portuguese, spanish, turkish
+            return transName.slice(0, -1); // cutting off last char stops us matching by type
     }
 
-    return moveName;
+    return transName;
+}
+
+/**
+ * Handle special cases for overlapping Psychic move name w/ Psychic Fangs 
+ * Only when:
+ * - affected locale
+ * - @Psychic is desired
+ * - @Psychic Fangs is not desired, but is learnable
+ */
+function FixPsychicCollision(pokemon_id, form, cms) {
+    if (currentLocale != "en") return ""; // technically also turkish and hindi
+
+    if (!cms.includes("Psychic") || cms.includes("Psychic Fangs")) return "";
+
+    if (!jb_pkm.some(p=>p.id==pokemon_id&&(!form||p.form==form)&&p.cm&&p.cm.includes("Psychic Fangs"))) return "";
+
+    return "&!" + pokemon_id + ",!@" + TranslatedMoveName(353); // @Psychic Fangs id
 }
 
 /* Handle special case for typed Hidden Power */
 function GetHiddenPowerSearch(pkm_id, all_fms) {
-    str = '&!' + pkm_id;
+    let hp_types = new Set();
+    let non_hp_types = new Set();
 
     for (const f of all_fms) {
-        if (f.startsWith("Hidden Power")) {
-            str = str + ',@1' + f.replace("Hidden Power ", "");
-        }
+        const move_obj = jb_fm.find(e=>e.name==f);
+        const type_name = TranslatedTypeName(move_obj.type);
+
+        if (f.startsWith("Hidden Power"))
+            hp_types.add(type_name); 
+        else if (f !== "Hidden Power") // skip typeless
+            non_hp_types.add(type_name);
+    }
+
+    let hp_only_types = hp_types.difference(non_hp_types);
+
+    let str = '&!' + pkm_id + ",!@" + TranslatedMoveName(281); // Hidden Power ID
+    for (const t of hp_only_types) {
+        str = str + ",@1" + t;
     }
 
     return str;

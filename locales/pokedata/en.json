@@ -1467,7 +1467,7 @@
         "278": "Snarl",
         "279": "Crunch",
         "280": "Foul Play",
-        "281": "Hidden Power Steel",
+        "281": "Hidden Power",
         "282": "Take Down",
         "283": "Waterfall",
         "284": "Surf",
@@ -1613,5 +1613,10 @@
         "492": "Drum Beating",
         "493": "Pyro Ball",
         "494": "Gigaton Hammer"
+    },
+    "special_moves": {
+        "Weather Ball": "Weather Ball",
+        "Aura Wheel": "Aura Wheel",
+        "Techno Blast": "Techno Blast"
     }
 }

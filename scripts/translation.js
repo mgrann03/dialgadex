@@ -206,13 +206,72 @@ function TranslatedFormName(form_key) {
 
 /**
  * Get the localized version of this attack, by id
- * If "type" is supplied (Hidden Power) append it
+ * 
+ * If "type" is supplied for Hidden Power, append it
+ * 
+ * If type=None for typed moves, strip type down to base name
+ * Else shift to appropriate type, if it exists
  */
 function TranslatedMoveName(id, type) {
     let trans = GetTranslation("pokedata.moves."+id, "");
 
+    // Add appropriate Hidden Power type
     if (id == 281 && type) {
+        switch (type) {
+            case "None":
+            case "Normal":
+            case "Fairy":
+                return trans;
+        }
         trans = trans + " " + GetTranslation("pokedata.types."+type, type);
+    }
+
+    // Strip Weather Balls
+    if ([292, 293, 294, 295, 352].includes(id)) {
+        switch (type) {
+            case "None":
+                return GetTranslation("pokedata.special_moves.Weather Ball", trans);
+            case "Fire":
+                return GetTranslation("pokedata.moves.292", trans);
+            case "Ice":
+                return GetTranslation("pokedata.moves.293", trans);
+            case "Rock":
+                return GetTranslation("pokedata.moves.294", trans);
+            case "Water":
+                return GetTranslation("pokedata.moves.295", trans);
+            case "Normal":
+                return GetTranslation("pokedata.moves.352", trans);
+        }
+    }
+
+    // Strip Aura Wheels
+    if (406 <= id && id <= 407) {
+        switch (type) {
+            case "None":
+                return GetTranslation("pokedata.special_moves.Aura Sphere", trans);
+            case "Electric":
+                return GetTranslation("pokedata.moves.406", trans);
+            case "Dark":
+                return GetTranslation("pokedata.moves.407", trans);
+        }
+    }
+
+    // Strip Techno Blast
+    if (336 <= id && id <= 340) {
+        switch (type) {
+            case "None":
+                return GetTranslation("pokedata.special_moves.Techno Blast", trans);
+            case "Normal": // Normal
+                return GetTranslation("pokedata.moves.336", trans);
+            case "Fire": // Burn
+                return GetTranslation("pokedata.moves.337", trans);
+            case "Ice": // Chill
+                return GetTranslation("pokedata.moves.338", trans);
+            case "Water": // Water
+                return GetTranslation("pokedata.moves.339", trans);
+            case "Electric": // Shock
+                return GetTranslation("pokedata.moves.340", trans);
+        }
     }
 
     return trans;
@@ -226,8 +285,7 @@ function TranslatedTypeName(type) {
 }
 
 /**
- * Get the localized version of this attack, by id
- * If "type" is supplied (Hidden Power) append it
+ * Persist move translation by saving it in our map
  */
 function AddMoveNameToLocale(id, name) {
     //TODO: Persist this data past a locale swap
