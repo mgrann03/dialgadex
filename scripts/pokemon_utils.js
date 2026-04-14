@@ -42,13 +42,13 @@ function GetRaidStats(pkm_obj, tier = null) {
     }
     
     const ivs = { atk: 15, def: 15, hp: 15 };
-    const cpm = [,0.6,0.67,0.73,0.79,0.79,0.79,1.0][tier];
+    const cpm = [,0.6,0.67,0.73,0.79,0.79,0.79,1.0,0.79][tier];
 
     let stats = {...pkm_obj.stats};
     
     stats.atk = (stats.baseAttack + ivs.atk) * Math.fround(cpm);
     stats.def = (stats.baseDefense + ivs.def) * Math.fround(cpm);
-    stats.hp = [,600,,3600,9000,15000,22500,20000][tier];
+    stats.hp = [,600,,3600,9000,15000,22500,20000,25000][tier];
 
     return stats; // returns by copy to prevent reassignment of reference
 }
