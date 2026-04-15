@@ -168,12 +168,6 @@ function TranslateEverything() {
     if ($("#move-data").is(":visible")) {
         SetMoveTable(cur_sort);
     }
-    if ($("#type-matrix").is(":visible")) {
-        // Clear and rebuild
-        $("#type-matrix-topaxis th:not(:first)").remove();
-        $("#type-matrix-body").empty();
-        BuildTypeChart();
-    }
     if ($("#pokedex-page").is(":visible") && current_pkm_obj) {
         // Reload everything as if we just opened this dex entry from a different page
         CheckURLAndAct();
@@ -184,6 +178,15 @@ function TranslateEverything() {
             LoadPokedex(ParsePokedexURL(params));
         */
     }
+
+    // Always clear and rebuild type chart (not dynamic)
+    $("#type-matrix-topaxis th:not(:first)").remove();
+    $("#type-matrix-body").empty();
+    BuildTypeChart();
+    
+    // Always update type selectors
+    document.getElementById("strongest-links-types")?.updateTranslations();
+    document.getElementById("move-type-links-bytype")?.updateTranslations();
 
     DisplaySelectedLang();
 }

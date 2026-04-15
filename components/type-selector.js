@@ -119,6 +119,22 @@ class TypeSelector extends HTMLElement {
 
         this.#typeNodeMap.get(this.selectedType).classList.add("selected");
     }
+
+    updateTranslations() {
+        for (const [type, node] of this.#typeNodeMap.entries()) {
+            switch (type) {
+                case "Any":
+                    node.firstElementChild.innerText = GetTranslation("pokedata.types.Any","All types")
+                    break;
+                case "Each":
+                    node.firstElementChild.innerText = GetTranslation("pokedata.types.Each","Each type")
+                    break;
+                default:
+                    node.firstElementChild.innerText = GetTranslation("pokedata.types."+type,type)
+                    break;
+            }
+        }
+    }
 }
 
 window.customElements.define('type-selector', TypeSelector);
