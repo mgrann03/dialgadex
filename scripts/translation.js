@@ -1,7 +1,8 @@
 let currentLocale = 'en';
 let translationMap;
+let fallbackMap;
 
-const availableLocales = ['en', 'es', 'fr'];
+const availableLocales = ['en', 'es', 'fr', 'de', 'it'];
 /**
  * Checks whether the input locale is currently supported.
  */
@@ -46,36 +47,57 @@ function GetPreferredLocale() {
 /**
  * Load locale in preparation for translation
  */
-async function SetLocale(newLocale) {
+async function SetLocale(newLocale) {  
     const oldLocale = currentLocale;
     if (!newLocale)
         newLocale = GetPreferredLocale();
+    if (!IsSupportedLocale(newLocale)) return;
 
     try {
-        translationMap = await FetchJSON("/locales/" + newLocale + ".json", "/locales/en.json", 
+        translationMap = await FetchJSON("/locales/" + newLocale + ".json", null,
             () => {
                 currentLocale = newLocale;
             },
-            () => {
+            async () => {
                 console.warn("Unsupported language or translation map unable to load. Falling back to English.")
                 currentLocale = 'en';
+                translationMap = await LoadFallbackLocale();
             });
-        translationMap.pokedata = await FetchJSON("/locales/pokedata/" + currentLocale + ".json", "/locales/pokedata/en.json", 
+        translationMap.pokedata = await FetchJSON("/locales/pokedata/" + currentLocale + ".json", null, 
             () => {},
-            () => {
+            async () => {
                 console.warn("Unsupported language or pokedata map unable to load. Falling back to English.")
                 currentLocale = 'en';
+                translationMap = (await LoadFallbackLocale()).pokedata;
             });
-        
+    }
+    catch (err) {
+        console.error("No translation context found");
+        translationMap = LoadFallbackLocale();
+    }
+    finally { 
         if (currentLocale != oldLocale)
             TranslateEverything();
         
         document.documentElement.lang = currentLocale;
     }
-    catch (err) {
-        console.error("No translation context found");
-        translationMap = null;
+}
+
+/**
+ * Load fallback locale to merge in as a backup for any missing keys
+ */
+async function LoadFallbackLocale() {
+    if (fallbackMap) return await fallbackMap;
+
+    try {
+        fallbackMap = await FetchJSON("/locales/en.json");
+        fallbackMap.pokedata = await FetchJSON("/locales/pokedata/en.json");
     }
+    catch (err) {
+        console.error("Default string map failed to load. This may lead to unexpected behavior. Trying to continue...")
+    }
+
+    return await fallbackMap;
 }
 
 /**
@@ -92,11 +114,24 @@ async function SetLocale(newLocale) {
  *     }
  */
 function GetTranslation(key, fallback) {
-    if (!fallback && fallback !== "") fallback = "Localization Failure";
-
-    if (!translationMap) return fallback;
+    if (!translationMap) return GetFallbackTranslation(key, fallback);
     
-    const ret = (key.split('.').reduce((a,b) => {return (a[b] ?? fallback)}, translationMap));
+    const ret = (key.split('.').reduce((a,b) => {return a?.[b]}, translationMap));
+
+    return (typeof ret === 'string') ? ret : GetFallbackTranslation(key, fallback);
+} 
+
+/**
+ * Pass along the provided fallback if valid,
+ * or look up key in the fallback map and return the associated value
+ */
+function GetFallbackTranslation(key, fallback) {
+    if (!fallback && fallback !== "") 
+        fallback = "Localization Failure";
+
+    if (!fallbackMap) return fallback;
+    
+    const ret = (key.split('.').reduce((a,b) => {return ((a?.[b]) ?? fallback)}, fallbackMap));
 
     return (typeof ret === 'string') ? ret : fallback;
 } 
@@ -182,9 +217,9 @@ function TranslateElement(element) {
 
     $(element).find('[data-i18n-reorder]').each(function() { // Locale-specific reorder of elements
         const orderKey = $(this).attr('data-i18n-reorder');
-        const orderArr = (orderKey.split('.').reduce((a,b) => {return a[b]}, translationMap));
+        const orderArr = (orderKey.split('.').reduce((a,b) => {return a?.[b]}, translationMap));
 
-        for (const selector of orderArr) {
+        for (const selector of (orderArr ?? [])) {
             $(this).append($(this).find(selector), " ");
         }
     });

@@ -23,12 +23,20 @@ async function Main() {
     // Bind Event Handlers
     BindAll();
 
-    // Load Pokemon Data
-    const jsonLoaded = await LoadJSONData();
-    if (jsonLoaded) {
-        await SetLocale();
+    // Load Data
+    let loadPromises = [];
+    loadPromises.push(LoadJSONData());
+    loadPromises.push(SetLocale());
+    loadPromises.push(LoadFallbackLocale());
+    try {
+        await Promise.all(loadPromises);
+
         CheckURLAndAct();
         InitializePokemonSearch();
+    }
+    catch (err) {
+        console.error("Fatal error in JSON data load.");
+        return false;
     }
 }
 

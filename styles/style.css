@@ -1460,6 +1460,15 @@ th.vertical a.type-text {
     justify-self: stretch;
 }
 
+.setting-grid3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    column-gap: 1em;
+    height: max-content;
+
+    justify-items: center;
+}
+
 input.settings-num {
     font-weight: bold;
     font-family: inherit;

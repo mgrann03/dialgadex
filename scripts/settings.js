@@ -106,6 +106,8 @@ function BindSettings() {
     $("#lang-en").click(function() { SetLocale("en"); });
     $("#lang-es").click(function() { SetLocale("es"); });
     $("#lang-fr").click(function() { SetLocale("fr"); });
+    $("#lang-de").click(function() { SetLocale("de"); });
+    $("#lang-it").click(function() { SetLocale("it"); });
 
 }
 
@@ -429,6 +431,8 @@ function DisplaySelectedLang() {
     $("#lang-en").removeClass("settings-opt-sel");
     $("#lang-es").removeClass("settings-opt-sel");
     $("#lang-fr").removeClass("settings-opt-sel");
+    $("#lang-de").removeClass("settings-opt-sel");
+    $("#lang-it").removeClass("settings-opt-sel");
 
     $("#lang-"+currentLocale).addClass("settings-opt-sel");
 }

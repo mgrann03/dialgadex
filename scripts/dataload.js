@@ -88,17 +88,22 @@ async function FetchJSON(URL, fallbackURL, onSuccess, onFallback, onFailure) {
         json = await response.json();
         if (onSuccess) onSuccess(json);
     } catch (primaryError) {
-        console.warn("Primary fetch failed, trying fallback...", primaryError.message);
-        
-        try { // fallback to CDN URL
-            const fallbackResponse = await fetch(fallbackURL);
-            if (!fallbackResponse.ok) throw new Error(`Fallback failed: ${fallbackResponse.status}`);
-            json = await fallbackResponse.json();
-            if (onFallback) onFallback(json);
-        } catch (fallbackError) {
-            console.error("Critical Error: Both primary and fallback failed.");
-            if (onFailure) onFailure(fallbackError);
-            throw fallbackError;
+        if (fallbackURL) {
+            console.warn("Primary fetch failed, trying fallback...", primaryError.message);
+            
+            try { // fallback to CDN URL
+                const fallbackResponse = await fetch(fallbackURL);
+                if (!fallbackResponse.ok) throw new Error(`Fallback failed: ${fallbackResponse.status}`);
+                json = await fallbackResponse.json();
+                if (onFallback) onFallback(json);
+            } catch (fallbackError) {
+                console.error("Critical Error: Both primary and fallback failed.");
+                if (onFailure) onFailure(fallbackError);
+                throw fallbackError;
+            }
+        }
+        else {
+            throw "No fallback URL provided";
         }
     }
 
