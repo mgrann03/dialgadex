@@ -101,6 +101,12 @@ function BindSettings() {
     $("#settings-speculative").change(function() { 
         SetSpeculative($("#settings-speculative").is(":checked")); 
     });
+
+    // Language Selector
+    $("#lang-en").click(function() { SetLocale("en"); });
+    $("#lang-es").click(function() { SetLocale("es"); });
+    $("#lang-fr").click(function() { SetLocale("fr"); });
+
 }
 
 /**
@@ -414,6 +420,17 @@ function SetTheme(theme = "darkmode") {
     $("body").removeClass();
     $("body").addClass(theme);
     settings_theme = theme;
+}
+
+/**
+ * Updates the visual styling of the language selector
+ */
+function DisplaySelectedLang() {
+    $("#lang-en").removeClass("settings-opt-sel");
+    $("#lang-es").removeClass("settings-opt-sel");
+    $("#lang-fr").removeClass("settings-opt-sel");
+
+    $("#lang-"+currentLocale).addClass("settings-opt-sel");
 }
 
 /**

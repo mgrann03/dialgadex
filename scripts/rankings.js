@@ -107,8 +107,6 @@ async function LoadStrongest(type = "Any", versus) {
         $("#strongest-title").attr("data-i18n-reorder", "strongest.types.»order");
     }
 
-    TranslateElement("#strongest");
-
     // sets description
     $('meta[name=description]').attr('content', 
         FormatTranslation("meta.rankings.description", {
@@ -151,7 +149,7 @@ async function LoadStrongest(type = "Any", versus) {
     }
     
     // remove previous table rows and replace from str_pokemons
-    $("#strongest-table tbody tr").remove();
+    ClearViewport();
     RecalcViewport(null,0);
 
     // Display relevant footnotes

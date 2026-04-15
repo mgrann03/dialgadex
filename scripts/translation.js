@@ -12,7 +12,7 @@ function IsSupportedLocale(checkLocale) {
 /**
  * Select preferred language from URL params or from browser preference.
  */
-function SelectLocale() {
+function GetPreferredLocale() {
     const urlParams = new URLSearchParams(window.location.search);
     
     // User gave us a preference
@@ -46,9 +46,10 @@ function SelectLocale() {
 /**
  * Load locale in preparation for translation
  */
-async function InitializeLocalization() {
+async function SetLocale(newLocale) {
     const oldLocale = currentLocale;
-    const newLocale = SelectLocale();
+    if (!newLocale)
+        newLocale = GetPreferredLocale();
 
     try {
         translationMap = await FetchJSON("/locales/" + newLocale + ".json", "/locales/en.json", 
@@ -115,9 +116,41 @@ function FormatTranslation(key, params = {}, fallback = "") {
 
 /**
  * Scan DOM for translatable elements and perform updates to live document
+ * Update the lang URL param for link sharing
+ * Then reload appropriate dynamic elements using their usual functions
+ * And update the settings menu to show the current selection
  */
 function TranslateEverything() {
     TranslateElement($('body'));
+
+    UpdateURL(window.location.search);
+
+    // Refresh Dynamic content
+    if ($("#strongest").is(":visible")) {
+        ClearViewport();
+        RecalcViewport(null, 0);
+    }
+    if ($("#move-data").is(":visible")) {
+        SetMoveTable(cur_sort);
+    }
+    if ($("#type-matrix").is(":visible")) {
+        // Clear and rebuild
+        $("#type-matrix-topaxis th:not(:first)").remove();
+        $("#type-matrix-body").empty();
+        BuildTypeChart();
+    }
+    if ($("#pokedex-page").is(":visible") && current_pkm_obj) {
+        // Reload everything as if we just opened this dex entry from a different page
+        CheckURLAndAct();
+
+        /* Alternative:
+        const params = new URLSearchParams(location.search);
+        if (params.has("p"))
+            LoadPokedex(ParsePokedexURL(params));
+        */
+    }
+
+    DisplaySelectedLang();
 }
 
 /**

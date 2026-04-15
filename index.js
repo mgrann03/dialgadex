@@ -26,7 +26,7 @@ async function Main() {
     // Load Pokemon Data
     const jsonLoaded = await LoadJSONData();
     if (jsonLoaded) {
-        await InitializeLocalization();
+        await SetLocale();
         CheckURLAndAct();
         InitializePokemonSearch();
     }
@@ -553,11 +553,14 @@ function HasTouchScreen() {
  * Update browser history to push new url and persist locale
  */
 function UpdateURL(url) {
-    if (currentLocale != 'en') {
-        const urlParams = new URLSearchParams(url);
+    const urlParams = new URLSearchParams(url);
+    if (currentLocale == 'en') {
+        urlParams.delete("lang");
+    }
+    else {
         urlParams.set("lang", currentLocale);
-        url = "?" + urlParams.toString();
     }
 
+    url = "?" + urlParams.toString();
     window.history.pushState({}, "", url);
 }
