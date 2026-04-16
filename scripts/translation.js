@@ -161,23 +161,7 @@ function TranslateEverything() {
     UpdateURL(window.location.search);
 
     // Refresh Dynamic content
-    if ($("#strongest").is(":visible")) {
-        ClearViewport();
-        RecalcViewport(null, 0);
-    }
-    if ($("#move-data").is(":visible")) {
-        SetMoveTable(cur_sort);
-    }
-    if ($("#pokedex-page").is(":visible") && current_pkm_obj) {
-        // Reload everything as if we just opened this dex entry from a different page
-        CheckURLAndAct();
-
-        /* Alternative:
-        const params = new URLSearchParams(location.search);
-        if (params.has("p"))
-            LoadPokedex(ParsePokedexURL(params));
-        */
-    }
+    CheckURLAndAct();
 
     // Always clear and rebuild type chart (not dynamic)
     $("#type-matrix-topaxis th:not(:first)").remove();
