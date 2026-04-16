@@ -394,10 +394,18 @@
 
     "meta": {
         "rankings": {
-            "title": "Best {type} Attackers - DialgaDex",
-            "title-each": "Best Attackers of Each type - DialgaDex",
-            "title-versus": "Best Attackers against {type}-type Bosses - DialgaDex",
-            "description": "The best {type} attackers {versus} in Pokémon Go, using the new eDPS metric."
+            "typed": {
+                "title": "Best {type} Attackers - DialgaDex",
+                "description": "The best {type}-type attackers in Pokémon Go, using the new eDPS metric."
+            },
+            "each": {
+                "title": "Best Attackers of Each type - DialgaDex",
+                "description": "The best attackers of Each type in Pokémon Go, using the new eDPS metric."
+            },
+            "versus": {
+                "title": "Best Attackers against {type}-type Bosses - DialgaDex",
+                "description": "The best attackers against {type}-type Bosses in Pokémon Go, using the new eDPS metric."
+            }
         },
         "moves": {
             "title": "{type} {kind} Moves - DialgaDex",

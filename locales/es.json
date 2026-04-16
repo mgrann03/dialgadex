@@ -394,30 +394,38 @@
 
     "meta": {
         "rankings": {
-            "title": "Mejores Atacantes {type} - DialgaDex",
-            "title-each": "Mejores Atacantes de Cada Tipo - DialgaDex",
-            "title-versus": "Mejores Atacantes contra Oponentes de tipo {type} - DialgaDex",
-            "description": "Mejores atacantes {type} {versus} en Pokémon Go, usando la nueva métrica eDPS."
+            "typed": {
+                "title": "Mejores Atacantes del tipo {type} - DialgaDex",
+                "description": ""
+            },
+            "each": {
+                "title": "Mejores Atacantes de Cada Tipo - DialgaDex",
+                "description": ""
+            },
+            "versus": {
+                "title": "Mejores Atacantes contra Oponentes de tipo {type} - DialgaDex",
+                "description": ""
+            }
         },
         "moves": {
             "title": "Ataques {kind} {type} - DialgaDex",
-            "description": "Todos los atributos de datos de ataques ocultos para ataques {kind} {type} en Pokémon Go. Incluye métricas que evalúan qué tan efectivo es cada ataque."
+            "description": ""
         },
         "pokedex": {
             "title": "#{id} {name} - DialgaDex",
-            "description": "Mejores sets de ataques, estadísticas base y contrarios de incursión para {name} en Pokémon Go."
+            "description": ""
         },
         "typechart": {
             "title": "Efectividades de los Tipos - DialgaDex",
-            "description": "La efectividad de cada tipo de ataque contra los jefes de incursión en Pokémon Go."
+            "description": ""
         },
         "faq": {
             "title": "PF - DialgaDex",
-            "description": "Respuestas a preguntas comunes sobre DialgaDex."
+            "description": ""
         },
         "about": {
             "title": "Sobre - DialgaDex",
-            "description": "Créditos, referencias, información de contacto y detalles sobre DialgaDex."
+            "description": ""
         }
     }
 }

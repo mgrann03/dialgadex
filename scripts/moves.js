@@ -45,7 +45,7 @@ async function LoadMoves(type = "Any", kind) {
     // sets titles
     document.title = FormatTranslation("meta.moves.title", {
         type: (cur_sort.move_type == "Any" ? "" : GetTranslation("pokedata.types." + cur_sort.move_type, cur_sort.move_type)),
-        kind: GetTranslation("terms." + cur_sort.move_kind.toLowerCase())
+        kind: GetTranslation("terms." + cur_sort.move_kind.toLowerCase() + "-plural")
     });
     $("#move-type-title").text(cur_sort.move_type == "Any" ? "" : GetTranslation("pokedata.types." + cur_sort.move_type));
     $("#move-type-helper").text(cur_sort.move_type == "Any" ? "" : GetTranslation("moves.type-helper"));
@@ -54,7 +54,7 @@ async function LoadMoves(type = "Any", kind) {
     $('meta[name=description]').attr('content', 
         FormatTranslation("meta.moves.description", {
             type: (type == "Any" ? "" : GetTranslation("pokedata.types." + type, type)),
-            kind: GetTranslation("terms." + cur_sort.move_kind.toLowerCase())
+            kind: GetTranslation("terms." + cur_sort.move_kind.toLowerCase() + "-plural")
         }));
 
     BuildMoveUserMap();

@@ -83,13 +83,19 @@ async function LoadStrongest(type = "Any", versus) {
     }
 
     // sets titles
-    let titleKey = "meta.rankings.title";
-    if (type == "Each") titleKey = "meta.rankings.title-each";
-    else if (versus) titleKey = "meta.rankings.title-versus";
+    let titleKey = "meta.rankings.typed";
+    if (type == "Each") titleKey = "meta.rankings.each";
+    else if (versus) titleKey = "meta.rankings.versus";
 
-    document.title = FormatTranslation(titleKey, {
-        type: GetTranslation("pokedata.types." + type, type)
+    document.title = FormatTranslation(titleKey + ".title", {
+        type: GetTranslation((type == "Any" ? "strongest.any.type-text" : "pokedata.types." + type), type)
     });
+
+    // sets description
+    $('meta[name=description]').attr('content', 
+        FormatTranslation(titleKey + ".description", {
+            type: GetTranslation((type == "Any" ? "strongest.any.type-text" : "pokedata.types." + type), type)
+        }));
 
     if (type == "Any") {
         $("#strongest-type-title").attr("data-i18n", "strongest.any.type-text");
@@ -108,14 +114,6 @@ async function LoadStrongest(type = "Any", versus) {
     }
 
     TranslateElement($("#strongest-title"));
-
-    // sets description
-    $('meta[name=description]').attr('content', 
-        FormatTranslation("meta.rankings.description", {
-            type: (type == "Any" || type == "Each" ? "" : GetTranslation("pokedata.types." + type, type)),
-            versus: (versus ? FormatTranslation("meta.rankings.title-versus", {type: GetTranslation("pokedata.types." + type, type)}) : "")
-        }));
-
 
     const search_params = GetSearchParms(type, versus);
     search_params.real_damage = false;
