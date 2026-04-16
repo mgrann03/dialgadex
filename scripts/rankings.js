@@ -107,6 +107,8 @@ async function LoadStrongest(type = "Any", versus) {
         $("#strongest-title").attr("data-i18n-reorder", "strongest.types.»order");
     }
 
+    TranslateElement($("#strongest-title"));
+
     // sets description
     $('meta[name=description]').attr('content', 
         FormatTranslation("meta.rankings.description", {

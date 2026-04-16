@@ -202,7 +202,7 @@ function TranslateElement(element) {
         }
     });
 
-    $(element).find('[data-i18n-reorder]').each(function() { // Locale-specific reorder of elements
+    $(element).find('[data-i18n-reorder]').addBack('[data-i18n-reorder]').each(function() { // Locale-specific reorder of elements
         const orderKey = $(this).attr('data-i18n-reorder');
         const orderArr = (orderKey.split('.').reduce((a,b) => {return a?.[b]}, translationMap));
 

@@ -6,12 +6,16 @@
 $(document).ready(Main);
 
 // global constants and variables
-
-// FIXME these are not ideal, would be better that, if a new pokemon is loaded,
-//        whatever asynchronous operations were being done on the previous mon
-//        should be cancelled
-
 let current_pkm_obj = null; // current pokedex pokemon's pkm_obj
+
+const pages = [
+    {id: 'pokedex-page', template_path: '/templates/pokedex.html', binder: BindPokeDex},
+    {id: 'strongest', template_path: '/templates/rankings.html', binder: BindRankings},
+    {id: 'move-data', template_path: '/templates/moves.html', binder: BindMoveData},
+    {id: 'type-matrix', template_path: '/templates/typechart.html', binder: BuildTypeChart},
+    {id: 'faq', template_path: '/templates/faq.html'},
+    {id: 'about', template_path: '/templates/about.html'}
+];
 
 /**
  * Main function.
@@ -354,38 +358,18 @@ function LoadAboutAndUpdateURL() {
  * Shows appropriate part of SPA, hiding all other parts
  */
 async function LoadPage(pageName) {
-    let pages = [
-        {id: 'pokedex-page', template_path: '/templates/pokedex.html', binder: BindPokeDex},
-        {id: 'strongest', template_path: '/templates/rankings.html', binder: BindRankings},
-        {id: 'move-data', template_path: '/templates/moves.html', binder: BindMoveData},
-        {id: 'type-matrix', template_path: '/templates/typechart.html', binder: BuildTypeChart},
-        {id: 'faq', template_path: '/templates/faq.html'},
-        {id: 'about', template_path: '/templates/about.html'}
-    ];
-
     for (const page of pages) {
         const pageDiv = $("#"+page.id);
 
-        if (page.id == pageName) {
-            if (!pageDiv.attr('data-loaded')) { // Load page if not already loaded
-                // Build a translated copy of template
-                const templateElement = await FetchTemplate(page.template_path);
-                //templateElement.html(templateHTML);
-                TranslateElement(templateElement);
-                
-                // Swap copy in
-                templateElement.children().appendTo(pageDiv);
-
-                // Bind
-                if (page.binder) page.binder();
-
-                // Mark as loaded
-                pageDiv.attr('data-loaded',true);
+        if (page.id === pageName) {
+            if (!page.loadingPromise) {
+                page.loadingPromise = LoadAndApplyTemplate(page);
             }
+            await page.loadingPromise;
             pageDiv.css("display", "revert");
         }
         else {
-            $("#"+page.id).css("display", "none");
+            pageDiv.css("display", "none");
         }
     };
 
@@ -397,6 +381,28 @@ async function LoadPage(pageName) {
         left: 0,
         behavior: "smooth",
     });
+}
+
+/**
+ * Shows appropriate part of SPA, hiding all other parts
+ */
+async function LoadAndApplyTemplate(page) {
+    try {
+        const pageDiv = $("#"+page.id);
+
+        const templateElement = await FetchTemplate(page.template_path);
+        TranslateElement(templateElement);
+        templateElement.children().appendTo(pageDiv);
+
+        if (page.binder) page.binder();
+
+        pageDiv.attr('data-loaded', true);
+    } catch (err) {
+        delete page.loadingPromise; // Clear promise for a retry
+        
+        console.error("Failed to load page:", err);
+        throw err; 
+    }
 }
 
 /**
