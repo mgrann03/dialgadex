@@ -710,6 +710,13 @@ function RunSearchString(str, check_movesets = true) {
  * Filters an input pkm_arr based on the provided search string
  */
 function ApplySearchString(str, pkm_arr, id_filter_only = false) {
+    const shadow_tok = GetTranslation("pokemon.terms.shadow", "shadow");
+    const mega_tok = GetTranslation("pokemon.terms.mega", "mega");
+    const mega_pattern = `^${mega_tok}(\\d+-\\d*|-\\d+|\\d+)?$`;
+    const mega_regex = new RegExp(mega_pattern, 'i');
+    const costume_tok = GetTranslation("pokemon.terms.costume", "costume");
+    const research_tok = GetTranslation("pokemon.terms.research", "research");
+    
     // Break into AND'd clauses and progressively filter down by each
     for (let clause of str.split(/[&|]/)) {
         pkm_arr = pkm_arr.filter(p => {
@@ -730,9 +737,9 @@ function ApplySearchString(str, pkm_arr, id_filter_only = false) {
                     return true;
                 }
 
-                if (tok=="shadow") // shadow
+                if (tok==shadow_tok) // shadow
                     clause_val = clause_val || (p.shadow ^ invert);
-                if (tok.slice(0,4)=="mega") // mega/primal
+                if (mega_regex.test(tok)) // mega/primal
                     clause_val = clause_val || ((p.form=="Mega"||p.form=="MegaY"||p.form=="MegaZ") ^ invert);
                 if (tok[0]=="@") { // has attack
                     let check_fm = true, check_cm = true;
@@ -765,11 +772,11 @@ function ApplySearchString(str, pkm_arr, id_filter_only = false) {
                 if (POKEMON_TYPES.has(tok)) { // type
                     clause_val = clause_val || (p.types.includes(tok) ^ invert);
                 }
-                if (tok=="costume") { // costume form
+                if (tok==costume_tok) { // costume form
                     // Might need to make this more robust depending on if it breaks anything outside of Mewtwo
                     clause_val = clause_val || ((p.id==150&&p.form=="A") ^ invert);
                 }
-                if (tok=="research") { // research reward
+                if (tok==research_tok) { // research reward
                     // Might need to make this more robust depending on if it breaks anything outside of Ho-Oh/Lugia
                     clause_val = clause_val || (((p.id==249||p.id==250)&&p.form=="S") ^ invert);
                 }
