@@ -701,9 +701,7 @@ function GetMonSearchIssue(parent, pkm_obj, form_issue = false, shadow_issue = f
         + ICONS_URL + ");background-position:" + coords.x + "px "
         + coords.y + "px'></span>");
     leftside.append(" <span class='strongest-name'>"
-        + ((pkm_obj.shadow)
-            ? "<span class=shadow-text>" + GetTranslation("terms.shadow", "Shadow") + "</span> " : "")
-        + TranslatedSpeciesName(pkm_obj.id, pkm_obj.name)
+        + TranslatedSpeciesName(pkm_obj.id, pkm_obj.name, pkm_obj.shadow)
         +"</span>");
     
     if (form_text.length > 0 && !form_issue)

@@ -690,7 +690,7 @@ function GetRankingRow(row_i) {
     if (row_i < str_pokemons.length) {
         const p = str_pokemons[row_i];
 
-        const name = TranslatedSpeciesName(p.id, p.name);
+        const name = TranslatedSpeciesName(p.id, p.name, p.shadow);
         const coords = GetPokemonIconCoords(p.id, p.form);
         const form_text = GetFormText(p.id, p.form).replace(/\s+Forme?/,"");
         const legendary = p.class !== undefined;
@@ -730,12 +730,12 @@ function GetRankingRow(row_i) {
             e.preventDefault();
             LoadPokedexAndUpdateURL(GetPokeDexMon(p.id, p.form));
         });
+
+
         a_name.html("<span class=pokemon-icon style='background-image:url("
             + ICONS_URL + ");background-position:" + coords.x + "px "
             + coords.y + "px'></span>"
             + " <span class='strongest-name'>"
-            + ((p.shadow)
-                ? "<span class=shadow-text>" + GetTranslation("terms.shadow", "Shadow") + "</span> " : "")
             + name
             + ((p.level == 50) ? "<sup class='xl'>XL</sup>" : "")
             +"</span>"

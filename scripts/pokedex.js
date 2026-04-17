@@ -506,8 +506,7 @@ function ShowCountersPopup(hover_element, show, counter = null) {
         const form_text = GetFormText(counter.id, counter.form);
 
         const name = "<p class='counter-name'>"
-            + ((counter.shadow) ? "<span class=shadow-text>"+GetTranslation("terms.shadow", "Shadow")+"</span> " : "")
-            + TranslatedSpeciesName(counter.id, counter.name)
+            + TranslatedSpeciesName(counter.id, counter.name, counter.shadow)
             + ((form_text.length > 0)
                 ? " <span class=small-text>(" + form_text + ")</span>" : "")
             + "</p>"

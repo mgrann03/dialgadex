@@ -215,7 +215,7 @@ function TranslateElement(element) {
 /**
  * Get the name of this Pokemon species, by id
  */
-function TranslatedSpeciesName(id, fallback) {
+function TranslatedSpeciesName(id, fallback, shadow = false) {
     let trans = GetTranslation("pokedata.species."+id, fallback);
 
     if (fallback) {
@@ -223,8 +223,13 @@ function TranslatedSpeciesName(id, fallback) {
             trans = GetTranslation("terms.mega") + " " + trans;
         if (fallback.startsWith("Primal "))
             trans = GetTranslation("terms.primal") + " " + trans;
-        if (fallback.startsWith("Shadow "))
-            trans = GetTranslation("terms.shadow") + " " + trans;
+        if (shadow) {
+            const shadow_html = `<span class=shadow-text>${GetTranslation("terms.shadow", "Shadow")}</span>`;
+            trans = FormatTranslation("terms.shadow-order", {
+                shadow: shadow_html,
+                species: trans
+            }, "{shadow} {species}");
+        }
         
         if (fallback.endsWith(" X"))
             trans = trans + " X";
@@ -236,6 +241,7 @@ function TranslatedSpeciesName(id, fallback) {
     
     return trans;
 }
+
 
 /**
  * Get the name of this Pokemon species IN ENGLISH, by id

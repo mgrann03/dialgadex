@@ -356,6 +356,7 @@
 
         "shadow": "Oscuro",
         "not-shadow": "No ",
+        "shadow-order": "{species} {shadow}",
         "mega": "Mega",
         "primal": "Primigenio"
     },
