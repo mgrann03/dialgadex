@@ -450,24 +450,24 @@ function GetSearchString(pkm_arr,
     // Shadow forms
     const has_shadow_forms = pkm_arr.some(e=>e.shadow);
     if (has_shadow_forms) {
-        str = str + "&" + GetUnique(pkm_arr.filter(e=>!e.shadow).map(e=>e.id)).join(",") + "," + GetTranslation("pokemon.terms.shadow", "shadow");
+        str = str + "&" + GetUnique(pkm_arr.filter(e=>!e.shadow).map(e=>e.id)).join(",") + "," + GetTranslation("terms.shadow", "shadow");
     }
     else {
-        str = str + "&!" + GetTranslation("pokemon.terms.shadow", "shadow");
+        str = str + "&!" + GetTranslation("terms.shadow", "shadow");
     }
 
     // Pure only (never shadow)
     const pure_only = (new Set(pkm_arr.filter(e=>!e.shadow&&jb_pkm.find(p=>p.id==e.id&&p.form==e.form).shadow).map(e=>e.id))).difference(new Set(pkm_arr.filter(e=>e.shadow).map(e=>e.id)));
     if (pure_only.size > 0) {
         for (const p_id of pure_only) {
-            str = str + "&!" + p_id + ",!" + GetTranslation("pokemon.terms.shadow", "shadow");
+            str = str + "&!" + p_id + ",!" + GetTranslation("terms.shadow", "shadow");
         }
     }
 
     // Mega forms
     const has_mega_forms = pkm_arr.some(e=>e.form=="Mega"||e.form=="MegaY"||e.form=="MegaZ");
     if (has_mega_forms) {
-        str = str + "&" + GetUnique(pkm_arr.filter(e=>e.form!="Mega"&&e.form!="MegaY"&&e.form!="MegaZ").map(e=>e.id)).join(",") + "," + GetTranslation("pokemon.terms.mega", "mega") + "-";
+        str = str + "&" + GetUnique(pkm_arr.filter(e=>e.form!="Mega"&&e.form!="MegaY"&&e.form!="MegaZ").map(e=>e.id)).join(",") + "," + GetTranslation("terms.mega", "mega") + "1-";
     }
     /* Disabled - If we set filters to remove megas, still include the base pokemon
     else {
@@ -478,7 +478,7 @@ function GetSearchString(pkm_arr,
     //const has_pure_forms = pkm_arr.some(e=>!(e.shadow||e.form=="Mega"||e.form=="MegaY"||e.form=="MegaZ"));
     if (has_shadow_forms && has_mega_forms) {
         str = str + "&" + GetUnique(pkm_arr.filter(e=>e.form!="Mega"&&e.form!="MegaY"&&e.form!="MegaZ"&&!e.shadow).map(e=>e.id)).join(",") 
-            + "," + GetTranslation("pokemon.terms.shadow", "shadow") + "," + GetTranslation("pokemon.terms.mega", "mega") + "-";
+            + "," + GetTranslation("terms.shadow", "shadow") + "," + GetTranslation("terms.mega", "mega") + "1-";
     }
 
     // Alternate (non-Mega) forms
@@ -710,12 +710,10 @@ function RunSearchString(str, check_movesets = true) {
  * Filters an input pkm_arr based on the provided search string
  */
 function ApplySearchString(str, pkm_arr, id_filter_only = false) {
-    const shadow_tok = GetTranslation("pokemon.terms.shadow", "shadow");
-    const mega_tok = GetTranslation("pokemon.terms.mega", "mega");
-    const mega_pattern = `^${mega_tok}(\\d+-\\d*|-\\d+|\\d+)?$`;
-    const mega_regex = new RegExp(mega_pattern, 'i');
-    const costume_tok = GetTranslation("pokemon.terms.costume", "costume");
-    const research_tok = GetTranslation("pokemon.terms.research", "research");
+    const shadow_tok = GetTranslation("terms.shadow", "shadow");
+    const mega_tok = GetTranslation("terms.mega", "mega");
+    const costume_tok = GetTranslation("search-string.costume", "costume");
+    const research_tok = GetTranslation("search-string.research", "research");
     
     // Break into AND'd clauses and progressively filter down by each
     for (let clause of str.split(/[&|]/)) {
@@ -739,7 +737,7 @@ function ApplySearchString(str, pkm_arr, id_filter_only = false) {
 
                 if (tok==shadow_tok) // shadow
                     clause_val = clause_val || (p.shadow ^ invert);
-                if (mega_regex.test(tok)) // mega/primal
+                if (tok.startsWith(mega_tok)) // mega/primal
                     clause_val = clause_val || ((p.form=="Mega"||p.form=="MegaY"||p.form=="MegaZ") ^ invert);
                 if (tok[0]=="@") { // has attack
                     let check_fm = true, check_cm = true;
