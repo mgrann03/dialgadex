@@ -143,6 +143,15 @@ function GetPokemonMoves(pkm_obj, hidden_power_filter = "Type-Match") {
     return [fm, cm, elite_fm, elite_cm, pure_only_cm, shadow_only_cm];
 }
 
+/**
+ * Returns boolean for whether the pokemon can learn a specific move
+ */
+function PokemonCanLearn(pkm_obj, move_name) {
+    const moves = GetPokemonMoves(pkm_obj);
+
+    return moves.some(e=>e.includes(move_name));
+}
+
 
 /**
  * Builds a unique string based on a pokemon for uses like hashing.
@@ -594,7 +603,7 @@ function GetSearchString(pkm_arr,
                     str = str + ",@" + SanitizeMoveNameSearch(cm);
                 }
 
-                str = str + FixPsychicCollision(p.id,null,cms);
+                str = str + FixAllMoveTranslationCollisions(all_ps.all,cms);
 
                 all_ps.all.length = 0; // Prevent duplicating when we encounter the other forms
             }
@@ -604,7 +613,7 @@ function GetSearchString(pkm_arr,
                 if (p.cm_is_elite||!check_elite_only)
                     str = str + "&!" + p.id + ",@" + SanitizeMoveNameSearch(p.cm); 
 
-                str = str + FixPsychicCollision(p.id,p.form,[p.cm])
+                str = str + FixAllMoveTranslationCollisions([p],[p.cm]);
             }
             // else length == 0, which means we've seen it before
         }
@@ -842,28 +851,63 @@ function SanitizeMoveNameSearch(move_name) {
     const transName = TranslatedMoveName(move_obj.id, "None"); // Sanitize to "untyped" base names as they appear in-game
 
     if (move_name == "Psychic") {
-        if (currentLocale == "en" || currentLocale == "es") // technically also hindi, portuguese, spanish, turkish
+        if (currentLocale == "en" || currentLocale == "es") // technically also hindi, portuguese, turkish
             return transName.slice(0, -1); // cutting off last char stops us matching by type
     }
+    if (move_name == "Fly") {
+        if (currentLocale == "fr") // technically also indonesian
+            return transName.slice(0, -1); // cutting off last char stops us matching by type
+    }
+
 
     return transName;
 }
 
 /**
- * Handle special cases for overlapping Psychic move name w/ Psychic Fangs 
- * Only when:
- * - affected locale
- * - @Psychic is desired
- * - @Psychic Fangs is not desired, but is learnable
+ * Handle special cases for overlapping move names
+ * (incl_pkm should only have a single, shared "id" and merely be different forms)
  */
-function FixPsychicCollision(pokemon_id, form, cms) {
-    if (currentLocale != "en") return ""; // technically also turkish and hindi
+function FixMoveTranslationCollision(incl_pkm, all_incl_cms, incl_cm, excl_cm, excl_cm_id) {
+    // Only if we want incl_cm and don't want excl_cm
+    if (!all_incl_cms.includes(incl_cm) || all_incl_cms.includes(excl_cm)) return "";
+    // Only if a desired form actually learns excl_cm
+    if (!incl_pkm.some(p=>{
+        const pkm_obj = jb_pkm.find(e=>e.id==p.id&&e.form==p.form);
+        return PokemonCanLearn(pkm_obj, excl_cm);
+    })) return "";
 
-    if (!cms.includes("Psychic") || cms.includes("Psychic Fangs")) return "";
+    return "&!" + incl_pkm[0].id + ",!@" + TranslatedMoveName(excl_cm_id);
+}
 
-    if (!jb_pkm.some(p=>p.id==pokemon_id&&(!form||p.form==form)&&p.cm&&p.cm.includes("Psychic Fangs"))) return "";
 
-    return "&!" + pokemon_id + ",!@" + TranslatedMoveName(353); // @Psychic Fangs id
+const knownCollisions = [
+    {locale: "en", incl_cm: "Psychic", excl_cm: "Psychic Fangs", excl_cm_id: 353},
+
+    // These locales are not supported yet
+    //{locale: "hi", incl_cm: "Psychic", excl_cm: "Psychic Fangs", excl_cm_id: 353},
+    //{locale: "tr", incl_cm: "Psychic", excl_cm: "Psychic Fangs", excl_cm_id: 353},
+
+    // These collisions don't actually exist in the game
+    /*{locale: "fr", incl_cm: "Fly", excl_cm: "Disarming Voice", excl_cm_id: 84},
+    {locale: "fr", incl_cm: "Fly", excl_cm: "Mirror Coat", excl_cm_id: 276},
+    {locale: "fr", incl_cm: "Fly", excl_cm: "Magma Storm", excl_cm_id: 386},
+    {locale: "fr", incl_cm: "Fly", excl_cm: "High Jump Kick", excl_cm_id: 408},
+    {locale: "fr", incl_cm: "Fly", excl_cm: "Thunder Cage", excl_cm_id: 472},*/
+]
+/**
+ * Handle all special cases for overlapping move names
+ */
+function FixAllMoveTranslationCollisions(incl_pkm, all_incl_cms) {
+    let str = "";
+
+    for (const collision of knownCollisions) {
+        if (collision.locale == currentLocale) {
+            str = str + FixMoveTranslationCollision(incl_pkm, all_incl_cms, 
+                collision.incl_cm, collision.excl_cm, collision.excl_cm_id);
+        }
+    }
+
+    return str;
 }
 
 /* Handle special case for typed Hidden Power */
