@@ -540,7 +540,7 @@ function GetSearchString(pkm_arr,
             if (filtered_in_unshared_types.every(e=>e.size >= 1 && all_type_combos.reduce((acc, tc)=>(acc + (tc.has([...e][0]) ? 1 : 0)), 0) == 1)) { // Every desired form has an unshared type that is unique to them
                 str = str + "&!" + pkm_id;
                 for (const tc of filtered_in_unshared_types) {
-                    str = str + "," + [...tc][0];
+                    str = str + "," + TranslatedTypeName([...tc][0]);
                 }
                 continue;
             }
@@ -551,7 +551,7 @@ function GetSearchString(pkm_arr,
             const filtered_out_unshared_types = filtered_out_type_combos.map(e=>e.difference(all_shared_types)); // Unshared types among undesired forms
             if (filtered_out_unshared_types.every(e=>e.size >= 1 && all_type_combos.reduce((acc, tc)=>(acc + (tc.has([...e][0]) ? 1 : 0)), 0) == 1)) { // Every undesired form has an unshared type that is unique to them
                 for (const tc of filtered_out_unshared_types) {
-                    str = str + "&!" + pkm_id + ",!" + [...tc][0];
+                    str = str + "&!" + pkm_id + ",!" + TranslatedTypeName([...tc][0]);
                 }
                 continue;
             }
@@ -714,6 +714,7 @@ function ApplySearchString(str, pkm_arr, id_filter_only = false) {
     const mega_tok = GetTranslation("terms.mega", "mega");
     const costume_tok = GetTranslation("search-string.costume", "costume");
     const research_tok = GetTranslation("search-string.research", "research");
+    const pokemon_types_localized = new Map ([...POKEMON_TYPES].map(t=>[t, TranslatedTypeName(t)]));
     
     // Break into AND'd clauses and progressively filter down by each
     for (let clause of str.split(/[&|]/)) {
@@ -758,17 +759,19 @@ function ApplySearchString(str, pkm_arr, id_filter_only = false) {
                     
                     if (check_fm && !!p.fm) {
                         fm_obj = fm_obj ?? jb_fm.find(f=>f.name==p.fm);
-                        fm_phrase_val = (p.fm.substring(0,move_name.length)==move_name) || (fm_obj.type==move_name);
+                        fm_phrase_val = (p.fm.substring(0,move_name.length)==move_name) || (TranslatedTypeName(fm_obj.type)==move_name);
                     }
                     if (check_cm && !!p.cm) {
                         cm_obj = cm_obj ?? jb_cm.find(c=>c.name==p.cm);
-                        cm_phrase_val = (p.cm.substring(0,move_name.length)==move_name) || (cm_obj.type==move_name);
+                        cm_phrase_val = (p.cm.substring(0,move_name.length)==move_name) || (TranslatedTypeName(cm_obj.type)==move_name);
                     }
 
                     clause_val = clause_val || ((fm_phrase_val || cm_phrase_val) ^ invert);
                 }
-                if (POKEMON_TYPES.has(tok)) { // type
-                    clause_val = clause_val || (p.types.includes(tok) ^ invert);
+                for (const [type_name, trans_type_name] of pokemon_types_localized) { // type
+                    if (tok == trans_type_name) {
+                        clause_val = clause_val || (p.types.includes(type_name) ^ invert);
+                    }
                 }
                 if (tok==costume_tok) { // costume form
                     // Might need to make this more robust depending on if it breaks anything outside of Mewtwo
