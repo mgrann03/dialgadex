@@ -241,7 +241,8 @@
         },
         "site": "Site Settings",
         "preview": "Data Preview",
-        "darkmode": "Dark Mode"
+        "darkmode": "Dark Mode",
+        "language": "Language"
     },
 
     "moves": {

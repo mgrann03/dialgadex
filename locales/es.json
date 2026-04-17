@@ -241,7 +241,8 @@
         },
         "site": "Opciones del Sitio",
         "preview": "Vista Previa",
-        "darkmode": "Modo Oscuro"
+        "darkmode": "Modo Oscuro",
+        "language": "Idioma" 
     },
 
     "moves": {
