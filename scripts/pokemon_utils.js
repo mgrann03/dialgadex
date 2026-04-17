@@ -490,7 +490,7 @@ function GetSearchString(pkm_arr,
             // Instead of complicated set logic, just do Darmanitan manually
             // because it's the only real exception not already handled above by "unique" typing per form
             if (pkm_id == 555) {
-                str = str + "&" + GetDarmanitanFilters(filtered_in_forms).map(filt=>'!555,'+filt).join("&");
+                str = str + "&" + GetDarmanitanFilters(filtered_in_forms);
                 continue;
             }
 
@@ -810,24 +810,28 @@ function GetDarmanitanFilters(filtered_in_forms) {
         (filtered_in_forms.has("Galarian_standard") ? 2 : 0) +  // G: Ice
         (filtered_in_forms.has("Standard") ? 1 : 0)             // S: Fire
 
-    return [
-        [],                         // 0: 
-        ['!Ice','!Psychic'],        // 1: S
-        ['!Fire'],                  // 2: G
-        ['!Psychic','!Ice,!Fire'],  // 3: SG
-        ['Psychic'],                // 4: Z
-        ['!Ice'],                   // 5: ZS
-        ['Psychic,!Fire'],          // 6: ZG
-        ['!Ice,!Fire'],             // 7: ZSG (!X)
-        ['Ice','Fire'],             // 8: X
-        ['Fire','!Psychic'],        // 9: XS
-        ['Ice'],                    // 10: XG
-        ['!Psychic'],               // 11: XSG (!Z)
-        ['Fire','Psychic,Ice'],     // 12: XZ
-        ['Fire'],                   // 13: XZS (!G)
-        ['Psychic,Ice'],            // 14: XZG (!S)
-        ['555'],                    // 15: XZSG
-    ][form_bitstring];
+    const t_fire = TranslatedTypeName("Fire");
+    const t_ice = TranslatedTypeName("Ice");
+    const t_psychic = TranslatedTypeName("Psychic");
+
+    return ([
+        [],                                     // 0: 
+        ['!'+t_ice,'!'+t_psychic],              // 1: S
+        ['!'+t_fire],                           // 2: G
+        ['!'+t_psychic,'!'+t_ice+',!'+t_fire],  // 3: SG
+        [t_psychic],                            // 4: Z
+        ['!'+t_ice],                            // 5: ZS
+        [t_psychic+',!'+t_fire],                // 6: ZG
+        ['!'+t_ice+',!'+t_fire],                // 7: ZSG (!X)
+        [t_ice,t_fire],                         // 8: X
+        [t_fire,'!'+t_psychic],                 // 9: XS
+        [t_ice],                                // 10: XG
+        ['!'+t_psychic],                        // 11: XSG (!Z)
+        [t_fire,t_psychic+','+t_ice],           // 12: XZ
+        [t_fire],                               // 13: XZS (!G)
+        [t_psychic+','+t_ice],                  // 14: XZG (!S)
+        ['555'],                                // 15: XZSG
+    ][form_bitstring]).map(filt=>'!555,'+filt).join("&");
 }
 
 /* Handle special cases for weird move names */
