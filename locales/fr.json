@@ -1,3 +1,431 @@
 {
+    "strongest": {
+        "best": "Top",
+        "attackers": "Attaquants",
+        "counters": "Contres",
+        
+        "any": {
+            "type-text": "Global",
+            "helper-text": "",
+            "»order": [
+                "#strongest-best-span",
+                "#strongest-type-title",
+                "#strongest-type-helper",
+                "#chk-versus",
+                "#strongest-vs-lbl"
+            ]
+        },
+        "each": {
+            "type-text": "Chaque",
+            "helper-text": "type",
+            "»order": [
+                "#strongest-best-span",
+                "#chk-versus",
+                "#strongest-vs-lbl",
+                "#strongest-type-title",
+                "#strongest-type-helper"
+            ]
+        },
+        "types": {
+            "helper-text": "type",
+            "»order": [
+                "#strongest-best-span",
+                "#chk-versus",
+                "#strongest-vs-lbl",
+                "#strongest-type-helper",
+                "#strongest-type-title"
+            ]
+        },
+
+        "notes": {
+            "elite": "* = Attaque Élite💿",
+            "typed": "Les classements par type sont calculés en utilisant les dégâts super efficaces pour le type choisi et les dégâts neutres pour tous les autres types.",
+            "versus": "Les classements sont calculés à l'aide d'un multiplicateur d'efficacité approprié pour les dégâts d'attaque.",
+            "affinity": {
+                "prefix": "Les classements sont calculés sur la base d'un",
+                "link": "moyenne de tous les boss de raid",
+                "suffix": ".",
+                "»order": [
+                    "#footnote-affinity-prefix",
+                    "#type-affinity-link",
+                    "#footnote-affinity-suffix"
+                ]
+            }
+        }
+    },
+
+    "dex": {
+        "unreleased": "§Cette espèce ou forme n'est pas encore disponible dans **Pokémon GO**",
+        "tier-title": "Classement de type",
+        "shadow-title": "Forme Obscure",
+        "stats": {
+            "title": "Statistiques, IVs, et PC",
+            "base": "Base Statistiques",
+            "base-tooltip": "§Pokémon stats as found in the Game Master\nfor this species/form",
+            "max": "Statistiques Niv.50",
+            "max-tooltip": "§Real in-game stats for a\nPerfect-IV Level 50 Pokémon",
+            "calc-title": "Calculateur de statistiques",
+            "level-tooltip": {
+                "cpm": "Determines the Multiplier (CPM) used when calculating effective stats",
+                "levelup": "Can be raised by one half-level per \"Power-up\"",
+                "max": "Maximum level is 50 (+1 if Best Buddy)",
+                "hidden": "Never displayed directly in game; represented by a white arc in the Pokémon screen"
+            },
+            "iv-tooltip": {
+                "title": "\"Individual Values\"",
+                "explanation": "Additional points in each stat, as displayed in the Appraisal screen"
+            },
+            "hundo": "IV 100%",
+            "hundo-tooltip": "Real in-game stats for a Perfect-IV Pokémon\nat the specified Level",
+            "effective": "Statistiques Réelles",
+            "effective-tooltip": "Real in-game stats for a Pokémon with the specified Level and IVs",
+            "»percent-perfect-metric": [
+                "#rat-pct-val",
+                "#rat-pct-oftxt",
+                "#rat-pct-perftxt",
+                "#rat-pct-metric"
+            ],
+            "»percent-perfect-metric-sh": [
+                "#sh-rat-pct-val",
+                "#sh-rat-pct-oftxt",
+                "#sh-rat-pct-metric",
+                "#sh-rat-pct-perftxt",
+                "#sh-rat-pct-shadowtxt"
+            ],
+            "of": "du",
+            "perfect": "Parfait",
+            "when-shadow": "Forme Obscure",
+            "percent-perfect-ivs": "% du Parfait",
+            "percent-perfect-product": "% de performance",
+            "calculate": "Calculer",
+            "reset": "Réinitialiser"
+        },
+        "types": {
+            "title": "Sensibilité aux types",
+            "3r": "3x Résistance",
+            "3r-tooltip": "Multiplicateur de dégâts x0.244",
+            "2r": "2x Résistance",
+            "2r-tooltip": "Multiplicateur de dégâts x0.391",
+            "1r": "1x Résistance",
+            "1r-tooltip": "Multiplicateur de dégâts x0.625",
+            "1w": "1x Faiblesse",
+            "1w-tooltip": "Multiplicateur de dégâts x1.60",
+            "2w": "2x Faiblesse",
+            "2w-tooltip": "Multiplicateur de dégâts x2.56"
+        },
+        "counters": {
+            "title": "Meilleurs Contres",
+            "mega-abbrev": "(M)",
+            "shadow-abbrev": "(Obs)",
+            "notes": {
+                "method": "Les calculs prennent en compte les dégâts infligés par le Pokémon adverse à ce Pokémon et sa résistance aux dégâts qu'il peut subir de la part de ce Pokémon.",
+                "disclaimer": "Avertissement : Les calculs ne peuvent pas reproduire toutes les subtilités des combats de raid réels. Ils servent plutôt à évaluer la puissance globale des attaquants, et non leurs performances face à un boss de raid en particulier. Pour obtenir la liste la plus précise des contres en raid, veuillez consulter les simulations."
+            }
+        },
+        "moves": {
+            "title": "Meilleurs Set",
+            "shadow-header": "(Obscure)"
+        }
+    },
+
+    "filters": {
+        "species": {
+            "title": "Filtre d'Epèces",
+            "unreleased": "Unreleased",
+            "unreleased-tooltip": "Inclure les Pokémon non présent dans le jeu",
+            "mega": "Méga/Primo",
+            "shadow": "Obscure",
+            "legendary": "Legendaire",
+            "legendary-tooltip": "Inclut également les Pokémon Fabuleux et les Ultra-Chimères"
+        },
+        "moves": {
+            "title": "Filtre d'Attaques",
+            "elite": "Attaques Élites 💿",
+            "elite-tooltip": "§Autoriser les attaques ayant une restriction\n(Nécessitant un évènement ou une CT Élite)",
+            "mixed": "Types d'attaque mixtes",
+            "mixed-tooltip": "Autoriser à ce que l'attaque immédiate et chargée soit de type différent",
+            "off": "Aucun STAB",
+            "off-tooltip": "Autoriser les attaques ne possèdant pas de STAB",
+            "suboptimal": "Sets multiples",
+            "suboptimal-tooltip": "Autoriser plusieurs sets pour un même Pokémon"
+        },
+        "display": {
+            "title": "Paramètres d'affichage",
+            "group": "Regrouper les espèces",
+            "group-enabled": "Comparer les sets sous-optimaux au set optimal de ce Pokémon.",
+            "group-disabled": "Comparer tous les sets par rapport aux autres Pokémon",
+            "baseline": "Classement",
+            "baseline-tooltip": "Configurer le Pokémon \"100%\" de référence",
+            "budget": "Éco +",
+            "budget-tooltip": {
+                "title": "Comparer les meilleurs Pokémon \"pas chers\"",
+                "mega": "Sans Méga",
+                "shadow": "Sans Obscure",
+                "legendary": "Sans Légendaire",
+                "type": "Doit être du type"
+            },
+            "espace-tooltip": {
+                "title": "Comparer les \"presques meilleurs\" Pokémon",
+                "slegend": "Sans Légandaire Obscure",
+                "rmythic": "Sans Fabuleux",
+                "energy": "Sans Méga/Primo",
+                "ascent": "Sans Draco-Ascension",
+                "authorlink": "Défini par",
+                "graphiclink": "Utilisé dans les infographies par"
+            },
+            "best": "Meilleur",
+            "best-tooltip": "Comaparer les autres Pokémon par rapport au meilleur",
+            "tiers": "Tiers",
+            "tiers-tooltip": "§Détermine le mode de calcul des niveaux.\nDétermine le mode de calcul des niveaux.",
+            "jenks-tooltip": "Niveaux algorithmiques basés sur la variance minimale",
+            "espace-tiers": "Des paliers avec des seuils prédéfinis tous les 10 %",
+            "absolute": "Absolu",
+            "absolute-tooltip": {
+                "title": "Niveaux absolus basés uniquement sur la note affichée",
+                "contextless": "Ignore le contexte (comparaison des Pkm, des types)",
+                "baseline": "Optimisé pour les classements généraux « Tous types »",
+                "purpose": "Idéal pour comparer différents types"
+            }
+        }
+    },
     
+    "settings": {
+        "calculation": "Paramètres",
+        "metric": "Formules PvE",
+        "dps-tooltip": {
+            "title": "Dégâts par seconde",
+            "explanation": "Vitesse de production des dégâts",
+            "characteristic": "Favorise les Glass Canons"
+        },
+        "tdo-tooltip": {
+            "title": "Dégâts totaux infligés",
+            "explanation": "Niveau de dégâts subis avant l'évanouissement",
+            "characteristic": "Favorise les Tanks"
+        },
+        "edps-tooltip": {
+            "title": "DPS Effectif",
+            "explanation": "Dans un raid de durée infinie, il s'agit du DPS réel qui serait atteint en tenant compte du temps perdu à reconnecter les joueurs."
+        },
+        "level": "Niveau des Pokémon",
+        "budget50-tooltip": {
+            "title": "Éco +",
+            "explanation": "Pokémon Niveau 50 pour les petits budgets",
+            "lv40": "UStatistiques au niveau 40 pour les légendaires",
+            "lv50": "Utilisez les statistiques au niveau 50 pour les personnages non légendaires.",
+            "characteristic": "Permet de compenser la rareté des bonbons L rares."
+        },
+        "pp-tooltip": {
+            "title": "Bonus d'Équipe",
+            "explanation": "Taille du groupe pour booster le bonus d'équipe",
+            "characteristic": "Augmente les dégâts chargés en fonction du ratio attaques rapides/attaques chargées"
+        },
+        "affinity-tooltip": {
+            "title": "Affinité de type",
+            "explanation": "Utilisez de vrais boss de raid de haut niveau pour calculer les classements.",
+            "characteristic": "Prend en compte les types réels, les types d'attaque, les puissances d'attaque et les statistiques des boss de raid en fonction du scénario actuel."
+        },
+        "team-tooltip": {
+            "title": "Taille d'équipe Pokémon",
+            "explanation": "Taille de l'équipe de combat pour le calcul du DPS",
+            "characteristic": "Calcule les dégâts par seconde estimés (eDPS) comme si N copies identiques du Pokémon étaient dans une équipe de combat, et que le retour dans le lobby n'avait lieu qu'après chaque Nème mort."
+        },
+        "6stack": "Équipe de 6",
+        "solo": "Solo",
+        "megasolo-tooltip": {
+            "title": "MégaSolo",
+            "explanation": "Utilisez une équipe de 6 Pokémon pour tout sauf les Méga-Évolutions, qui combattent en solo."
+        },
+        "relobby-tooltip": {
+            "title": "Temps de soins",
+            "explanation": "Temps passé au maximum à réanimer une équipe de raid complète et à rejoindre le combat"
+        },
+        "site": "Paramètres du site",
+        "preview": "Aperçu des futures données",
+        "darkmode": "Mode Sombre"
+    },
+
+    "moves": {
+        "type-helper": "type",
+        "move-data": "Liste des Attaques",
+        "top-users": "Top Utilisateurs",
+
+        "pps": "Dégâts par seconde (DPS)",
+        "pps-short": "P/S",
+        "pps-tooltip": "L'efficacité d'une attaque à infliger des dégâts",
+        "eps": "Energie par seconde (EPS)",
+        "eps-short": "E/S",
+        "eps-tooltip": "L'efficacité d'unattaque immédiate pour accumuler de l'énergie",
+        "ppe": "Dégâts par énergie (DPE)",
+        "ppe-short": "P/E",
+        "ppe-tooltip": "L'efficacité avec laquelle une attaque chargée convertit l'énergie en dégâts",
+        "p2pes": "P/S * P/E",
+        "p2pes-short": "§P^2^/ES",
+        "p2pes-tooltip": "§Dans quelle mesure une attaque chargée utilise à la fois l'énergie chargée *et* inflige des dégâts",
+        "peps2": "P/S * E/S",
+        "peps2-short": "§PE/S^2^",
+        "peps2-tooltip": "§Dans quelle mesure une action rapide parvient à la fois à accumuler de l'énergie *et* à infliger des dégâts de manière autonome",
+
+        "»move-title": [
+            "#move-type-title",
+            "#move-type-helper",
+            "#chk-move-kind",
+            "#move-kind-lbl",
+            "#move-data-span"
+        ]
+    },
+
+    "move-editor": {
+        "edit": {
+            "title": "Modifier l'attaque",
+            "action": "Modifier",
+            "confirm": "Modifié !"
+        },
+        "add": {
+            "title": "Ajouter l'attaque",
+            "action": "Ajouter",
+            "confirm": "Ajouté !"
+        },
+        "delete": {
+            "action": "Supprimer",
+            "confirm": "Supprimé !"
+        },
+        "clear": "Effacer",
+        "apply": "Appliquer"
+    },
+    "moveset-editor": {
+        "title": "Mofidier Set",
+        "reset": "Annuler",
+        "apply": "Appliquer"
+    },
+    "type-affinity": {
+        "title": "Affinité de type",
+        "weakness": "§Boss\nWeakness",
+        "damage": "§Boss\nDamage"
+    },
+
+    "terms": {
+        "type": "Type",
+        "attacking-type": "Type Attaquant",
+        "defending-type": "Type Défenseur",
+        "attacker": "Attaquant",
+        "defender": "Défenseur",
+        "type-matchups": "Sensibilité de type",
+
+        "name": "Nom",
+        "power": "Puissance",
+        "power-short": "PS",
+        "energy": "Énergie",
+        "energy-short": "ENG",
+        "duration": "Durée",
+        "duration-short": "DUR",
+
+        "dps": "DPS",
+        "tdo": "TDO",
+        "edps": "eDPS",
+
+        "fast": "Immédiate",
+        "charged": "Chargée",
+        "fast-plural": "Immédiates",
+        "charged-plural": "Chargées",
+        "move": "Attaque",
+        "moves": "Ataques",
+        "moveset": "Set",
+        "fast-move": "Attaque Immédiate",
+        "fast-move-plural": "Attaques Immédiates",
+        "charged-move": "Attaque Chargée",
+        "charged-move-plural": "Attaques Chargées",
+
+        "enabled": "Activé",
+        "disabled": "Désactivé",
+
+        "supereffective": "Super Efficace",
+        "resisted": "Résisté",
+        "immune": "Immunisé",
+        "damage-multiplier": "Multiplicateur de Dégâts",
+
+        "attack": "Attaque",
+        "defense": "Défense",
+        "stamina": "PV",
+
+        "level": "Niveau",
+        "ivs": "IVs",
+        "cp": "PC",
+
+        "tier": "Tier",
+
+        "shadow": "Obscure",
+        "not-shadow": "Non Obscure",
+        "mega": "Méga",
+        "primal": "Primo"
+    },
+
+    "site": {
+        "disclaimer": "§DialgaDex is not affiliated with The Pokémon Company, Niantic, Scopely, Pokémon Go, or any other such entities.\nPokémon is a trademark of Nintendo. All such trademarks are the property of their respective owners.",
+
+        "links": {
+            "rankings": "Classement Attaquants",
+            "moves": "Classement Attaques",
+            "types": "Tableau des efficacités de type",
+            "FAQ": "FAQ",
+            "contact": "Contact",
+            "credits": "Crédits",
+            "privacy": "Mentions Légales"
+        }
+    },
+
+    "search-string": {
+        "title": "Générer une chaîne de recherche",
+        "settings": "Paramètres",
+        "incl-moves": "Voir Set",
+        "elite-only": "Voir Attaques Élites seulement",
+        "min-tier": "Minimum Tier",
+        "result-title": "Chaîne de recherche",
+        "issues": "Issus Possibles",
+        "length-issue": "§GLa chaîne de recherche générée dépasse la limite de 5000 caractères.\nEssayez de modifier les paramètres pour les rendre plus restrictifs.",
+        "incl-msg": "Incorrectement inclus",
+        "excl-msg": "Exclus à tort",
+        "missing": "Manquant: ",
+        "copy": "Copier",
+        "copied": "Copié !",
+
+        "costume": "costume",
+        "research": "recherche"
+    },
+
+    "meta": {
+        "rankings": {
+            "typed": {
+                "title": "Meilleur Attaquant de {type} - DialgaDex",
+                "description": "Le meilleur Attaquant de {type} dans Pokémon Go, selon la nouvelle métrique eDPS."
+            },
+            "each": {
+                "title": "Meilleur Attaquant de chaque type - DialgaDex",
+                "description": "Les meilleurs attaquants de chaque type dans Pokémon Go, selon la nouvelle métrique eDPS."
+            },
+            "versus": {
+                "title": "Les meilleurs attaquants contre les Boss de {type} - DialgaDex",
+                "description": "Les meilleurs attaquants contre les Boss de {type} dans Pokémon Go, selon la nouvelle métrique eDPS."
+            }
+        },
+        "moves": {
+            "title": "Attaque de {type} {kind} - DialgaDex",
+            "description": "Toutes les données de déplacement cachées pour les déplacements de type {type} et de type {kind} dans Pokémon Go. Inclut des indicateurs permettant d'évaluer l'efficacité de chaque déplacement."
+        },
+        "pokedex": {
+            "title": "#{id} {name} - DialgaDex",
+            "description": "Meilleurs ensembles de mouvements, statistiques de base et contres en raid pour {name} dans Pokémon Go."
+        },
+        "typechart": {
+            "title": "Efficacité des types - DialgaDex",
+            "description": "L'efficacité de chaque type d'attaque contre les boss de raid dans Pokémon Go."
+        },
+        "faq": {
+            "title": "FAQ - DialgaDex",
+            "description": "Réponses aux questions fréquentes sur DialgaDex."
+        },
+        "about": {
+            "title": "A propos - DialgaDex",
+            "description": "Crédits, références, coordonnées et détails concernant DialgaDex."
+        }
+    }
 }
