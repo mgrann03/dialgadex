@@ -61,24 +61,24 @@
         "stats": {
             "title": "Statistiques, IVs, et PC",
             "base": "Base Statistiques",
-            "base-tooltip": "§Pokémon stats as found in the Game Master\nfor this species/form",
+            "base-tooltip": "§Statistiques du Pokémon telles qu'elles apparaissent pour cette espèce/forme",
             "max": "Statistiques Niv.50",
-            "max-tooltip": "§Real in-game stats for a\nPerfect-IV Level 50 Pokémon",
+            "max-tooltip": "§Statistiques réelles en jeu pour un Pokémon de niveau 50 avec des \nIV parfaits",
             "calc-title": "Calculateur de statistiques",
             "level-tooltip": {
-                "cpm": "Determines the Multiplier (CPM) used when calculating effective stats",
-                "levelup": "Can be raised by one half-level per \"Power-up\"",
-                "max": "Maximum level is 50 (+1 if Best Buddy)",
-                "hidden": "Never displayed directly in game; represented by a white arc in the Pokémon screen"
+                "cpm": "Détermine le multiplicateur (CPM) utilisé lors du calcul des statistiques effectives",
+                "levelup": "Peut être rehaussé d'un demi-niveau par un \"Power-up\"",
+                "max": "Niveau maximum : 50 (+1 si Meilleur ami)",
+                "hidden": "Jamais affiché directement dans le jeu ; représenté par un arc blanc sur l’écran Pokémon."
             },
             "iv-tooltip": {
                 "title": "\"Individual Values\"",
-                "explanation": "Additional points in each stat, as displayed in the Appraisal screen"
+                "explanation": "Points supplémentaires dans chaque statistique, tels qu'affichés dans l'écran d'évaluation"
             },
             "hundo": "IV 100%",
-            "hundo-tooltip": "Real in-game stats for a Perfect-IV Pokémon\nat the specified Level",
+            "hundo-tooltip": "Statistiques réelles en jeu pour un Pokémon avec des \nIV parfaits au niveau spécifié",
             "effective": "Statistiques Réelles",
-            "effective-tooltip": "Real in-game stats for a Pokémon with the specified Level and IVs",
+            "effective-tooltip": "Statistiques réelles en jeu pour un Pokémon avec le niveau et les IV spécifiés.",
             "»percent-perfect-metric": [
                 "#rat-pct-val",
                 "#rat-pct-oftxt",
