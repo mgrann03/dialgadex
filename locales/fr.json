@@ -241,7 +241,8 @@
         },
         "site": "Paramètres du site",
         "preview": "Aperçu des futures données",
-        "darkmode": "Mode Sombre"
+        "darkmode": "Mode Sombre",
+        "language": "Langue" 
     },
 
     "moves": {
@@ -354,7 +355,8 @@
         "tier": "Tier",
 
         "shadow": "Obscure",
-        "not-shadow": "Non Obscure",
+        "not-shadow": "Non ",
+        "shadow-order": "{species} {shadow}",
         "mega": "Méga",
         "primal": "Primo"
     },
