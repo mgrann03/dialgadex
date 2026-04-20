@@ -38,7 +38,7 @@
         },
 
         "notes": {
-            "elite": "* = Attaque Élite💿",
+            "elite": "* = Attaque Élite",
             "typed": "Les classements par type sont calculés en utilisant les dégâts super efficaces pour le type choisi et les dégâts neutres pour tous les autres types.",
             "versus": "Les classements sont calculés à l'aide d'un multiplicateur d'efficacité approprié pour les dégâts d'attaque.",
             "affinity": {
@@ -140,7 +140,7 @@
         },
         "moves": {
             "title": "Filtre d'Attaques",
-            "elite": "Attaques Élites 💿",
+            "elite": "Attaques Élites",
             "elite-tooltip": "§Autoriser les attaques ayant une restriction\n(Nécessitant un évènement ou une CT Élite)",
             "mixed": "Types d'attaque mixtes",
             "mixed-tooltip": "Autoriser à ce que l'attaque immédiate et chargée soit de type différent",
