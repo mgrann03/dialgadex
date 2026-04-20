@@ -383,7 +383,7 @@
         "min-tier": "Minimum Tier",
         "result-title": "Chaîne de recherche",
         "issues": "Issus Possibles",
-        "length-issue": "§GLa chaîne de recherche générée dépasse la limite de 5000 caractères.\nEssayez de modifier les paramètres pour les rendre plus restrictifs.",
+        "length-issue": "§La chaîne de recherche générée dépasse la limite de 5000 caractères.\nEssayez de modifier les paramètres pour les rendre plus restrictifs.",
         "incl-msg": "Incorrectement inclus",
         "excl-msg": "Exclus à tort",
         "missing": "Manquant: ",
