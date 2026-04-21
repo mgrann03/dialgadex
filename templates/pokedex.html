@@ -1,0 +1,310 @@
+<div class=center id=pokedex>
+    <div id=containers-father>
+        <div class=pokemon-containers id=previous-containers></div>
+        <div class=pokemon-containers id=main-container></div>
+        <div class=pokemon-containers id=next-containers></div>
+    </div>
+    <div id=additional-containers></div>
+</div>
+
+<!-- pokedex stats and moves table -->
+<div id=pokedex-details>
+    <div id=not-released class="center" data-i18n="dex.unreleased">Not found in the <b>Pokémon GO</b> files yet</div>
+    <div id=released>
+        <div class="card" id="attack-tiers" style="display: none">
+            <div class="card-header">
+                <div class="card-title" id="attack-tiers-title" data-i18n="dex.tier-title">Raid Attacker Rankings</div>
+            </div>
+            <div class="card-body">
+                <div class="dex-layout-table" id="attack-tier-results">
+                    <div class="dex-layout-tablecell">
+                        <div class="dex-layout-header tier-label tier-D">
+                            D<span class="desktop"> <span data-i18n="terms.tier">Tier</span></span>
+                        </div>
+                        <div class="dex-layout-content" id="dex-tier-D"></div>
+                    </div>
+                    <div class="dex-layout-tablecell">
+                        <div class="dex-layout-header tier-label tier-C">
+                            C<span class="desktop"> <span data-i18n="terms.tier">Tier</span></span>
+                        </div>
+                        <div class="dex-layout-content" id="dex-tier-C"></div>
+                    </div>
+                    <div class="dex-layout-tablecell">
+                        <div class="dex-layout-header tier-label tier-B">
+                            B<span class="desktop"> <span data-i18n="terms.tier">Tier</span></span>
+                        </div>
+                        <div class="dex-layout-content" id="dex-tier-B"></div>
+                    </div>
+                    <div class="dex-layout-tablecell">
+                        <div class="dex-layout-header tier-label tier-A">
+                            A<span class="desktop"> <span data-i18n="terms.tier">Tier</span></span>
+                        </div>
+                        <div class="dex-layout-content" id="dex-tier-A"></div>
+                    </div>
+                    <div class="dex-layout-tablecell">
+                        <div class="dex-layout-header tier-label tier-S">
+                            S+<span class="desktop"> <span data-i18n="terms.tier">Tier</span></span>
+                        </div>
+                        <div class="dex-layout-content" id="dex-tier-S"></div>
+                    </div>
+                </div>
+                <div class="secondary-header tier-label shadow-bg center" id="attack-tier-shadow-header" data-i18n="dex.shadow-title">When Shadow</div>
+                <div class="dex-layout-table rounded-bottom" id="attack-tier-results-shadow">
+                    <div class="dex-layout-tablecell">
+                        <div class="dex-layout-content" id="dex-tier-D-shadow">&nbsp;</div>
+                    </div>
+                    <div class="dex-layout-tablecell">
+                        <div class="dex-layout-content" id="dex-tier-C-shadow">&nbsp;</div>
+                    </div>
+                    <div class="dex-layout-tablecell">
+                        <div class="dex-layout-content" id="dex-tier-B-shadow">&nbsp;</div>
+                    </div>
+                    <div class="dex-layout-tablecell">
+                        <div class="dex-layout-content" id="dex-tier-A-shadow">&nbsp;</div>
+                    </div>
+                    <div class="dex-layout-tablecell">
+                        <div class="dex-layout-content" id="dex-tier-S-shadow">&nbsp;</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card" id="stats-calculator">
+            <form id=stats-form>
+            <div class="card-header">
+                <div class="card-title" data-i18n="dex.stats.title">Stats, IVs, and CP</div>
+            </div>
+            <div class="card-body">
+                <div class="col5-layout">
+                    <!--header-->
+                    <div></div>
+                    <div class="col-header" data-i18n="terms.attack">Attack</div>
+                    <div class="col-header" data-i18n="terms.defense">Defense</div>
+                    <div class="col-header" data-i18n="terms.stamina">HP</div>
+                    <div></div>
+                    <!--base-->
+                    <div class="row-header">
+                        <span class="tooltip tooltip-top"><span data-i18n="dex.stats.base">Base Stats</span>
+                            <span class="tooltiptext" data-i18n="dex.stats.base-tooltip">Pokémon stats as found in the Game Master<br/>for this species/form</span>
+                        </span>
+                    </div>
+                    <div id=base-stat-atk></div>
+                    <div id=base-stat-def></div>
+                    <div id=base-stat-hp></div>
+                    <div></div>
+                    <!--true max-->
+                    <div class="row-header">
+                        <span class="tooltip tooltip-top"><span data-i18n="dex.stats.max">Lv50 Stats</span>
+                            <span class="tooltiptext" data-i18n="dex.stats.max-tooltip">Real in-game stats for a<br/>Perfect-IV Level 50 Pokémon</span>
+                        </span>
+                    </div>
+                    <div id=max-stat-atk></div>
+                    <div id=max-stat-def></div>
+                    <div id=max-stat-hp></div>
+                    <div id=max-cp></div>
+                    
+                    <div></div>
+                    <div class="mid3 col-header" data-i18n="dex.stats.calc-title">Stat Calculator</div>
+                    <div></div>
+                    <!--level-->
+                    <div class="row-header">
+                        <span class="tooltip tooltip-top"><span data-i18n="terms.level">Level</span>
+                            <span class="tooltiptext">
+                                <ul>
+                                    <li data-i18n="dex.stats.level-tooltip.cpm">Determines the Multiplier (CPM) used when calculating effective stats</li>
+                                    <li data-i18n="dex.stats.level-tooltip.levelup">Can be raised by one half-level per "Power-up"</li>
+                                    <li data-i18n="dex.stats.level-tooltip.max">Maximum level is 50 (+1 if Best Buddy)</li>
+                                    <li data-i18n="dex.stats.level-tooltip.hidden">Never displayed directly in game; represented by a white arc in the Pokémon screen</li>
+                                </ul>
+                            </span>
+                        </span>
+                    </div>
+                    <div><input id=input-lvl type=number min=1 max=51 step=0.5 value=40></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <!--ivs-->
+                    <div class="row-header">
+                        <span class="tooltip tooltip-top"><span data-i18n="terms.ivs">IVs</span>
+                            <span class="tooltiptext">
+                                <div class="tooltip-title" data-i18n="dex.stats.iv-tooltip.title">"Individual Values"</div>
+                                <p data-i18n="dex.stats.iv-tooltip.explanation">Additional points in each stat, as displayed in the Appraisal screen</p>
+                            </span>
+                        </span>
+                    </div>
+                    <div><input id=input-atk type=number min=0 max=15 value=15></div>
+                    <div><input id=input-def type=number min=0 max=15 value=15></div>
+                    <div><input id=input-hp type=number min=0 max=15 value=15></div>
+                    <div></div>
+                    <!--maximum-->
+                    <div class="row-header">
+                        <span class="tooltip tooltip-top"><span data-i18n="dex.stats.hundo">100% Stats</span>
+                            <span class="tooltiptext" data-i18n="dex.stats.hundo-tooltip">Real in-game stats for a Perfect-IV Pokémon<br/>at the specified Level</span>
+                        </span>
+                    </div>
+                    <div id=hundo-stat-atk></div>
+                    <div id=hundo-stat-def></div>
+                    <div id=hundo-stat-hp></div>
+                    <div id=hundo-cp></div>
+                    <!--effective-->
+                    <div class="row-header" data-vis-nonhundo="">
+                        <span class="tooltip tooltip-top"><span data-i18n="dex.stats.effective">Effective Stats</span>
+                            <span class="tooltiptext" data-i18n="dex.stats.effective-tooltip">Real in-game stats for a Pokémon with the specified Level and IVs</span>
+                        </span>
+                    </div>
+                    <div id=eff-stat-atk data-vis-nonhundo></div>
+                    <div id=eff-stat-def data-vis-nonhundo></div>
+                    <div id=eff-stat-hp data-vis-nonhundo></div>
+                    <div id=eff-cp data-vis-nonhundo></div>
+                    <!--compare-->
+                    <div></div>
+                    <div class="off" style="grid-column: 2 / 6;">
+                        <div id=eff-iv-compare data-vis-nonhundo></div>
+                        <div id=eff-stat-compare data-vis-nonhundo></div>
+                        <div id=rat-pct-vs-max data-vis-nonhundo data-i18n-reorder="dex.stats.»percent-perfect-metric">
+                            <span id=rat-pct-val></span>
+                            <span id=rat-pct-oftxt data-i18n="dex.stats.of"></span>
+                            <span id=rat-pct-perftxt data-i18n="dex.stats.perfect"></span>
+                            <span id=rat-pct-metric></span>
+                        </div>
+                        <div id=sh-rat-pct-vs-max data-vis-nonhundo data-i18n-reorder="dex.stats.»percent-perfect-metric-sh">
+                            <span id=sh-rat-pct-val></span>
+                            <span id=sh-rat-pct-oftxt data-i18n="dex.stats.of"></span>
+                            <span id=sh-rat-pct-perftxt data-i18n="dex.stats.perfect"></span>
+                            <span id=sh-rat-pct-metric></span>
+                            <span id=sh-rat-pct-shadowtxt data-i18n="dex.stats.when-shadow"></span>
+                        </div>
+                        <div id=sh-rat-pct-vs-max></div>
+                    </div>
+                    <div class="small-text full-row"><!--spacer--></div>
+                </div>
+            </div>
+            <div class="card-footer buttons">
+                <input type=button value=Reset id="stats-reset" data-i18n="dex.stats.reset" />
+                <input type=submit value=Calculate data-i18n="dex.stats.calculate" />
+            </div>
+            </form>
+        </div>
+        <div class="card" id=effectiveness>
+            <div class="card-header">
+                <div class="card-title" id="effectiveness-title" data-i18n="dex.types.title">Type Matchups</div>
+            </div>
+            <div class="card-body">
+                <div class="dex-layout-table rounded-bottom" id=effectiveness-table>
+                    <div class="dex-layout-tablecell">
+                        <div class="dex-layout-header tooltip tooltip-top">
+                            <span class="resist immune">
+                                <img src="imgs/triple-resistance.svg" class="tripleshield-icon" alt="3 shields representing triple resistance" >
+                            </span>
+                            <span class="desktop" data-i18n="dex.types.3r">3x Resistance</span>
+                            <span class="tooltiptext" data-i18n="dex.types.3r-tooltip">Damage Multiplier x0.244</span>
+                        </div>
+                        <div class="dex-layout-content" id="effectiveness-0244"></div>
+                    </div>
+                    <div class="dex-layout-tablecell">
+                        <div class="dex-layout-header tooltip tooltip-top">
+                            <span class="immune">
+                                <img src="imgs/double-resistance.svg" class="tripleshield-icon" alt="2 shields representing double resistance">
+                            </span>
+                            <span class="desktop" data-i18n="dex.types.2r">2x Resistance</span>
+                            <span class="tooltiptext" data-i18n="dex.types.2r-tooltip">Damage Multiplier x0.391</span>
+                        </div>
+                        <div class="dex-layout-content" id="effectiveness-0391"></div>
+                    </div>
+                    <div class="dex-layout-tablecell">
+                        <div class="dex-layout-header tooltip tooltip-top">
+                            <span class="resist">
+                                <img src="imgs/resistance.svg" class="shield-icon" alt="A shield representing type resistance">
+                            </span>
+                            <span class="desktop" data-i18n="dex.types.1r">1x Resistance</span>
+                            <span class="tooltiptext" data-i18n="dex.types.1r-tooltip">Damage Multiplier x0.625</span>
+                        </div>
+                        <div class="dex-layout-content" id="effectiveness-0625"></div>
+                    </div>
+                    <div class="dex-layout-tablecell">
+                        <div class="dex-layout-header tooltip tooltip-top">
+                            <span class="supereffective">
+                                <img src="imgs/effective.svg" class="sword-icon" alt="A sword representing supereffective damage">
+                            </span>
+                            <span class="desktop" data-i18n="dex.types.1w">1x Weakness</span>
+                            <span class="tooltiptext" data-i18n="dex.types.1w-tooltip">Damage Multiplier x1.60</span>
+                        </div>
+                        <div class="dex-layout-content" id="effectiveness-160"></div>
+                    </div>
+                    <div class="dex-layout-tablecell">
+                        <div class="dex-layout-header tooltip tooltip-top">
+                            <span class="supereffective">
+                                <img src="imgs/double-effective.svg" class="sword-icon" alt="2 swords representing doubly supereffective damage">
+                            </span>
+                            <span class="desktop" data-i18n="dex.types.2w">2x Weakness</span>
+                            <span class="tooltiptext" data-i18n="dex.types.2w-tooltip">Damage Multiplier x2.56</span>
+                        </div>
+                        <div class="dex-layout-content" id="effectiveness-256"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card" id="counters">
+            <div class="card-header">
+                <div class="card-title" data-i18n="dex.counters.title">Raid Counters</div>
+                <div class="drawer absolute-right v-middle">
+                    <img class="drawer-icon" src="imgs/filter.svg" alt="Funnel button to open filter and display options" />
+                    <div id=counters-filters class="drawer-popup"></div>
+                </div> 
+            </div>
+            <div class="card-body">
+                <div class=center id=counters-popup></div>
+                <div id=counters-table><div id=counters-grid></div></div>
+            </div>
+            <div class="card-footer">
+                <ul class="footnotes">
+                    <li data-i18n="strongest.notes.elite">* Elite fast or charged move</li>
+                    <li data-i18n="dex.counters.notes.method">Calculations take into account the counter's damage against this Pokémon and the counter's resistance 
+                        to incoming damage from this Pokémon.
+                    </li>
+                    <li class="off" data-i18n="dex.counters.notes.disclaimer">Disclaimer: Calculations cannot capture some of the nuances of real raid battles. These calculations are 
+                        best used to gauge overall attacker strength, not performance against any single raid boss. For the most
+                        accurate list of raid counters, please reference simulations instead.
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title" id="movesets-title" data-i18n="dex.moves.title">Best Movesets</div>
+                <div class="drawer absolute-right v-middle" id="moveset-edit-icon">
+                    <img class="drawer-icon" src="imgs/edit.svg" alt="Pencil button to open moveset editor" />
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table-bg move-table" id=pokedex-move-table>
+                    <thead>
+                        <tr class=table-header>
+                            <th>
+                                <span class="desktop" data-i18n="terms.fast-move">Fast Move</span>
+                                <span class="mobile moveset-title" data-i18n="terms.moveset">Moveset</span>
+                            </th>
+                            <th data-i18n="terms.charged-move">Charged Move</th>
+                            <th data-i18n="terms.dps">DPS</th>
+                            <th><span data-i18n="terms.dps">DPS</span><br><span class='shadow-text' data-i18n="dex.moves.shadow-header">(Shadow)</span></th>
+                            <th data-i18n="terms.tdo">TDO</th>
+                            <th><span data-i18n="terms.tdo">TDO</span><br><span class='shadow-text' data-i18n="dex.moves.shadow-header">(Shadow)</span></th>
+                            <th id=table-metric-header class=sortable onclick=SortPokedexTable(6)>
+                                <span data-i18n="terms.edps">eDPS</span> <span class=th-triangle>▿</span>
+                            </th>
+                            <th id=table-metric-header-sh>
+                                <span data-i18n="terms.edps">eDPS</span><br>
+                                <span class='shadow-text' data-i18n="dex.moves.shadow-header">(Shadow)</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="card-footer">
+                <ul class="footnotes">
+                    <li data-i18n="strongest.notes.elite">* Elite fast or charged move</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

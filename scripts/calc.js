@@ -475,8 +475,10 @@ function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow, level,
             const moveset = {
                 rat: avg_rating.rat, dps: avg_rating.dps, tdo: avg_rating.tdo,
                 all_rat: all_ratings,
-                fm: fm, fm_is_elite: fm_is_elite, fm_type: fm_obj.type,
-                cm: cm, cm_is_elite: cm_is_elite, cm_type: cm_obj.type
+                fm: fm, fm_is_elite: fm_is_elite, 
+                fm_type: fm_obj.type, fm_id: fm_obj.id,
+                cm: cm, cm_is_elite: cm_is_elite, 
+                cm_type: cm_obj.type, cm_id: cm_obj.id
             };
             // if the array of movesets isn't full
             // or the current moveset is stronger than the weakest in the array,
@@ -560,7 +562,7 @@ function GetMovesetYs(types, atk, fms, cms, total_incoming_dps = 50) {
  * Searches the strongest pokemon of each type and returns the strongest
  * pokemon per type.
  */
-function GetStrongestOfEachType(search_params) {
+async function GetStrongestOfEachType(search_params) {
     // map of strongest pokemon and moveset found so far for each type
     let str_pokemons = new Map();
 
@@ -580,7 +582,7 @@ function GetStrongestOfEachType(search_params) {
             };
         }
 
-        const str_pok = GetStrongestVersus(enemy_params, search_params, 1)[0];
+        const str_pok = (await GetStrongestVersus(enemy_params, search_params, 1))[0];
         str_pokemons.set(type, str_pok);
     }
 
@@ -597,13 +599,13 @@ function GetStrongestOfEachType(search_params) {
  * Searches the strongest pokemon of one type and returns the strongest
  * pokemon of that type.
  */
-function GetStrongestOfOneType(search_params) {
+async function GetStrongestOfOneType(search_params) {
 
     // build a basic enemy to "sim" against
     let enemy_params;
     if (settings_type_affinity) {
         enemy_params = GetTypeAffinity(search_params.type, !search_params.versus);
-        UpdateAffinityTooltip(enemy_params);
+        UpdateAffinityDialog(enemy_params);
     }
     else {
         enemy_params = {
@@ -616,7 +618,7 @@ function GetStrongestOfOneType(search_params) {
     }
 
     // array of strongest pokemon and moveset found so far
-    let str_pokemons = GetStrongestVersus(enemy_params, search_params);
+    let str_pokemons = await GetStrongestVersus(enemy_params, search_params);
 
     // reverses strongest pokemon array
     str_pokemons.reverse();
@@ -627,14 +629,14 @@ function GetStrongestOfOneType(search_params) {
 /**
  * Find all strongest counters to this pokemon, filtering based on params
  */
-function GetStrongestVersus(enemy_params, search_params, num_counters = 100000) {
+async function GetStrongestVersus(enemy_params, search_params, num_counters = 100000) {
     const counters = [];
 
     /**
      * Checks if any of the movesets of a specific pokemon is stronger than any
      * of the current counters. If it is, updates the counters arrays.
      */
-    function UpdateIfStronger(pkm_obj, shadow, level, search_params) {
+    async function UpdateIfStronger(pkm_obj, shadow, level, search_params) {
         const movesets = GetStrongestAgainstSpecificEnemy(pkm_obj, shadow, level, enemy_params, search_params);
         if (movesets.length == 0)
             return;
@@ -656,7 +658,7 @@ function GetStrongestVersus(enemy_params, search_params, num_counters = 100000) 
             }
 
             if (is_strong_enough) {
-
+                
                 // adds pokemon to array of counters
                 const counter = {
                     rat: moveset.rat, dps: moveset.dps, tdo: moveset.tdo,
@@ -666,9 +668,9 @@ function GetStrongestVersus(enemy_params, search_params, num_counters = 100000) 
                     shadow: shadow, class: pkm_obj.class,
                     level: level,
                     fm: moveset.fm, fm_is_elite: moveset.fm_is_elite,
-                    fm_type: moveset.fm_type,
+                    fm_type: moveset.fm_type, fm_id: moveset.fm_id,
                     cm: moveset.cm, cm_is_elite: moveset.cm_is_elite,
-                    cm_type: moveset.cm_type
+                    cm_type: moveset.cm_type, cm_id: moveset.cm_id,
                 };
 
                 
@@ -685,7 +687,7 @@ function GetStrongestVersus(enemy_params, search_params, num_counters = 100000) 
         }
     }
 
-    SearchAll(search_params, UpdateIfStronger);
+    await SearchAll(search_params, UpdateIfStronger);
 
     // sorts array
     counters.sort(function compareFn(a , b) {
@@ -774,4 +776,16 @@ function CalcZScore(value, dist) {
 // Force num to be inside the specified range
 function Clamp(num, min, max) {
     return Math.min(Math.max(num, min), max);
+}
+
+/**
+ * Format a decimal value with spaces in the left-padding and rounding-off fractional parts
+ * (Aligns the decimal point for the whole column)
+ */
+function FormatDecimal(val, minIntDigits, minFracDigits, maxFracDigits) {
+    if (val==0)
+        return "&#8199;".repeat(minIntDigits-1) + "0";
+
+    return "&#8199;".repeat(Math.max(0, minIntDigits - Math.floor(Math.max(0,Math.log10(val)) + 1)))
+        + val.toLocaleString(currentLocale, { minimumFractionDigits: minFracDigits, maximumFractionDigits: maxFracDigits });
 }

@@ -30,17 +30,6 @@ let settings_newdps = true;
  * Bind event handlers for all settings options
  */
 function BindSettings() {
-    // Refresh list when any options change
-    $("#filter-settings :checkbox").change(function() {
-        if ($("#strongest").is(":visible")) {
-            CheckURLAndAct();
-        }
-        else if ($("#counters").is(":visible")) {
-            ResetPokedexCounters();
-            LoadPokedexCounters();
-        }
-    });
-
     // Dark Mode
     $("#settings-darkmode").change(function() { 
         if ($("#settings-darkmode").is(":checked"))
@@ -112,6 +101,14 @@ function BindSettings() {
     $("#settings-speculative").change(function() { 
         SetSpeculative($("#settings-speculative").is(":checked")); 
     });
+
+    // Language Selector
+    $("#lang-en").click(function() { SetLocale("en"); });
+    $("#lang-es").click(function() { SetLocale("es"); });
+    $("#lang-fr").click(function() { SetLocale("fr"); });
+    $("#lang-de").click(function() { SetLocale("de"); });
+    $("#lang-it").click(function() { SetLocale("it"); });
+
 }
 
 /**
@@ -206,11 +203,11 @@ function SetMetric(metric) {
             break;
     }
     
-    $("#tof-exp").val(settings_metric_exp.toFixed(3));
+    //$("#tof-exp").val(settings_metric_exp.toFixed(3));
 
     // sets pokemondex move table header
-    $("#table-metric-header").html(settings_metric);
-    $("#table-metric-header-sh").html(settings_metric + "<br>(Shadow)");
+    //$("#table-metric-header").html(settings_metric);
+    //$("#table-metric-header-sh").html(settings_metric + "<br>(Shadow)");
 
     // Reset any cached tier rankings
     ClearTypeTiers();
@@ -428,6 +425,19 @@ function SetTheme(theme = "darkmode") {
 }
 
 /**
+ * Updates the visual styling of the language selector
+ */
+function DisplaySelectedLang() {
+    $("#lang-en").removeClass("settings-opt-sel");
+    $("#lang-es").removeClass("settings-opt-sel");
+    $("#lang-fr").removeClass("settings-opt-sel");
+    $("#lang-de").removeClass("settings-opt-sel");
+    $("#lang-it").removeClass("settings-opt-sel");
+
+    $("#lang-"+currentLocale).addClass("settings-opt-sel");
+}
+
+/**
  * Sets the pokemon used for comparison in "percentage" bars
  */
 function SetAffinity(useAffinity) {
@@ -523,6 +533,6 @@ function GetSearchParms(type, versus) {
  * Ensures the same filters are shared everywhere, without duplicating all the DOM.
  */
 function MoveFilterPopup(new_parent_id) {
-    // Move filters for display
     $("#filter-settings").appendTo(new_parent_id);
+    $("#filter-settings").css("display", "");
 }

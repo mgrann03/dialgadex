@@ -14,225 +14,56 @@ let display_numbered = true, show_pct = true, highlight_suboptimal = true;
 function BindRankings() {
     // Moveset count
     $("#chk-suboptimal").change(function() {
-        $("#chk-grouped").prop("disabled", !$("#chk-suboptimal").is(":checked"));
+        const isChecked = $('#chk-suboptimal').is(":checked");
+        $("#chk-grouped").prop("disabled", !isChecked);
+        ShowHideSearchStringIcon(!isChecked);
     });
 
     // Enemy type
     $("#chk-versus").change(function() {
         const urlParams = new URLSearchParams(window.location.search);
-        
-        if (this.checked && urlParams.has('t') 
-            && urlParams.get('t') != 'Each' && urlParams.get('t') != 'Any') {
-            urlParams.set('v', '');
-        }
-        else if (urlParams.has('v')) urlParams.delete('v');
-        
-        window.history.pushState({}, "", "?" + urlParams.toString().replace(/=(?=&|$)/gm, ''));
-
-        CheckURLAndAct();
+        const type = urlParams.has('t') ? urlParams.get('t') : "Any";
+        LoadStrongestAndUpdateURL(type, $(this).prop("checked"));
     });
 
-    BindSearchStringDialog();
+    // Refresh list when any options change
+    $("#strongest").on("change", "#filter-settings :checkbox", function() {
+        if ($("#strongest").is(":visible")) {
+            CheckURLAndAct();
+        }
+        else if ($("#counters").is(":visible")) {
+            ResetPokedexCounters();
+            LoadPokedexCounters();
+        }
+    });
+
+    // Update types based on selector
+    $("#strongest-links-types").on("type-change", function (event) {
+        LoadStrongestAndUpdateURL(event.detail.type);
+    });
+
+    document.getElementById("strongest-links-types").setHrefs((type) => `/?strongest&t=${type}`);
 
     SetupScroll();
 }
 
 /**
- * Bind event handlers for the search string generator popup
- */
-function BindSearchStringDialog() {
-    function UpdateSearchString() {
-        const minTier = $('[name="min-tier"]:checked').val();
-
-        let pkm_arr;
-        if (minTier == "S") {
-            pkm_arr = str_pokemons.filter(e=>e.tier[0]=="S"||e.tier=="MRay");
-        }
-        else {
-            pkm_arr = str_pokemons.filter(e=>e.tier.charCodeAt(0)<=minTier.charCodeAt(0)||
-                e.tier[0]=="S"||e.tier=="MRay");
-        }
-
-        const check_movesets = $("#chk-include-movesets").prop("checked");
-        const check_elite_only = $('#chk-elite-movesets').prop("checked") && check_movesets;
-
-        const search_str = GetSearchString(pkm_arr, check_movesets, check_elite_only)
-        $("#search-string-result").text(search_str);
-
-        const result_arr = RunSearchString(search_str, check_movesets, check_elite_only);
-        const result_compare = ValidateSearchString(pkm_arr, result_arr, check_movesets, check_elite_only);
-
-        $("#search-string-issues, #search-string-excluded-col, #search-string-included-col, #string-length-issue").css("display", "none");
-        if (result_compare.not_found.size > 0) { 
-            $("#search-string-issues, #search-string-excluded-col").css("display", "block");
-            $("#search-string-excluded").empty();
-
-            for (const missed_mon of result_compare.not_found) {
-                let pkm_obj = ParseUniqueIdentifier(missed_mon, true, false, check_movesets);
-                GetMonSearchIssue($("#search-string-excluded"), pkm_obj);
-            }
-        }
-        
-        if (result_compare.not_wanted.size > 0) {
-            $("#search-string-issues, #search-string-included-col").css("display", "block");
-            $("#search-string-included").empty();
-            for (const included_mon of result_compare.not_wanted) {
-                let pkm_obj = ParseUniqueIdentifier(included_mon, true, false, check_movesets);
-                let base_pkm_obj = pkm_arr.find(e=>e.id==pkm_obj.id&&e.form==pkm_obj.form&&e.shadow==pkm_obj.shadow);
-                if (base_pkm_obj) { // move issue
-                    let fm_issue = null, cm_issue = null;
-                    if (check_elite_only && base_pkm_obj.fm_is_elite && pkm_obj.fm == "null") {
-                        fm_issue = {
-                            issue: "missing",
-                            move: base_pkm_obj.fm
-                        };
-                    }
-                    if (!fm_issue && (base_pkm_obj.fm_is_elite || !check_elite_only) && pkm_obj.fm != base_pkm_obj.fm && pkm_obj.fm != "null") {
-                        fm_issue = {
-                            issue: "incorrect",
-                            move: pkm_obj.fm
-                        };
-                    }
-                    if (check_elite_only && base_pkm_obj.cm_is_elite && pkm_obj.cm == "null") {
-                        cm_issue = {
-                            issue: "missing",
-                            move: base_pkm_obj.cm
-                        };
-                    }
-                    if (!cm_issue && (base_pkm_obj.cm_is_elite || !check_elite_only) && pkm_obj.cm != base_pkm_obj.cm && pkm_obj.cm != "null") {
-                        cm_issue = {
-                            issue: "incorrect",
-                            move: pkm_obj.cm
-                        };
-                    }
-                    
-                    if (fm_issue || cm_issue)
-                        GetMonSearchIssue($("#search-string-included"), pkm_obj, false, false, fm_issue, cm_issue);
-                }
-                else { 
-                    base_pkm_obj = pkm_arr.find(e=>e.id==pkm_obj.id&&e.form==pkm_obj.form&&e.shadow!=pkm_obj.shadow);
-                    if (base_pkm_obj) { // shadow issue
-                        GetMonSearchIssue($("#search-string-included"), pkm_obj, false, true, null, null);
-                    }
-                    else {
-                        GetMonSearchIssue($("#search-string-included"), pkm_obj, true, false, null, null);
-                    }
-                }
-            }
-        }
-
-        if (search_str.length > 5000)
-            $("#search-string-issues, #string-length-issue").css("display", "block");
-    }
-
-    // Dialog Open/Close
-    $("#search-string-icon").click(function() {
-        $("#overlay").addClass("active");
-
-        UpdateSearchString();
-        $("#search-string-popup").get(0).show();
-    });
-    $("#search-string-popup").on("close", function(e) {
-        if (e.target === e.currentTarget) {// only apply to this, not children
-            $("#overlay").removeClass("active");
-        }
-    });
-
-    // Copy to Clipboard
-    $("#search-string-copy").click(async function (e) {
-        try {
-            await navigator.clipboard.writeText($("#search-string-result").text());
-            $("#search-string-copy").attr("value", "Copied!");
-            setTimeout(()=>{$("#search-string-copy").attr("value", "Copy")}, 1000);
-        } catch (err) {
-            console.error('Failed to copy text: ', err);
-        }
-    });
-
-    // Settings
-    $('[name="min-tier"], #chk-include-movesets, #chk-elite-movesets').change(UpdateSearchString);
-    $('#chk-include-movesets').change(function (e) {
-        if ($('#chk-include-movesets').prop("checked")) {
-            $('#chk-elite-movesets').removeAttr("disabled");
-        }
-        else {
-            $('#chk-elite-movesets').prop("disabled", true);
-        }
-    });
-}
-
-/**
  *  Enable/Disable Search String dialog button based on current settings
  */ 
-function ShowHideSearchStringIcon() {
-    let visible = true;
-    if ($('#chk-suboptimal').is(":checked"))
-        visible = false;
-    if ($('#each-type-strongest-link').is('.selected'))
-        visible = false;
-
+function ShowHideSearchStringIcon(visible) {
     $('#search-string-icon').css('display', (visible ? '' : 'none'));
-}
-
-/**
- * Constructs Div element representing a pkm_obj
- * 
- * TODO: Probably can generalize this and use it for search results, table results
- */
-function GetMonSearchIssue(parent, pkm_obj, form_issue = false, shadow_issue = false, fm_issue = null, cm_issue = null) {
-    const coords = GetPokemonIconCoords(pkm_obj.id, pkm_obj.form);
-    let form_text = GetFormText(pkm_obj.id, pkm_obj.form).replace(/\s+Forme?/,"");
-    if (form_text == "" && form_issue) form_text = pkm_obj.form;
-
-    const leftside = $("<div></div>");
-    leftside.append("<span class=pokemon-icon style='background-image:url("
-        + ICONS_URL + ");background-position:" + coords.x + "px "
-        + coords.y + "px'></span>");
-    leftside.append(" <span class='strongest-name'>"
-        + ((pkm_obj.shadow)
-            ? "<span class=shadow-text>Shadow</span> " : "")
-        + pkm_obj.name
-        +"</span>");
-    
-    if (form_text.length > 0 && !form_issue)
-        leftside.append(`<span class='poke-form-name'> (${form_text})</span>`);
-
-    parent.append(leftside);
-
-    const rightside = $("<div></div>");
-    if (form_text.length > 0 && form_issue)
-        rightside.append(`<span class='poke-form-name issue-highlight'> (${form_text})</span>`);
-    if (shadow_issue)
-        rightside.append(`<span class='poke-form-name issue-highlight'> (${pkm_obj.shadow ? '' : 'Not '}Shadow)</span>`);
-
-    if (fm_issue) {
-        const fm_obj = jb_fm.find(e=>e.name == fm_issue.move);
-        if (fm_issue.issue == "missing") 
-            rightside.append("<span class='issue-highlight'>Missing: </span>");
-        rightside.append(`<span class="type-text bg-${fm_obj.type}">${fm_issue.move}</span>`);
-    }
-    if (cm_issue) {
-        const cm_obj = jb_cm.find(e=>e.name == cm_issue.move);
-        if (cm_issue.issue == "missing") 
-            rightside.append("<span class='issue-highlight'>Missing: </span>");
-        rightside.append(`<span class="type-text bg-${cm_obj.type}">${cm_issue.move}</span>`);
-    }
-    parent.append(rightside);
 }
 
 /**
  * Loads the list of the strongest pokemon of a specific type in pokemon go.
  * The type can be 'each', 'any' or an actual type.
  */
-function LoadStrongest(type = "Any") {
-    if (!finished_loading)
-        return false;
+async function LoadStrongest(type = "Any", versus) {
+    // displays what should be displayed 
+    await LoadPage("strongest");
 
     // Move filters for display
     MoveFilterPopup("#strongest-filters");
-
-    // displays what should be displayed 
-    LoadPage("strongest");
 
     // Only enable suboptimal filters if we're searching a specific type (not "Each")
     if (type == null || type == "Each")
@@ -240,17 +71,9 @@ function LoadStrongest(type = "Any") {
     else 
         $("#chk-suboptimal").prop("disabled", false);
 
-    // sets selected link
-    $("#strongest-links li").removeClass("selected");
-    if (type == "Any")
-        $("#any-type-strongest-link").addClass("selected");
-    else if (type == "Each")
-        $("#each-type-strongest-link").addClass("selected");
-    else 
-        $("#strongest-links-types li:has(a.bg-"+type+")").addClass("selected");
-
     // Handle logic for "versus"
     const versus_chk = $("#strongest input[value='versus']:checkbox");
+    versus_chk.prop("checked", versus);
     if (type == "Any" || type == "Each") { // disabled if not a specific type
         versus_chk.prop("checked", false);
         versus_chk.prop("disabled", true);
@@ -258,43 +81,45 @@ function LoadStrongest(type = "Any") {
     else {
         versus_chk.prop("disabled", false);
     }
-    const versus = versus_chk.is(":checked");
 
     // sets titles
-    let title = "Best " + (type == "Any" || type == "Each" || versus ? "" : type + "-type ") + "Attackers";
-    if (type == "Each")
-        title = title + " of Each type";
-    if (versus)
-        title = title + " against " + type + "-type Bosses";
-    document.title = title + " - DialgaDex"; // page title
+    let titleKey = "meta.rankings.typed";
+    if (type == "Each") titleKey = "meta.rankings.each";
+    else if (versus) titleKey = "meta.rankings.versus";
 
-    $("#strongest-type-title").text("");
-    $("#strongest-title-suffix").text("");
-    if (type == "Any") {
-        $("#strongest-type-title").text("Overall");
-    }
-    else if (type == "Each") {
-        $("#strongest-title-suffix").text("of Each Type");
-    }
-    else {
-        $("#strongest-type-title").html(type + "<span class='desktop'>-type<span>");
-    }
+    document.title = FormatTranslation(titleKey + ".title", {
+        type: GetTranslation((type == "Any" ? "strongest.any.type-text" : "pokedata.types." + type), type)
+    });
 
     // sets description
     $('meta[name=description]').attr('content', 
-        "Best " + (type == "Any" || type == "Each" || versus ? "" : type + "-type ") + 
-        "raid counters " + 
-        (type != "Any" && type != "Each" && versus ? "against " + type + "-type bosses ": "") + 
-        "in Pokémon Go, using the new eDPS metric.");
+        FormatTranslation(titleKey + ".description", {
+            type: GetTranslation((type == "Any" ? "strongest.any.type-text" : "pokedata.types." + type), type)
+        }));
 
-    // removes previous table rows
-    $("#strongest-table tbody tr").remove();
+    if (type == "Any") {
+        $("#strongest-type-title").attr("data-i18n", "strongest.any.type-text");
+        $("#strongest-type-helper").attr("data-i18n", "strongest.any.helper-text");
+        $("#strongest-title").attr("data-i18n-reorder", "strongest.any.»order");
+    }
+    else if (type == "Each") {
+        $("#strongest-type-title").attr("data-i18n", "strongest.each.type-text");
+        $("#strongest-type-helper").attr("data-i18n", "strongest.each.helper-text");
+        $("#strongest-title").attr("data-i18n-reorder", "strongest.each.»order");
+    }
+    else {
+        $("#strongest-type-title").attr("data-i18n", "pokedata.types."+type);
+        $("#strongest-type-helper").attr("data-i18n", "strongest.types.helper-text");
+        $("#strongest-title").attr("data-i18n-reorder", "strongest.types.»order");
+    }
+
+    TranslateElement($("#strongest-title"));
 
     const search_params = GetSearchParms(type, versus);
     search_params.real_damage = false;
 
     if (type == "Each") {
-        str_pokemons = GetStrongestOfEachType(search_params);
+        str_pokemons = await GetStrongestOfEachType(search_params);
         tier_stops = [];
         let i=0;
         for (const t of POKEMON_TYPES) {
@@ -311,7 +136,7 @@ function LoadStrongest(type = "Any") {
         show_pct = false;
         highlight_suboptimal = false;
     } else {
-        str_pokemons = GetStrongestOfOneType(search_params);
+        str_pokemons = await GetStrongestOfOneType(search_params);
 
         display_numbered = true;
         show_pct = true;
@@ -321,9 +146,11 @@ function LoadStrongest(type = "Any") {
 
         if (IsDefaultSearchParams(search_params))
             SetTypeTier(type, str_pokemons);
-
-        RecalcViewport(null,0);
     }
+    
+    // remove previous table rows and replace from str_pokemons
+    ClearViewport();
+    RecalcViewport(null,0);
 
     // Display relevant footnotes
     //$("#footnote-elite").css('display', search_params.elite ? 'block' : 'none');
@@ -332,7 +159,7 @@ function LoadStrongest(type = "Any") {
     $("#footnote-versus").css('display', search_params.versus ? 'block' : 'none');
 
     // Update Icon
-    ShowHideSearchStringIcon();
+    ShowHideSearchStringIcon(type != "Each");
 
     // Prevent Link
     return false;
@@ -343,20 +170,16 @@ function LoadStrongest(type = "Any") {
  * Calls the 'LoadStrongest' function and updates the url accordingly.
  */
 function LoadStrongestAndUpdateURL(type = "Any", versus = null) {
-
-    if (!finished_loading)
-        return false;
-
     if (versus !== null)
-        $("#chk-versus").prop("checked", !!versus);
+        versus = !!versus;
 
     let url = "?strongest&t=" + type;
-    if ($("#chk-versus").prop("checked")) 
+    if ($("#chk-versus").prop("checked") && type != "Any" && type != "Each") 
         url += '&v';
 
-    window.history.pushState({}, "", url);
+    UpdateURL(url);
     
-    return LoadStrongest(type);
+    LoadStrongest(type, versus);
 }
 
 /**
@@ -826,8 +649,10 @@ function RenderLabels(indices) {
         let label = $(`<div class="tier-label floating-label">${tier.tier}</div>`);
         if (tier.tier == "MRay") 
             label.addClass("tier-MRay");
-        if (tier.type)
+        if (tier.type) {
             label.addClass("bg-"+tier.type);
+            label.text(TranslatedTypeName(tier.type));
+        }
 
         label.css("top", ((endRow + startRow - 1) / 2 * ROW_HEIGHT) + "px");
         $("#tier-label-container").append(label);
@@ -865,7 +690,7 @@ function GetRankingRow(row_i) {
     if (row_i < str_pokemons.length) {
         const p = str_pokemons[row_i];
 
-        const name = p.name;
+        const name = TranslatedSpeciesName(p.id, p.name, p.shadow);
         const coords = GetPokemonIconCoords(p.id, p.form);
         const form_text = GetFormText(p.id, p.form).replace(/\s+Forme?/,"");
         const legendary = p.class !== undefined;
@@ -899,35 +724,33 @@ function GetRankingRow(row_i) {
                 ? (((display_grouped) 
                     ? p.grouped_rat : row_i) + 1) : "")
             +"</td>";
-        const td_name = $("<td class='td-poke-name'>"
-            + "<a class='a-poke-name' href='/?p=" + p.id + "&f=" + p.form 
-            + "' onclick='return LoadPokedexAndUpdateURL(GetPokeDexMon(" + p.id
-                + ",\"" + p.form + "\"))'>"
-            + "<span class=pokemon-icon style='background-image:url("
+        const td_name = $("<td class='td-poke-name'></td>")
+        const a_name = $(`<a class='a-poke-name' href='/?p=${p.id}&f=${p.form}'</a>`);
+        a_name.on("click", function(e) {
+            e.preventDefault();
+            LoadPokedexAndUpdateURL(GetPokeDexMon(p.id, p.form));
+        });
+
+
+        a_name.html("<span class=pokemon-icon style='background-image:url("
             + ICONS_URL + ");background-position:" + coords.x + "px "
             + coords.y + "px'></span>"
             + " <span class='strongest-name'>"
-            + ((p.shadow)
-                ? "<span class=shadow-text>Shadow</span> " : "")
             + name
             + ((p.level == 50) ? "<sup class='xl'>XL</sup>" : "")
             +"</span>"
             + ((form_text.length > 0)
                 ? "<span class=poke-form-name> (" + form_text + ")</span>" 
-                : "")
-            + "</a></td>");
-        const td_fm =
-            "<td><span class='type-text bg-"
-            + ((p.fm == "Hidden Power") ? "any-type" : p.fm_type) + "' "
-            + "onclick=\"OpenMoveEditor('" + p.fm + "')\">"
-            + p.fm + ((p.fm_is_elite) ? "*" : "") + "</span></td>";
-        const td_cm =
-            "<td><span class='type-text bg-" + p.cm_type + "' "
-            + "onclick=\"OpenMoveEditor('" + p.cm + "')\">"
-            + p.cm + ((p.cm_is_elite) ? "*" : "") + "</span></td>";
-        const td_rat = "<td>" + settings_metric + " <b>"
-            + p.rat.toFixed(2) + "</b></td>";
-        const td_pct = ((show_pct && p.pct) ? "<td>" + GetBarHTML(p.pct, p.pct.toFixed(1) + "%", 100, best_pct, ((Math.abs(p.pct - 100) < 0.000001) ? "contrast" : "")) + "</td>" : "");
+                : ""));
+        td_name.append(a_name);
+
+        const td_fm = $("<td></td>");
+        td_fm.append(GetMoveLink(p.fm, p.fm_type, p.fm_is_elite));
+        const td_cm = $("<td></td>");
+        td_cm.append(GetMoveLink(p.cm, p.cm_type, p.cm_is_elite));
+        const td_rat = "<td>" + GetTranslation("terms."+settings_metric, settings_metric) + " <b>"
+            + FormatDecimal(p.rat,2,2,2) + "</b></td>";
+        const td_pct = ((show_pct && p.pct) ? "<td>" + GetBarHTML(p.pct, FormatDecimal(p.pct,3,1,1) + "%", 100, best_pct, ((Math.abs(p.pct - 100) < 0.000001) ? "contrast" : "")) + "</td>" : "");
 
         //if (!show_pct || !display_numbered)
         //    td_name.css("width", "45%");
@@ -947,38 +770,12 @@ function GetRankingRow(row_i) {
     }
 }
 
-function UpdateAffinityTooltip(enemy_params) {
-    const tbl = $("#affinity-table tbody");
-    tbl.empty();
-    
-    const total_damage = enemy_params.enemy_ys[0]["Any"].y_num ?? estimated_y_numerator;
-
-    for (const t of POKEMON_TYPES) {
-        const t_weakness = GetEffectivenessMultOfType(enemy_params.weakness, t);
-        const t_damage = enemy_params.enemy_ys[0][t] ? enemy_params.enemy_ys[0][t].y_num : 0;
-
-        const tr = $("<tr></tr>");
-        tr.append(`<td><span class='type-text bg-${t}'>${t}</span></td>`);
-        tr.append(`<td><div style="width: 50px">
-                <div class="bar-fg" style="width: ${t_weakness*50}px">
-                    <span class="bar-txt">${t_weakness.toFixed(2)}</span>
-                </div>
-            </div></td>`);
-        tr.append(`<td><div style="width: 100px">
-                <div class="bar-fg" style="width: ${(t_damage/total_damage*100*2)}px">
-                    <span class="bar-txt">${(t_damage/total_damage*100).toFixed(1)}%</span>
-                </div>
-            </div></td>`);
-        tbl.append(tr);
-    }
-}
-
 /**
  * Look up a pokemon's tier ranking for a specific type
  */
-function GetTypeTier(type, pkm_obj) {
+async function GetTypeTier(type, pkm_obj) {
     if (!POKEMON_TYPES.has(type)) return {pure: "F", shadow: "F"};
-    BuildTypeTier(type);
+    await BuildTypeTier(type);
 
     let tiers = {
         pure: type_tiers[type][GetUniqueIdentifier({
@@ -1001,7 +798,7 @@ function GetTypeTier(type, pkm_obj) {
 /**
  * If not already built, create a lookup for tier rankings of mons' typed movesets
  */
-function BuildTypeTier(type) {
+async function BuildTypeTier(type) {
     if (type_tiers && type_tiers[type]) return; // Already built
     
     let search_params = {
@@ -1009,7 +806,7 @@ function BuildTypeTier(type) {
         type
     };
 
-    let strongest = GetStrongestOfOneType(search_params);
+    let strongest = await GetStrongestOfOneType(search_params);
     ProcessAndGroup(strongest, type);
     SetTypeTier(type, strongest);
 }
@@ -1088,4 +885,32 @@ function throttle(func, timeFrame) {
             lastTime = now;
         }
     };
+}
+
+/**
+ * Builds a formatted anchor element to link back to a type ranking list
+ */
+function GetTypeLink(type, versus) {
+    const anchor = $(`<a class='type-text bg-${type}' href='/?strongest&t=${type}${(versus ? "&v" : "")}'>${GetTranslation("pokedata.types."+type)}</a>`);
+    anchor.on("click", function (e) {
+        e.preventDefault();
+        LoadStrongestAndUpdateURL(type, versus);
+    });
+
+    return anchor;
+}
+
+/**
+ * Builds a formatted anchor element to link back to a type ranking list
+ */
+function GetTypeLinkImg(type, versus) {
+    const anchor = $(`<a href='/?strongest&t=${type}${(versus ? "&v" : "")}'></a>`);
+    anchor.on("click", function (e) {
+        e.preventDefault();
+        LoadStrongestAndUpdateURL(type, versus);
+    });
+    const img = $(`<img src='/imgs/types/${type.toLowerCase()}.gif' alt=${type}></img>`);
+    anchor.append(img);
+
+    return anchor;
 }

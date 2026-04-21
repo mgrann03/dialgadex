@@ -6,33 +6,42 @@
 $(document).ready(Main);
 
 // global constants and variables
-
-// FIXME these are not ideal, would be better that, if a new pokemon is loaded,
-//        whatever asynchronous operations were being done on the previous mon
-//        should be cancelled
-
-// whether pokemon go table moves are currently being loaded asynchronously
-let loading_pogo_moves = false;
-// whether pokemon go counters are currently being loaded asynchronously
-let loading_counters = false;
-
 let current_pkm_obj = null; // current pokedex pokemon's pkm_obj
 
-// whether counters of current pokemon have been loaded yet
-let counters_loaded = false;
+const pages = [
+    {id: 'pokedex-page', template_path: '/templates/pokedex.html', binder: BindPokeDex},
+    {id: 'strongest', template_path: '/templates/rankings.html', binder: BindRankings},
+    {id: 'move-data', template_path: '/templates/moves.html', binder: BindMoveData},
+    {id: 'type-matrix', template_path: '/templates/typechart.html', binder: BuildTypeChart},
+    {id: 'faq', template_path: '/templates/faq.html'},
+    {id: 'about', template_path: '/templates/about.html'}
+];
 
 /**
  * Main function.
  */
-function Main() {
+async function Main() {
     // when going back or forward in the browser history
     window.onpopstate = function() { CheckURLAndAct(); }
 
     // Bind Event Handlers
     BindAll();
 
-    // Load Pokemon Data
-    LoadJSONData();
+    // Load Data
+    let loadPromises = [];
+    loadPromises.push(LoadJSONData());
+    loadPromises.push(SetLocale());
+    loadPromises.push(LoadFallbackLocale());
+    try {
+        await Promise.all(loadPromises);
+
+        CheckURLAndAct();
+        InitializePokemonSearch();
+    }
+    catch (err) {
+        console.error("Fatal error in JSON data load.");
+        return false;
+    }
 }
 
 /**
@@ -40,11 +49,9 @@ function Main() {
  */
 function BindAll() {
     BindSettings();
-    BindPokeDex();
-    BindRankings();
-    BindMoveData();
     BindMenu();
     BindFooter();
+    BindDialogs();
     
     // Passthrough clicks for touchscreens
     $(document).click(function(event) { OnDocumentClick(event); });
@@ -100,6 +107,46 @@ function BindFooter() {
         e.preventDefault();
         return false;
     });
+}
+
+/**
+ * Populates type chart, building headers and effectiveness matrix
+ */
+function BuildTypeChart() {
+    // Build headers
+    for (const def_type of POKEMON_TYPES) {
+        const th_defending = $(`<th class="vertical"></th>`);
+        th_defending.append(GetTypeLink(def_type, true));
+        $("#type-matrix-topaxis").append(th_defending);
+    }
+
+    // Build rows
+    for (const att_type of POKEMON_TYPES) {
+        // Header (attacking type axis)
+        const tr_attacking = $("<tr></tr>");
+        const td_header = $("<td></td>");
+        td_header.append(GetTypeLink(att_type, false));
+        tr_attacking.append(td_header);
+
+        const att_effects = POKEMON_TYPES_EFFECT.get(att_type);
+
+        // Matrix
+        for (const def_type of POKEMON_TYPES) {
+            if (att_effects[0].includes(def_type)) { // immunity
+                tr_attacking.append(`<td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td>`);
+            }
+            else if (att_effects[1].includes(def_type)) { // resistance
+                tr_attacking.append(`<td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td>`);
+            }
+            else if (att_effects[2].includes(def_type)) { // supereffective
+                tr_attacking.append(`<td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td>`);
+            }
+            else {
+                tr_attacking.append("<td></td>");
+            }
+        }
+        $("#type-matrix-body").append(tr_attacking);
+    }
 }
 
 /**
@@ -179,7 +226,7 @@ function CheckURLAndAct() {
     if (params.has("strongest")) {
 
         // preserve versus param
-        $("#chk-versus").prop("checked", params.has("v") == true);
+        const versus = params.has("v");
 
         // if url has 't' param...
         if (params.has("t")) {
@@ -194,7 +241,7 @@ function CheckURLAndAct() {
             else if (type == "Any")
                 LoadStrongest("Any");
             else if (POKEMON_TYPES.has(type))
-                LoadStrongest(type);
+                LoadStrongest(type, versus);
 
             return;
         }
@@ -208,8 +255,9 @@ function CheckURLAndAct() {
     // if url has 'moves' param...
     if (params.has("moves")) {
 
-        // preserve move-kind param
-        $("#chk-move-kind").prop("checked", params.get("moves").toLowerCase() == "charged");
+        // parse move kind
+        let kind = "Fast";
+        if (params.get("moves").toLowerCase() == "charged") kind = "Charged";
 
         // if url has 't' param...
         if (params.has("t")) {
@@ -220,9 +268,9 @@ function CheckURLAndAct() {
                 + type.slice(1).toLowerCase();
             
             if (type == "Any")
-                LoadMoves("Any");
+                LoadMoves("Any", kind);
             else if (POKEMON_TYPES.has(type))
-                LoadMoves(type);
+                LoadMoves(type, kind);
 
             return;
         }
@@ -262,14 +310,14 @@ function CheckURLAndAct() {
  * Opens the Type Effectiveness Matrix and closes any other pages
  */
 function LoadTypeChartAndUpdateURL() {
-    window.history.pushState({}, "", "?typechart");
+    UpdateURL("?typechart");
     
     // sets the page title
-    document.title = "Type Chart - DialgaDex";
+    document.title = GetTranslation("meta.typechart.title", "Type Chart - DialgaDex");
 
     // sets description
     $('meta[name=description]').attr('content', 
-        "Each attacking type's effectiveness against raid bosses in Pokémon Go.");
+        GetTranslation("meta.typechart.description", "Each attacking type's effectiveness against raid bosses in Pokémon Go."));
 
     LoadPage("type-matrix");
 }
@@ -278,14 +326,14 @@ function LoadTypeChartAndUpdateURL() {
  * Opens the FAQ and closes any other pages
  */
 function LoadFAQAndUpdateURL() {
-    window.history.pushState({}, "", "?faq");
+    UpdateURL("?faq");
     
     // sets the page title
-    document.title = "FAQ - DialgaDex";
+    document.title = GetTranslation("meta.faq.title", "FAQ - DialgaDex");
 
     // sets description
     $('meta[name=description]').attr('content', 
-        "Answers to common questions about DialgaDex.");
+        GetTranslation("meta.faq.description", "Answers to common questions about DialgaDex."));
 
     LoadPage("faq");
 }
@@ -294,14 +342,14 @@ function LoadFAQAndUpdateURL() {
  * Opens the About Page and closes any other pages
  */
 function LoadAboutAndUpdateURL() {
-    window.history.pushState({}, "", "?about");
+    UpdateURL("?about");
     
     // sets the page title
-    document.title = "About - DialgaDex";
+    document.title = GetTranslation("meta.about.title", "About - DialgaDex");
 
     // sets description
     $('meta[name=description]').attr('content', 
-        "Credits, references, contact info, and details about DialgaDex.");
+        GetTranslation("meta.about.description", "Credits, references, contact info, and details about DialgaDex."));
 
     LoadPage("about");
 }
@@ -309,12 +357,21 @@ function LoadAboutAndUpdateURL() {
 /**
  * Shows appropriate part of SPA, hiding all other parts
  */
-function LoadPage(pageName) {
-    let pages = ['pokedex-page', 'strongest', 'move-data', 'type-matrix', 'faq', 'about'];
+async function LoadPage(pageName) {
+    for (const page of pages) {
+        const pageDiv = $("#"+page.id);
 
-    pages.forEach(page=>{
-        $("#"+page).css("display", (page==pageName ? "revert" : "none"));
-    });
+        if (page.id === pageName) {
+            if (!page.loadingPromise) {
+                page.loadingPromise = LoadAndApplyTemplate(page);
+            }
+            await page.loadingPromise;
+            pageDiv.css("display", "revert");
+        }
+        else {
+            pageDiv.css("display", "none");
+        }
+    };
 
     // If we're loading any page, show the footer
     $("#footer").css("display", (!!pageName ? "revert" : "none"));
@@ -327,17 +384,43 @@ function LoadPage(pageName) {
 }
 
 /**
+ * Shows appropriate part of SPA, hiding all other parts
+ */
+async function LoadAndApplyTemplate(page) {
+    try {
+        const pageDiv = $("#"+page.id);
+
+        const templateElement = await FetchTemplate(page.template_path);
+        TranslateElement(templateElement);
+        templateElement.children().appendTo(pageDiv);
+
+        if (page.binder) page.binder();
+
+        pageDiv.attr('data-loaded', true);
+    } catch (err) {
+        delete page.loadingPromise; // Clear promise for a retry
+        
+        console.error("Failed to load page:", err);
+        throw err; 
+    }
+}
+
+/**
  * Sets up autocomplete for the Pokemon Search Box
  */
 function InitializePokemonSearch() {
     let search_values = jb_pkm.slice();
 
-    // Add entries for mons completely missing from game data
-    const all_names = search_values.map(e => e.name);
-    jb_names.forEach((e, idx) => {
-        if (!all_names.includes(e) && idx <= jb_max_id && idx >= 1)
-            search_values.push({id: idx, name: e, form: 'Normal', types: []});
+    let idSet = new Set(Array.from({ length: jb_max_id }, (_, i) => i + 1));
+    search_values.forEach(e => { 
+        e.search_name = TranslatedSpeciesName(e.id, e.name);
+        idSet.delete(e.id);
     });
+
+    // Add entries for mons completely missing from game data
+    for (const idx of idSet) {
+        search_values.push({id: idx, search_name: TranslatedSpeciesName(idx), form: 'Normal', types: []});
+    }
 
     const pokemonSearch = new autoComplete({
         selector: "#poke-search-box",
@@ -346,9 +429,9 @@ function InitializePokemonSearch() {
             filter: (list) => {
                 const inputValue = pokemonSearch.input.value.toLowerCase();
                 return list.sort((a, b) => {
-                    if (a.value.name.toLowerCase().startsWith(inputValue)) 
-                        return b.value.name.toLowerCase().startsWith(inputValue) ? a.value.id - b.value.id : -1;
-                    else if (b.value.name.toLowerCase().startsWith(inputValue))
+                    if (a.value.search_name.toLowerCase().startsWith(inputValue)) 
+                        return b.value.search_name.toLowerCase().startsWith(inputValue) ? a.value.id - b.value.id : -1;
+                    else if (b.value.search_name.toLowerCase().startsWith(inputValue))
                         return 1;
 
                     return a.value.id - b.value.id;
@@ -359,7 +442,7 @@ function InitializePokemonSearch() {
             const sanitize = (str) => String(str).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[\u2018-\u2019]/g, "'").normalize("NFC");
 
             const sanQuery = sanitize(query);
-            const pokeName = record.name + ((record.form !== "Normal") ? " (" + GetFormText(record.id, record.form).replace(/\s+Forme?/,"") + ")" : "");
+            const pokeName = record.search_name + ((record.form !== "Normal") ? " (" + GetFormText(record.id, record.form).replace(/\s+Forme?/,"") + ")" : "");
 
             const idSearch = sanQuery.match(/#?(\d+).*/);
             if (idSearch && idSearch.length >= 2) {
@@ -369,11 +452,11 @@ function InitializePokemonSearch() {
                 }
             }
             else { // string search
-                const sanPokeName = sanitize(record.name);
+                const sanPokeName = sanitize(record.search_name);
                 let match = sanPokeName.indexOf(sanQuery);
                 if (~match) {
-                    const matchPart = record.name.substring(match, match + query.length);
-                    return {match_type: 'name', match_value: record.name.replace(matchPart, "<mark>" + matchPart + "</mark>")};
+                    const matchPart = record.search_name.substring(match, match + query.length);
+                    return {match_type: 'name', match_value: record.search_name.replace(matchPart, "<mark>" + matchPart + "</mark>")};
                 }
 
                 if (record.form !== "Normal") {
@@ -413,7 +496,7 @@ function InitializePokemonSearch() {
 
                 // Add Name
                 const nameTD = $("<td class='poke-search-name'></td>");
-                nameTD.html((data.match.match_type == "name") ? data.match.match_value : data.value.name);
+                nameTD.html((data.match.match_type == "name") ? data.match.match_value : data.value.search_name);
                 $(item).append(nameTD);
 
                 // Add Form
@@ -478,4 +561,20 @@ function HasTouchScreen() {
         }
     }
     return has_touch_screen
+}
+
+/**
+ * Update browser history to push new url and persist locale
+ */
+function UpdateURL(url) {
+    const urlParams = new URLSearchParams(url);
+    if (currentLocale == 'en') {
+        urlParams.delete("lang");
+    }
+    else {
+        urlParams.set("lang", currentLocale);
+    }
+
+    url = "?" + urlParams.toString();
+    window.history.pushState({}, "", url);
 }

@@ -1,0 +1,50 @@
+<div class="card">
+    <div id=type-matrix-header class="card-header">
+        <div class="card-title">
+            <span data-i18n="terms.type-matchups">Type Matchups</span>
+        </div>
+        <div class="table-legend">
+            <div class="tooltip">
+                <span class="supereffective"><img src="imgs/effective.svg" class="sword-icon" alt="A sword representing supereffective damage"></span>
+                <span data-i18n="terms.supereffective">Super Effective</span>
+                <span class="tooltiptext"><span data-i18n="terms.damage-multiplier">Damage Multiplier</span> x1.6</span>
+            </div>
+            <div class="tooltip">
+                <span class="resist"><img src="imgs/resistance.svg" class="shield-icon" alt="A shield representing type resistance"></span>
+                <span data-i18n="terms.resisted">Resisted</span>
+                <span class="tooltiptext"><span data-i18n="terms.damage-multiplier">Damage Multiplier</span> x0.625</span>
+            </div>
+            <div class="tooltip">
+                <span class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon" alt="2 shields representing double resistance"></span>
+                <span data-i18n="terms.immune">Immune</span>
+                <span class="tooltiptext"><span data-i18n="terms.damage-multiplier">Damage Multiplier</span> x0.391</span>
+            </div>
+        </div>
+        <div class="center table-title">
+            <span data-i18n="terms.defending-type">Defending Type</span>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-with-leftheader">
+            <div class="table-leftheader">
+                <div class="center table-title vertical">
+                    <span data-i18n="terms.attacking-type">Attacking Type</span>
+                </div>
+            </div>
+            <table class="table-bg move-table" id=type-matrix-table>
+                <thead>
+                    <tr class="table-header" id="type-matrix-topaxis">
+                        <th>
+                            <div class="corner-writing">
+                                <span data-i18n="terms.attacker">Attacker</span><span data-i18n="terms.defender">Defender</span>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="type-matrix-body">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer">&nbsp;</div>
+</div>

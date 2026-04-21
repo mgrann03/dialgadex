@@ -111,12 +111,12 @@ function GetPokemonMoves(pkm_obj, hidden_power_filter = "Type-Match") {
     // Add moves to Apex Forms
     if (pkm_obj.form == "S") {
         if (pkm_obj.id == 249) { // Apex Lugia
-            shadow_only_cm.push('Aeroblast+');
-            pure_only_cm.push('Aeroblast++');
+            shadow_only_cm.push('Aeroblast Plus');
+            pure_only_cm.push('Aeroblast Plus Plus');
         }
         if (pkm_obj.id == 250) { // Apex Ho-Oh
-            shadow_only_cm.push('Sacred Fire+');
-            pure_only_cm.push('Sacred Fire++');
+            shadow_only_cm.push('Sacred Fire Plus');
+            pure_only_cm.push('Sacred Fire Plus Plus');
         }
     }
 
@@ -141,6 +141,15 @@ function GetPokemonMoves(pkm_obj, hidden_power_filter = "Type-Match") {
     }
 
     return [fm, cm, elite_fm, elite_cm, pure_only_cm, shadow_only_cm];
+}
+
+/**
+ * Returns boolean for whether the pokemon can learn a specific move
+ */
+function PokemonCanLearn(pkm_obj, move_name) {
+    const moves = GetPokemonMoves(pkm_obj);
+
+    return moves.some(e=>e.includes(move_name));
 }
 
 
@@ -207,7 +216,7 @@ function GetPokemonId(in_str) {
     const clean_input = CleanPokeName(in_str);
 
     // checks for a name
-    let pokemon_id = jb_names.findIndex(e=>CleanPokeName(e) == clean_input);
+    let pokemon_id = GetAllSpeciesNames().findIndex(e=>CleanPokeName(e) == clean_input);
 
     if (pokemon_id > jb_max_id || pokemon_id < 1)
         return 0;
@@ -225,11 +234,11 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal") {
     let pokemon_name;
     let can_be_shadow = false;
     if (poke_obj) {
-        pokemon_name = poke_obj.name;
+        pokemon_name = TranslatedSpeciesName(pokemon_id, poke_obj.name);
         can_be_shadow = poke_obj.shadow;
     }
     else {
-        pokemon_name = jb_names[pokemon_id];
+        pokemon_name = TranslatedSpeciesName(pokemon_id);
     }
     
     const img_src_name = GetPokemonImgSrcName(pokemon_id, form);
@@ -266,12 +275,12 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal") {
     pokemon_container_div.append(img_container_div);
 
     // pokemon name p
-    const pokemon_name_p= $("<a href='/?p=" + pokemon_id + "&f=" + form 
-            + "' class='pokemon-name pokefont unselectable'"
-            + "onclick='return LoadPokedexAndUpdateURL(GetPokeDexMon(" + pokemon_id + ",\"" + form + "\"))'>"
-            + "#" + pokemon_id + " "
-            + pokemon_name
-            + "</a>");
+    const pokemon_name_p= $(`<a href='/?p=${pokemon_id}&f=${form}' class='pokemon-name pokefont unselectable'">#${pokemon_id} ${pokemon_name}</a>`);
+    pokemon_name_p.on("click", function(e) {
+        e.preventDefault();
+        LoadPokedexAndUpdateURL(GetPokeDexMon(pokemon_id, form));
+    });
+
     if (is_selected && poke_obj && form != "Mega" && form != "MegaY" && form != "MegaZ") {
         const shadow_icon = $("<img src='imgs/flame.svg' class='shadow-icon filter-" + (can_be_shadow ? 'shadow' : 'noshadow') + 
             "' alt='" + (can_be_shadow ? 'Purple flame representing the shadow form is released' : 'Dark purple flame representing the shadow form is not yet released') + "'></img>");
@@ -292,13 +301,7 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal") {
     const types = poke_obj !== undefined ? poke_obj.types : [];
     const pokemon_types_div = $("<div class=pokemon-types></div>");
     for (type of types) {
-        pokemon_types_div.append($("<a href='/?strongest&t=" + type 
-                + "' onclick='return LoadStrongestAndUpdateURL(\"" + type
-                + "\", false)'>"
-                + "<img src=imgs/types/"
-                + type.toLowerCase() + ".gif" 
-                + " alt='" + type + 
-                "'></img></a>"));
+        pokemon_types_div.append(GetTypeLinkImg(type));
     }
     pokemon_container_div.append(pokemon_types_div);
 
@@ -319,53 +322,54 @@ function CleanPokeName(string) {
  * 
  * 'f_process_pokemon' hs signature function(pkm_obj, is_shadow, search_params)
  */
-function SearchAll(search_params, f_process_pokemon) {
+async function SearchAll(search_params, f_process_pokemon) {
     for (let id = 1; id <= jb_max_id; id++) {
+        await tryYieldToMain();
         const forms = GetPokemonForms(id);
         const def_form = forms[0];
-    
+
         let pkm_obj = jb_pkm.find(entry =>
-                entry.id == id && entry.form == def_form);
-    
+            entry.id == id && entry.form == def_form);
+
         // checks whether pokemon should be skipped
         // (not released or legendary when not allowed)
         if (!pkm_obj || (!search_params.unreleased && !pkm_obj.released)
-                || (!search_params.legendary && pkm_obj.class)) {
+            || (!search_params.legendary && pkm_obj.class)) {
             continue;
         }
-    
+
         for (let level of settings_default_level) {
             if (pkm_obj.class == undefined && settings_xl_budget)
                 level = 50;
 
             // default form
-            f_process_pokemon(pkm_obj, false, level, search_params);
-        
+            await f_process_pokemon(pkm_obj, false, level, search_params);
+
             // shadow (except not released when it shouldn't)
             if (search_params.shadow && pkm_obj.shadow) {
-                    f_process_pokemon(pkm_obj, true, level, search_params);
+                await f_process_pokemon(pkm_obj, true, level, search_params);
             }
-        
+
             // other forms
             for (let form_i = 1; form_i < forms.length; form_i++) {
-        
+
                 pkm_obj = jb_pkm.find(entry =>
-                        entry.id == id && entry.form == forms[form_i]);
-        
+                    entry.id == id && entry.form == forms[form_i]);
+
                 // checks whether pokemon should be skipped (form not released or unwanted)
                 if (!pkm_obj || (!search_params.unreleased && !pkm_obj.released)
                     || (!search_params.mega && (pkm_obj.form == "Mega" || pkm_obj.form == "MegaY" || pkm_obj.form == "MegaZ")))
                     continue;
-        
-                f_process_pokemon(pkm_obj, false, level, search_params);                                                    
+
+                await f_process_pokemon(pkm_obj, false, level, search_params);
                 // other forms and shadow (except not released when it shouldn't)
                 if (search_params.shadow && pkm_obj.shadow) {
-                        f_process_pokemon(pkm_obj, true, level, search_params);
+                    await f_process_pokemon(pkm_obj, true, level, search_params);
                 }
             }
         }
     }
-    
+
 }
 
 /**
@@ -388,10 +392,10 @@ function GetRaidBosses(has_type = null, weak_to_type = null) {
     for (const pkm_obj of jb_pkm) {
         if (!pkm_obj.raid_tier || pkm_obj.raid_tier < 4) // Not a high-tier boss
             continue;
-        
+
         if (has_type) { // Find Pokemon with this type
             if (!pkm_obj.types.includes(has_type))
-                continue;            
+                continue;
         }
         if (weak_to_type) { // Find Pokemon weak to this type
             if (GetEffectivenessMultAgainst(weak_to_type, pkm_obj.types) <= 1.01) // Not exactly 1.0 because effective*resisted>1
@@ -446,24 +450,24 @@ function GetSearchString(pkm_arr,
     // Shadow forms
     const has_shadow_forms = pkm_arr.some(e=>e.shadow);
     if (has_shadow_forms) {
-        str = str + "&" + GetUnique(pkm_arr.filter(e=>!e.shadow).map(e=>e.id)).join(",") + ",shadow";
+        str = str + "&" + GetUnique(pkm_arr.filter(e=>!e.shadow).map(e=>e.id)).join(",") + "," + GetTranslation("terms.shadow", "shadow");
     }
     else {
-        str = str + "&!shadow"
+        str = str + "&!" + GetTranslation("terms.shadow", "shadow");
     }
 
     // Pure only (never shadow)
     const pure_only = (new Set(pkm_arr.filter(e=>!e.shadow&&jb_pkm.find(p=>p.id==e.id&&p.form==e.form).shadow).map(e=>e.id))).difference(new Set(pkm_arr.filter(e=>e.shadow).map(e=>e.id)));
     if (pure_only.size > 0) {
         for (const p_id of pure_only) {
-            str = str + "&!" + p_id + ",!shadow";
+            str = str + "&!" + p_id + ",!" + GetTranslation("terms.shadow", "shadow");
         }
     }
 
     // Mega forms
     const has_mega_forms = pkm_arr.some(e=>e.form=="Mega"||e.form=="MegaY"||e.form=="MegaZ");
     if (has_mega_forms) {
-        str = str + "&" + GetUnique(pkm_arr.filter(e=>e.form!="Mega"&&e.form!="MegaY"&&e.form!="MegaZ").map(e=>e.id)).join(",") + ",mega1-";
+        str = str + "&" + GetUnique(pkm_arr.filter(e=>e.form!="Mega"&&e.form!="MegaY"&&e.form!="MegaZ").map(e=>e.id)).join(",") + "," + GetTranslation("terms.mega", "mega") + "1-";
     }
     /* Disabled - If we set filters to remove megas, still include the base pokemon
     else {
@@ -474,7 +478,7 @@ function GetSearchString(pkm_arr,
     //const has_pure_forms = pkm_arr.some(e=>!(e.shadow||e.form=="Mega"||e.form=="MegaY"||e.form=="MegaZ"));
     if (has_shadow_forms && has_mega_forms) {
         str = str + "&" + GetUnique(pkm_arr.filter(e=>e.form!="Mega"&&e.form!="MegaY"&&e.form!="MegaZ"&&!e.shadow).map(e=>e.id)).join(",") 
-            + ",shadow,mega1-";
+            + "," + GetTranslation("terms.shadow", "shadow") + "," + GetTranslation("terms.mega", "mega") + "1-";
     }
 
     // Alternate (non-Mega) forms
@@ -495,7 +499,7 @@ function GetSearchString(pkm_arr,
             // Instead of complicated set logic, just do Darmanitan manually
             // because it's the only real exception not already handled above by "unique" typing per form
             if (pkm_id == 555) {
-                str = str + "&" + GetDarmanitanFilters(filtered_in_forms).map(filt=>'!555,'+filt).join("&");
+                str = str + "&" + GetDarmanitanFilters(filtered_in_forms);
                 continue;
             }
 
@@ -504,9 +508,9 @@ function GetSearchString(pkm_arr,
             if (pkm_id == 150) {
                 str = str + "&!150,";
                 if (filtered_in_forms.has('A'))
-                    str = str + "costume";
+                    str = str + GetTranslation("search-string.costume", "costume");
                 else 
-                    str = str + "!costume";
+                    str = str + "!" + GetTranslation("search-string.costume", "costume");
                 continue;
             }
 
@@ -515,9 +519,9 @@ function GetSearchString(pkm_arr,
             if (pkm_id == 249 || pkm_id == 250) {
                 str = str + "&!" + pkm_id + ",";
                 if (filtered_in_forms.has('S'))
-                    str = str + "research";
+                    str = str + GetTranslation("search-string.research", "research")
                 else 
-                    str = str + "!research";
+                    str = str + "!" + GetTranslation("search-string.research", "research");
                 continue;
             }
 
@@ -536,7 +540,7 @@ function GetSearchString(pkm_arr,
             if (filtered_in_unshared_types.every(e=>e.size >= 1 && all_type_combos.reduce((acc, tc)=>(acc + (tc.has([...e][0]) ? 1 : 0)), 0) == 1)) { // Every desired form has an unshared type that is unique to them
                 str = str + "&!" + pkm_id;
                 for (const tc of filtered_in_unshared_types) {
-                    str = str + "," + [...tc][0];
+                    str = str + "," + TranslatedTypeName([...tc][0]);
                 }
                 continue;
             }
@@ -547,7 +551,7 @@ function GetSearchString(pkm_arr,
             const filtered_out_unshared_types = filtered_out_type_combos.map(e=>e.difference(all_shared_types)); // Unshared types among undesired forms
             if (filtered_out_unshared_types.every(e=>e.size >= 1 && all_type_combos.reduce((acc, tc)=>(acc + (tc.has([...e][0]) ? 1 : 0)), 0) == 1)) { // Every undesired form has an unshared type that is unique to them
                 for (const tc of filtered_out_unshared_types) {
-                    str = str + "&!" + pkm_id + ",!" + [...tc][0];
+                    str = str + "&!" + pkm_id + ",!" + TranslatedTypeName([...tc][0]);
                 }
                 continue;
             }
@@ -598,11 +602,8 @@ function GetSearchString(pkm_arr,
                 for (const cm of cms) {
                     str = str + ",@" + SanitizeMoveNameSearch(cm);
                 }
-                if (cms.includes("Psychic") &&
-                    jb_pkm.some(j=>j.id==p.id&&j.cm&&j.cm.includes("Psychic Fangs")) && // some form learns psychic fangs
-                    !cms.includes("Psychic Fangs")) { // psychic fangs isn't filtered in
-                    str = str + "&!" + p.id + ",!@Psychic Fangs";
-                }
+
+                str = str + FixAllMoveTranslationCollisions(all_ps.all,cms);
 
                 all_ps.all.length = 0; // Prevent duplicating when we encounter the other forms
             }
@@ -612,10 +613,7 @@ function GetSearchString(pkm_arr,
                 if (p.cm_is_elite||!check_elite_only)
                     str = str + "&!" + p.id + ",@" + SanitizeMoveNameSearch(p.cm); 
 
-                if (p.cm == "Psychic" && 
-                    jb_pkm.find(j=>j.id==p.id&&j.form==p.form).cm.includes("Psychic Fangs")) { // can learn psychic fangs
-                    str = str + "&!" + p.id + ",!@Psychic Fangs";
-                }
+                str = str + FixAllMoveTranslationCollisions([p],[p.cm]);
             }
             // else length == 0, which means we've seen it before
         }
@@ -712,6 +710,12 @@ function RunSearchString(str, check_movesets = true) {
  * Filters an input pkm_arr based on the provided search string
  */
 function ApplySearchString(str, pkm_arr, id_filter_only = false) {
+    const shadow_tok = GetTranslation("terms.shadow", "shadow");
+    const mega_tok = GetTranslation("terms.mega", "mega");
+    const costume_tok = GetTranslation("search-string.costume", "costume");
+    const research_tok = GetTranslation("search-string.research", "research");
+    const pokemon_types_localized = new Map ([...POKEMON_TYPES].map(t=>[t, TranslatedTypeName(t)]));
+    
     // Break into AND'd clauses and progressively filter down by each
     for (let clause of str.split(/[&|]/)) {
         pkm_arr = pkm_arr.filter(p => {
@@ -732,9 +736,9 @@ function ApplySearchString(str, pkm_arr, id_filter_only = false) {
                     return true;
                 }
 
-                if (tok=="shadow") // shadow
+                if (tok==shadow_tok) // shadow
                     clause_val = clause_val || (p.shadow ^ invert);
-                if (tok.slice(0,4)=="mega") // mega/primal
+                if (tok.startsWith(mega_tok)) // mega/primal
                     clause_val = clause_val || ((p.form=="Mega"||p.form=="MegaY"||p.form=="MegaZ") ^ invert);
                 if (tok[0]=="@") { // has attack
                     let check_fm = true, check_cm = true;
@@ -755,23 +759,25 @@ function ApplySearchString(str, pkm_arr, id_filter_only = false) {
                     
                     if (check_fm && !!p.fm) {
                         fm_obj = fm_obj ?? jb_fm.find(f=>f.name==p.fm);
-                        fm_phrase_val = (p.fm.substring(0,move_name.length)==move_name) || (fm_obj.type==move_name);
+                        fm_phrase_val = (p.fm.substring(0,move_name.length)==move_name) || (TranslatedTypeName(fm_obj.type)==move_name);
                     }
                     if (check_cm && !!p.cm) {
                         cm_obj = cm_obj ?? jb_cm.find(c=>c.name==p.cm);
-                        cm_phrase_val = (p.cm.substring(0,move_name.length)==move_name) || (cm_obj.type==move_name);
+                        cm_phrase_val = (p.cm.substring(0,move_name.length)==move_name) || (TranslatedTypeName(cm_obj.type)==move_name);
                     }
 
                     clause_val = clause_val || ((fm_phrase_val || cm_phrase_val) ^ invert);
                 }
-                if (POKEMON_TYPES.has(tok)) { // type
-                    clause_val = clause_val || (p.types.includes(tok) ^ invert);
+                for (const [type_name, trans_type_name] of pokemon_types_localized) { // type
+                    if (tok == trans_type_name) {
+                        clause_val = clause_val || (p.types.includes(type_name) ^ invert);
+                    }
                 }
-                if (tok=="costume") { // costume form
+                if (tok==costume_tok) { // costume form
                     // Might need to make this more robust depending on if it breaks anything outside of Mewtwo
                     clause_val = clause_val || ((p.id==150&&p.form=="A") ^ invert);
                 }
-                if (tok=="research") { // research reward
+                if (tok==research_tok) { // research reward
                     // Might need to make this more robust depending on if it breaks anything outside of Ho-Oh/Lugia
                     clause_val = clause_val || (((p.id==249||p.id==250)&&p.form=="S") ^ invert);
                 }
@@ -821,55 +827,127 @@ function GetDarmanitanFilters(filtered_in_forms) {
         (filtered_in_forms.has("Galarian_standard") ? 2 : 0) +  // G: Ice
         (filtered_in_forms.has("Standard") ? 1 : 0)             // S: Fire
 
-    return [
-        [],                         // 0: 
-        ['!Ice','!Psychic'],        // 1: S
-        ['!Fire'],                  // 2: G
-        ['!Psychic','!Ice,!Fire'],  // 3: SG
-        ['Psychic'],                // 4: Z
-        ['!Ice'],                   // 5: ZS
-        ['Psychic,!Fire'],          // 6: ZG
-        ['!Ice,!Fire'],             // 7: ZSG (!X)
-        ['Ice','Fire'],             // 8: X
-        ['Fire','!Psychic'],        // 9: XS
-        ['Ice'],                    // 10: XG
-        ['!Psychic'],               // 11: XSG (!Z)
-        ['Fire','Psychic,Ice'],     // 12: XZ
-        ['Fire'],                   // 13: XZS (!G)
-        ['Psychic,Ice'],            // 14: XZG (!S)
-        ['555'],                    // 15: XZSG
-    ][form_bitstring];
+    const t_fire = TranslatedTypeName("Fire");
+    const t_ice = TranslatedTypeName("Ice");
+    const t_psychic = TranslatedTypeName("Psychic");
+
+    return ([
+        [],                                     // 0: 
+        ['!'+t_ice,'!'+t_psychic],              // 1: S
+        ['!'+t_fire],                           // 2: G
+        ['!'+t_psychic,'!'+t_ice+',!'+t_fire],  // 3: SG
+        [t_psychic],                            // 4: Z
+        ['!'+t_ice],                            // 5: ZS
+        [t_psychic+',!'+t_fire],                // 6: ZG
+        ['!'+t_ice+',!'+t_fire],                // 7: ZSG (!X)
+        [t_ice,t_fire],                         // 8: X
+        [t_fire,'!'+t_psychic],                 // 9: XS
+        [t_ice],                                // 10: XG
+        ['!'+t_psychic],                        // 11: XSG (!Z)
+        [t_fire,t_psychic+','+t_ice],           // 12: XZ
+        [t_fire],                               // 13: XZS (!G)
+        [t_psychic+','+t_ice],                  // 14: XZG (!S)
+        ['555'],                                // 15: XZSG
+    ][form_bitstring]).map(filt=>'!555,'+filt).join("&");
 }
 
 /* Handle special cases for weird move names */
-function SanitizeMoveNameSearch(moveName) {
-    if (moveName == "Psychic") 
-        moveName = "Psychi";
+function SanitizeMoveNameSearch(move_name) {
+    let move_obj = jb_fm.find(e=>e.name==move_name);
+    if (!move_obj) move_obj = jb_cm.find(e=>e.name==move_name);
 
-    if (moveName.startsWith("Weather Ball") 
-        || moveName.startsWith("Aura Wheel")) {
-        for (const t of POKEMON_TYPES) {
-            moveName = moveName.replace(" "+t, "");
-        }
+    const transName = TranslatedMoveName(move_obj.id, "None"); // Sanitize to "untyped" base names as they appear in-game
+
+    if (move_name == "Psychic") {
+        if (currentLocale == "en" || currentLocale == "es") // technically also hindi, portuguese, turkish
+            return transName.slice(0, -1); // cutting off last char stops us matching by type
     }
-    if (moveName.startsWith("Techno Blast")) {
-        for (const t of ["Normal", "Shock", "Burn", "Chill", "Water"]) {
-            moveName = moveName.replace(" "+t, "");
-        }
+    if (move_name == "Fly") {
+        if (currentLocale == "fr") // technically also indonesian
+            return transName.slice(0, -1); // cutting off last char stops us matching by type
     }
 
-    return moveName;
+
+    return transName;
 }
 
-/* Handle special case for typed Hidden Power */
-function GetHiddenPowerSearch(pkm_id, all_fms) {
-    str = '&!' + pkm_id;
+/**
+ * Handle special cases for overlapping move names
+ * (incl_pkm should only have a single, shared "id" and merely be different forms)
+ */
+function FixMoveTranslationCollision(incl_pkm, all_incl_cms, incl_cm, excl_cm, excl_cm_id) {
+    // Only if we want incl_cm and don't want excl_cm
+    if (!all_incl_cms.includes(incl_cm) || all_incl_cms.includes(excl_cm)) return "";
+    // Only if a desired form actually learns excl_cm
+    if (!incl_pkm.some(p=>{
+        const pkm_obj = jb_pkm.find(e=>e.id==p.id&&e.form==p.form);
+        return PokemonCanLearn(pkm_obj, excl_cm);
+    })) return "";
 
-    for (const f of all_fms) {
-        if (f.startsWith("Hidden Power")) {
-            str = str + ',@1' + f.replace("Hidden Power ", "");
+    return "&!" + incl_pkm[0].id + ",!@" + TranslatedMoveName(excl_cm_id);
+}
+
+
+const knownCollisions = [
+    {locale: "en", incl_cm: "Psychic", excl_cm: "Psychic Fangs", excl_cm_id: 353},
+
+    // These locales are not supported yet
+    //{locale: "hi", incl_cm: "Psychic", excl_cm: "Psychic Fangs", excl_cm_id: 353},
+    //{locale: "tr", incl_cm: "Psychic", excl_cm: "Psychic Fangs", excl_cm_id: 353},
+
+    // These collisions don't actually exist in the game
+    /*{locale: "fr", incl_cm: "Fly", excl_cm: "Disarming Voice", excl_cm_id: 84},
+    {locale: "fr", incl_cm: "Fly", excl_cm: "Mirror Coat", excl_cm_id: 276},
+    {locale: "fr", incl_cm: "Fly", excl_cm: "Magma Storm", excl_cm_id: 386},
+    {locale: "fr", incl_cm: "Fly", excl_cm: "High Jump Kick", excl_cm_id: 408},
+    {locale: "fr", incl_cm: "Fly", excl_cm: "Thunder Cage", excl_cm_id: 472},*/
+]
+/**
+ * Handle all special cases for overlapping move names
+ */
+function FixAllMoveTranslationCollisions(incl_pkm, all_incl_cms) {
+    let str = "";
+
+    for (const collision of knownCollisions) {
+        if (collision.locale == currentLocale) {
+            str = str + FixMoveTranslationCollision(incl_pkm, all_incl_cms, 
+                collision.incl_cm, collision.excl_cm, collision.excl_cm_id);
         }
     }
 
     return str;
+}
+
+/* Handle special case for typed Hidden Power */
+function GetHiddenPowerSearch(pkm_id, all_fms) {
+    let hp_types = new Set();
+    let non_hp_types = new Set();
+
+    for (const f of all_fms) {
+        const move_obj = jb_fm.find(e=>e.name==f);
+        const type_name = TranslatedTypeName(move_obj.type);
+
+        if (f.startsWith("Hidden Power"))
+            hp_types.add(type_name); 
+        else if (f !== "Hidden Power") // skip typeless
+            non_hp_types.add(type_name);
+    }
+
+    let hp_only_types = hp_types.difference(non_hp_types);
+
+    let str = '&!' + pkm_id + ",!@" + TranslatedMoveName(281); // Hidden Power ID
+    for (const t of hp_only_types) {
+        str = str + ",@1" + t;
+    }
+
+    return str;
+}
+
+let lastYieldTime = performance.now();
+
+async function tryYieldToMain(threshold = 16) {
+    if (performance.now() - lastYieldTime > threshold) {
+        await new Promise(resolve => setTimeout(resolve, 0));
+        lastYieldTime = performance.now();
+    }
 }

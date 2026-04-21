@@ -1,0 +1,47 @@
+<div id=strongest-links class="unselectable type-links">
+    <type-selector id="strongest-links-types" />
+</div>
+<div class="card">
+    <div id=strongest-header class="card-header">
+        <div class="card-title" style="padding: 0.5rem 3rem" id="strongest-title" data-i18n-reorder="strongest.any.»order">
+            <span data-i18n="strongest.best" id="strongest-best-span">Top</span>
+            <span id="strongest-type-title" data-i18n="strongest.any.type-text">Overall</span>
+            <span id="strongest-type-helper" data-i18n="strongest.any.type-helper"></span>
+            <input type='checkbox' class='toggling' value='versus' id='chk-versus' unchecked>
+            <label class='togglebutton' for='chk-versus' id="strongest-vs-lbl">
+                <div class='action'>
+                    <span class='option-1' data-i18n="strongest.attackers">Attackers</span>
+                    <span class='option-2' data-i18n="strongest.counters">Counters</span>
+                </div>
+            </label>
+        </div>
+        <div class="absolute-right row">
+            <div class="drawer v-middle" id="search-string-icon">
+                <img class="drawer-icon" src="imgs/search-string.svg" alt="Magnifying glass button to open search string generator" />
+            </div> 
+            <div class="drawer v-middle">
+                <img class="drawer-icon" src="imgs/filter.svg" alt="Funnel button to open filter and display options" />
+                <div id=strongest-filters class="drawer-popup"></div>
+            </div> 
+        </div>
+    </div>
+    <div class="card-body" id="strongest-scroller">
+        <table class="table-bg" id=strongest-table>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div class="card-footer">
+        <ul class="footnotes">
+            <li id=footnote-elite data-i18n="strongest.notes.elite">* Elite fast or charged move</li>
+            <li id=footnote-typed-ranking data-i18n="strongest.notes.typed">Typed rankings are calculated using super-effective damage for the chosen type, and neutral damage for all other types.</li>
+            <li id=footnote-versus data-i18n="strongest.notes.versus">"Versus" rankings are calculated using appropriate effectiveness multiplier for attacking damage.
+                <!--<br />Versus rankings also assume incoming damage is of the chosen type, and apply relevant defensive multipliers.-->
+            </li>
+            <li id=footnote-affinity-ranking data-i18n-reorder="strongest.notes.affinity.»order">
+                <span id=footnote-affinity-prefix data-i18n="strongest.notes.affinity.prefix">Rankings are calculated based on an</span>
+                <a href="#" id="type-affinity-link" data-i18n="strongest.notes.affinity.link">average of all raid bosses</a>
+                <span id=footnote-affinity-suffix data-i18n="strongest.notes.affinity.suffix">matching the scenario.</span>
+            </li>
+        </ul>
+    </div>
+</div>

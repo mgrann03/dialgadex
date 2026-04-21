@@ -1,0 +1,433 @@
+{
+    "strongest": {
+        "best": "Top",
+        "attackers": "Attackers",
+        "counters": "Counters",
+        
+        "any": {
+            "type-text": "Overall",
+            "helper-text": "",
+            "»order": [
+                "#strongest-best-span",
+                "#strongest-type-title",
+                "#strongest-type-helper",
+                "#chk-versus",
+                "#strongest-vs-lbl"
+            ]
+        },
+        "each": {
+            "type-text": "of Each",
+            "helper-text": "type",
+            "»order": [
+                "#strongest-best-span",
+                "#chk-versus",
+                "#strongest-vs-lbl",
+                "#strongest-type-title",
+                "#strongest-type-helper"
+            ]
+        },
+        "types": {
+            "helper-text": "type",
+            "»order": [
+                "#strongest-best-span",
+                "#strongest-type-title",
+                "#strongest-type-helper",
+                "#chk-versus",
+                "#strongest-vs-lbl"
+            ]
+        },
+
+        "notes": {
+            "elite": "* Elite fast or charged move",
+            "typed": "Typed rankings are calculated using super-effective damage for the chosen type, and neutral damage for all other types.",
+            "versus": "\"Versus\" rankings are calculated using appropriate effectiveness multiplier for attacking damage.",
+            "affinity": {
+                "prefix": "Rankings are calculated based on an",
+                "link": "average of all raid bosses",
+                "suffix": "matching the scenario.",
+                "»order": [
+                    "#footnote-affinity-prefix",
+                    "#type-affinity-link",
+                    "#footnote-affinity-suffix"
+                ]
+            }
+        }
+    },
+
+    "dex": {
+        "unreleased": "§This species/form is not in the **Pokémon GO** files yet",
+        "tier-title": "Raid Attacker Rankings",
+        "shadow-title": "When Shadow",
+        "stats": {
+            "title": "Stats, IVs, and CP",
+            "base": "Base Stats",
+            "base-tooltip": "§Pokémon stats as found in the Game Master\nfor this species/form",
+            "max": "Lv50 Stats",
+            "max-tooltip": "§Real in-game stats for a\nPerfect-IV Level 50 Pokémon",
+            "calc-title": "Stats Calculator",
+            "level-tooltip": {
+                "cpm": "Determines the Multiplier (CPM) used when calculating effective stats",
+                "levelup": "Can be raised by one half-level per \"Power-up\"",
+                "max": "Maximum level is 50 (+1 if Best Buddy)",
+                "hidden": "Never displayed directly in game; represented by a white arc in the Pokémon screen"
+            },
+            "iv-tooltip": {
+                "title": "\"Individual Values\"",
+                "explanation": "Additional points in each stat, as displayed in the Appraisal screen"
+            },
+            "hundo": "100% Stats",
+            "hundo-tooltip": "§Real in-game stats for a Perfect-IV Pokémon\nat the specified Level",
+            "effective": "Effective Stats",
+            "effective-tooltip": "Real in-game stats for a Pokémon with the specified Level and IVs",
+            "»percent-perfect-metric": [
+                "#rat-pct-val",
+                "#rat-pct-oftxt",
+                "#rat-pct-perftxt",
+                "#rat-pct-metric"
+            ],
+            "»percent-perfect-metric-sh": [
+                "#sh-rat-pct-val",
+                "#sh-rat-pct-oftxt",
+                "#sh-rat-pct-metric",
+                "#sh-rat-pct-perftxt",
+                "#sh-rat-pct-shadowtxt"
+            ],
+            "of": "of",
+            "perfect": "Perfect",
+            "when-shadow": "when Shadow",
+            "percent-perfect-ivs": "% of Perfect IVs",
+            "percent-perfect-product": "% of Perfect Stat Product",
+            "calculate": "Calculate",
+            "reset": "Reset"
+        },
+        "types": {
+            "title": "Type Matchups",
+            "3r": "3x Resistance",
+            "3r-tooltip": "Damage Multiplier x0.244",
+            "2r": "2x Resistance",
+            "2r-tooltip": "Damage Multiplier x0.391",
+            "1r": "1x Resistance",
+            "1r-tooltip": "Damage Multiplier x0.625",
+            "1w": "1x Weakness",
+            "1w-tooltip": "Damage Multiplier x1.60",
+            "2w": "2x Weakness",
+            "2w-tooltip": "Damage Multiplier x2.56"
+        },
+        "counters": {
+            "title": "Raid Counters",
+            "mega-abbrev": "(M)",
+            "shadow-abbrev": "(Sh)",
+            "notes": {
+                "method": "Calculations take into account the counter's damage against this Pokémon and the counter's resistance to incoming damage from this Pokémon.",
+                "disclaimer": "Disclaimer: Calculations cannot capture some of the nuances of real raid battles. These calculations are best used to gauge overall attacker strength, not performance against any single raid boss. For the most accurate list of raid counters, please reference simulations instead."
+            }
+        },
+        "moves": {
+            "title": "Best Movesets",
+            "shadow-header": "(Shadow)"
+        }
+    },
+
+    "filters": {
+        "species": {
+            "title": "Species Filters",
+            "unreleased": "Unreleased",
+            "unreleased-tooltip": "Include Pokémon found in the Game Master but not yet available in game",
+            "mega": "Mega/Primal",
+            "shadow": "Shadow",
+            "legendary": "Legendary",
+            "legendary-tooltip": "Also includes Mythical Pokémon and Ultrabeasts"
+        },
+        "moves": {
+            "title": "Move Filters",
+            "elite": "Elite Moves*",
+            "elite-tooltip": "§Allow moves with limited availability\n(Requires Special event or Elite TMs)",
+            "mixed": "Mixed Types",
+            "mixed-tooltip": "Allow fast and charged moves to be different types",
+            "off": "Off Types",
+            "off-tooltip": "Allow movesets where neither the fast nor charged move matches the target type",
+            "suboptimal": "Suboptimal Moves",
+            "suboptimal-tooltip": "Allow multiple movesets per Pokémon"
+        },
+        "display": {
+            "title": "Display Settings",
+            "group": "Group Species",
+            "group-enabled": "Compare suboptimal movesets to that Pokémon's best moveset",
+            "group-disabled": "Compare all movesets to each other",
+            "baseline": "Baseline",
+            "baseline-tooltip": "Sets the \"100%\" reference Pokémon",
+            "budget": "Budget",
+            "budget-tooltip": {
+                "title": "Compare to the top \"cheap\" Pokémon",
+                "mega": "No Megas",
+                "shadow": "No Shadows",
+                "legendary": "No Legendaries",
+                "type": "Must be on-type"
+            },
+            "espace-tooltip": {
+                "title": "Compare to the top \"available-ish\" Pokémon",
+                "slegend": "No Shadow Legendaries",
+                "rmythic": "No Research Mythics",
+                "energy": "No Energy Gimmicks (Mega/Fusion/Crowned)",
+                "ascent": "No Dragon Ascent",
+                "authorlink": "Defined by",
+                "graphiclink": "Used in infographics by"
+            },
+            "best": "Best",
+            "best-tooltip": "Compare to the absolute best Pokémon",
+            "tiers": "Tiers",
+            "tiers-tooltip": "§Determines how tiers are computed.\nDepends on comparison Pokémon.",
+            "jenks-tooltip": "Algorithmic tiers based on minimum variance",
+            "espace-tiers": "Tiers with hardcoded breakpoints at every 10%",
+            "absolute": "Absolute",
+            "absolute-tooltip": {
+                "title": "Absolute tiers based on only the displayed rating",
+                "contextless": "Ignores context (comparison Pokémon, type)",
+                "baseline": "Tuned to overall \"All-type\" rankings",
+                "purpose": "Best for comparing across different types"
+            }
+        }
+    },
+    
+    "settings": {
+        "calculation": "Calculation Settings",
+        "metric": "PvE Metric",
+        "dps-tooltip": {
+            "title": "Damage Per Second",
+            "explanation": "Speed of damage output",
+            "characteristic": "Favors glass cannons"
+        },
+        "tdo-tooltip": {
+            "title": "Total Damage Output",
+            "explanation": "Amount of damage done before fainting",
+            "characteristic": "Favors bulk"
+        },
+        "edps-tooltip": {
+            "title": "Effective DPS",
+            "explanation": "In an infinite-length raid, this is the actual DPS that would be achieved when accounting for the time lost relobbying."
+        },
+        "level": "Pokémon Level",
+        "budget50-tooltip": {
+            "title": "Budget50",
+            "explanation": "Level 50 for Budget Pokémon",
+            "lv40": "Use stats at Level 40 for Legendaries",
+            "lv50": "Use stats at Level 50 for non-Legendaries",
+            "characteristic": "Helps adjust for the scarcity of rare XL candies"
+        },
+        "pp-tooltip": {
+            "title": "Party Power",
+            "explanation": "Size of Party for party power boosts",
+            "characteristic": "Boosts charged damage based on the ratio of fast:charged moves"
+        },
+        "affinity-tooltip": {
+            "title": "Type Affinity",
+            "explanation": "Use real high-tier raid bosses when calculating rankings",
+            "characteristic": "Takes into account the actual types, attack types, attack strengths, and stats of raid bosses based on the current scenario."
+        },
+        "team-tooltip": {
+            "title": "Raid Team Size",
+            "explanation": "Size of battle team for computing eDPS",
+            "characteristic": "Computes eDPS as if N identical copies of the Pokémon were in a battle team, and relobbying only occurred after each Nth death"
+        },
+        "6stack": "6-Stack",
+        "solo": "Solo",
+        "megasolo-tooltip": {
+            "title": "MegaSolo",
+            "explanation": "Use a 6-mon team for everything but Megas, which fight solo"
+        },
+        "relobby-tooltip": {
+            "title": "Relobby Time",
+            "explanation": "Time spent max reviving a full raid team and rejoining the battle"
+        },
+        "site": "Site Settings",
+        "preview": "Data Preview",
+        "darkmode": "Dark Mode",
+        "language": "Language"
+    },
+
+    "moves": {
+        "type-helper": "type",
+        "move-data": "Move Data",
+        "top-users": "Top Users",
+
+        "pps": "Power per Second (DPS)",
+        "pps-short": "P/S",
+        "pps-tooltip": "How effective a move is at dealing damage",
+        "eps": "Energy per Second (EPS)",
+        "eps-short": "E/S",
+        "eps-tooltip": "How effective a fast move is at building up charged move energy",
+        "ppe": "Power per Energy (DPE)",
+        "ppe-short": "P/E",
+        "ppe-tooltip": "How efficiently a charged move converts energy into damage",
+        "p2pes": "P/S * P/E",
+        "p2pes-short": "§P^2^/ES",
+        "p2pes-tooltip": "§How well a charged move both uses charged energy *and* deals damage",
+        "peps2": "P/S * E/S",
+        "peps2-short": "§PE/S^2^",
+        "peps2-tooltip": "§How well a fast move accomplishes both building charged energy *and* dealing damage on its own",
+
+        "»move-title": [
+            "#move-type-title",
+            "#move-type-helper",
+            "#chk-move-kind",
+            "#move-kind-lbl",
+            "#move-data-span"
+        ]
+    },
+
+    "move-editor": {
+        "edit": {
+            "title": "Edit Move Data",
+            "action": "Edit",
+            "confirm": "Edited!"
+        },
+        "add": {
+            "title": "Add New Move",
+            "action": "Add",
+            "confirm": "Added!"
+        },
+        "delete": {
+            "action": "Delete",
+            "confirm": "Deleted!"
+        },
+        "clear": "Clear",
+        "apply": "Apply"
+    },
+    "moveset-editor": {
+        "title": "Edit Moveset",
+        "reset": "Reset",
+        "apply": "Apply"
+    },
+    "type-affinity": {
+        "title": "Type Affinity",
+        "weakness": "§Boss\nWeakness",
+        "damage": "§Boss\nDamage"
+    },
+
+    "terms": {
+        "type": "Type",
+        "attacking-type": "Attacking Type",
+        "defending-type": "Defending Type",
+        "attacker": "Attacker",
+        "defender": "Defender",
+        "type-matchups": "Type Matchups",
+
+        "name": "Name",
+        "power": "Power",
+        "power-short": "PWR",
+        "energy": "Energy",
+        "energy-short": "ENG",
+        "duration": "Duration",
+        "duration-short": "DUR",
+
+        "dps": "DPS",
+        "tdo": "TDO",
+        "edps": "eDPS",
+
+        "fast": "Fast",
+        "charged": "Charged",
+        "fast-plural": "Fast",
+        "charged-plural": "Charged",
+        "move": "Move",
+        "moves": "Moves",
+        "moveset": "Moveset",
+        "fast-move": "Fast Move",
+        "fast-move-plural": "Fast Moves",
+        "charged-move": "Charged Move",
+        "charged-move-plural": "Charged Moves",
+
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+
+        "supereffective": "Super Effective",
+        "resisted": "Resisted",
+        "immune": "Immune",
+        "damage-multiplier": "Damage Multiplier",
+
+        "attack": "Attack",
+        "defense": "Defense",
+        "stamina": "HP",
+
+        "level": "Level",
+        "ivs": "IVs",
+        "cp": "CP",
+
+        "tier": "Tier",
+
+        "shadow": "Shadow",
+        "not-shadow": "Not ",
+        "shadow-order": "{shadow} {species}",
+        "mega": "Mega",
+        "primal": "Primal"
+    },
+
+    "site": {
+        "disclaimer": "§DialgaDex is not affiliated with The Pokémon Company, Niantic, Scopely, Pokémon Go, or any other such entities.\nPokémon is a trademark of Nintendo. All such trademarks are the property of their respective owners.",
+
+        "links": {
+            "rankings": "Attacker Rankings",
+            "moves": "Move Data",
+            "types": "Type Chart",
+            "FAQ": "FAQ",
+            "contact": "Contact",
+            "credits": "Credits",
+            "privacy": "Privacy"
+        }
+    },
+
+    "search-string": {
+        "title": "Generate Search String",
+        "settings": "Settings",
+        "incl-moves": "Check Movesets",
+        "elite-only": "Check Elite Moves Only",
+        "min-tier": "Minimum Tier",
+        "result-title": "Search String",
+        "issues": "Possible Issues",
+        "length-issue": "§Generated search string exceeds the 5000 character limit.\nTry tweaking the settings to be more restrictive.",
+        "incl-msg": "Incorrectly Included",
+        "excl-msg": "Incorrectly Excluded",
+        "missing": "Missing: ",
+        "copy": "Copy",
+        "copied": "Copied!",
+
+        "costume": "costume",
+        "research": "research"
+    },
+
+    "meta": {
+        "rankings": {
+            "typed": {
+                "title": "Best {type} Attackers - DialgaDex",
+                "description": "The best {type}-type attackers in Pokémon Go, using the new eDPS metric."
+            },
+            "each": {
+                "title": "Best Attackers of Each type - DialgaDex",
+                "description": "The best attackers of Each type in Pokémon Go, using the new eDPS metric."
+            },
+            "versus": {
+                "title": "Best Attackers against {type}-type Bosses - DialgaDex",
+                "description": "The best attackers against {type}-type Bosses in Pokémon Go, using the new eDPS metric."
+            }
+        },
+        "moves": {
+            "title": "{type} {kind} Moves - DialgaDex",
+            "description": "All the hidden move data attributes for {type} {kind} moves in Pokémon Go. Includes metrics which evaluate how effective each move is."
+        },
+        "pokedex": {
+            "title": "#{id} {name} - DialgaDex",
+            "description": "Best movesets, base stats, and raid counters for {name} in Pokémon Go."
+        },
+        "typechart": {
+            "title": "Type Chart - DialgaDex",
+            "description": "Each attacking type's effectiveness against raid bosses in Pokémon Go."
+        },
+        "faq": {
+            "title": "FAQ - DialgaDex",
+            "description": "Answers to common questions about DialgaDex."
+        },
+        "about": {
+            "title": "About - DialgaDex",
+            "description": "Credits, references, contact info, and details about DialgaDex."
+        }
+    }
+}

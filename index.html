@@ -22,33 +22,184 @@
     <link rel="stylesheet" href="/styles/style.css">
     <link rel="stylesheet" href="/styles/mobile.css" media="screen and (max-width:900px)">
 
-    <link rel="preload" href="https://raw.githubusercontent.com/mgrann03/pokemon-resources/main/pogo_pkm_names.json" as="fetch" crossorigin />
+    <!--<link rel="preload" href="https://raw.githubusercontent.com/mgrann03/pokemon-resources/main/pogo_pkm_names.json" as="fetch" crossorigin />-->
     <link rel="preload" href="https://raw.githubusercontent.com/mgrann03/pokemon-resources/main/pogo_pkm.min.json" as="fetch" crossorigin />
     <link rel="preload" href="https://raw.githubusercontent.com/mgrann03/pokemon-resources/main/pogo_fm.json" as="fetch" crossorigin />
     <link rel="preload" href="https://raw.githubusercontent.com/mgrann03/pokemon-resources/main/pogo_cm.json" as="fetch" crossorigin />
+    <link rel="preload" href="/locales/en.json" as="fetch" crossorigin />
+    <link rel="preload" href="/locales/pokedata/en.json" as="fetch" crossorigin />
 
     <script src="/lib/jquery-3.6.0.min.js"></script>
     <script src="/lib/autoComplete.js"></script>
     <script src="/lib/jenks.js"></script>
     
     <script src="/scripts/dataload.js"></script>
+    <script src="/scripts/translation.js"></script>
     <script src="/scripts/settings.js"></script>
     <script src="/scripts/pokemon_enums.js"></script>
     <script src="/scripts/pokemon_utils.js"></script>
+    <script src="/scripts/dialogs.js"></script>
     <script src="/scripts/calc.js"></script>
     <script src="/scripts/rankings.js"></script>
     <script src="/scripts/pokedex.js"></script>
     <script src="/scripts/moves.js"></script>
     <script src="index.js"></script>
+    
+    <script src="/components/type-selector.js"></script>
 </head>
 
 <body class="darkmode">
 <div id=loading-bar-c><div id=loading-bar></div></div>
 <div id=overlay></div>
+<div id="filter-settings" style="display: none;">
+    <div class="settings-list">
+        <div class="settings-subtitle" data-i18n="filters.species.title">Species Filters</div>
+        <span class="tooltip tooltip-bottom"><span data-i18n="filters.species.unreleased">Unreleased</span>
+            <span class="tooltiptext" data-i18n="filters.species.unreleased-tooltip">Include Pokémon found in the Game Master but not yet available in game</span>
+        </span>
+            <label class="switch">
+                <input type=checkbox value=unreleased unchecked>
+                <span class="slider"></span>
+            </label>
+        <span data-i18n="filters.species.mega">Mega/Primal</span>
+            <label class="switch">
+                <input type=checkbox value=mega checked>
+                <span class="slider"></span>
+            </label>
+        <span data-i18n="filters.species.shadow">Shadow</span>
+            <label class="switch">
+                <input type=checkbox value=shadow checked>
+                <span class="slider"></span>
+            </label>
+        <span class="tooltip tooltip-bottom"><span data-i18n="filters.species.legendary">Legendary</span>
+            <span class="tooltiptext" data-i18n="filters.species.legendary-tooltip">Also includes Mythical Pokémon and Ultrabeasts</span>
+        </span>
+            <label class="switch">
+                <input type=checkbox value=legendary checked>
+                <span class="slider"></span>
+            </label>
+    </div>
+    <div class="settings-list">
+        <div class="settings-subtitle" data-i18n="filters.moves.title">Move Filters</div>
+        <span class="tooltip tooltip-bottom"><span data-i18n="filters.moves.elite">Elite Moves*</span>
+            <span class="tooltiptext" data-i18n="filters.moves.elite-tooltip">Allow moves with limited availability<br>
+                (Requires Special event or Elite TMs)</span>
+        </span>
+            <label class="switch">
+                <input type=checkbox value=elite checked>
+                <span class="slider"></span>
+            </label>
+        <span class="labeltext tooltip tooltip-bottom"><span data-i18n="filters.moves.mixed">Mixed Types</span>
+            <span class="tooltiptext" data-i18n="filters.moves.mixed-tooltip">Allow fast and charged moves with different types</span>
+        </span>
+            <label class="switch">
+                <input type=checkbox value=mixed id=chk-mixed checked>
+                <span class="slider"></span>
+            </label>
+        <span class="labeltext tooltip tooltip-bottom"><span data-i18n="filters.moves.off">Off Types</span>
+            <span class="tooltiptext" data-i18n="filters.moves.off-tooltip">Allow movesets where neither the fast nor charged move matches the target type</span>
+        </span>
+            <label class="switch">
+                <input type=checkbox value=offtype id=chk-offtype>
+                <span class="slider"></span>
+            </label>
+        <span class="tooltip tooltip-bottom"><span data-i18n="filters.moves.suboptimal">Suboptimal Moves</span>
+            <span class="tooltiptext" data-i18n="filters.moves.suboptimal-tooltip">Allow multiple movesets per Pokémon</span>
+        </span>
+            <label class="switch tooltip tooltip-bottom">
+                <input type=checkbox value=suboptimal id=chk-suboptimal unchecked>
+                <span class="slider"></span>
+            </label>
+    </div>
+    <div class="settings-list">
+        <div class="settings-subtitle" data-i18n="filters.display.title">Display Settings</div>
+        <span class="tooltip tooltip-bottom" id=settings-group-header><span data-i18n="filters.display.group">Group Species</span>
+            <span class="tooltiptext"><div style="display: inline-grid; grid-template-columns: auto auto auto; column-gap: 5px;">
+                <span data-i18n="terms.enabled">Enabled</span><span>→</span><span data-i18n="filters.display.group-enabled">Compare suboptimal movesets to that Pokémon's best moveset</span>
+                <span data-i18n="terms.disabled">Unchecked</span><span>→</span><span data-i18n="filters.display.group-disabled">Compare all movesets to each other</span></div></span>
+        </span>
+            <label class="switch tooltip tooltip-bottom" id=settings-group>
+                <input type=checkbox value=grouped id=chk-grouped disabled>
+                <span class="slider" ></span>
+            </label>
+        <span class="tooltip tooltip-bottom" id=settings-compare-header><span data-i18n="filters.display.baseline">Baseline</span>
+            <span class="tooltiptext" data-i18n="filters.display.baseline-tooltip">Sets the "100%" reference Pokémon</span>
+        </span>
+            <div class="col" id=settings-compare>
+                <span id=cmp-budget class="settings-opt settings-opt-sel unselectable tooltip"><span data-i18n="filters.display.budget">Budget</span>
+                    <span class="tooltiptext">
+                        <p data-i18n="filters.display.budget-tooltip.title">Compare to the top "cheap" Pokémon</p>
+                        <ul>
+                            <li data-i18n="filters.display.budget-tooltip.mega">No Megas</li>
+                            <li data-i18n="filters.display.budget-tooltip.shadow">No Shadows</li>
+                            <li data-i18n="filters.display.budget-tooltip.legendary">No Legendaries</li>
+                            <li data-i18n="filters.display.budget-tooltip.type">Must be on-type</li>
+                        </ul>
+                    </span>
+                </span>
+                <span id=cmp-espace class="settings-opt unselectable tooltip">ESpace
+                    <span class="tooltiptext">
+                        <p data-i18n="filters.display.espace-tooltip.title">Compare to the top "available-ish" Pokémon</p>
+                        <ul>
+                            <li data-i18n="filters.display.espace-tooltip.slegend">No Shadow Legendaries</li>
+                            <li data-i18n="filters.display.espace-tooltip.rmythic">No Research Mythics</li>
+                            <li data-i18n="filters.display.espace-tooltip.energy">No Energy Gimmicks (Mega/Fusion/Crowned)</li>
+                            <li data-i18n="filters.display.espace-tooltip.ascent">No Dragon Ascent</li>
+                            <li data-i18n="filters.display.espace-tooltip.type">Must be on-type</li>
+                        </ul>
+                        <p><i><span data-i18n="filters.display.espace-tooltip.authorlink">Defined by</span> <a href="https://reddit.com/u/Elastic_Space">/u/Elastic_Space</a></i></p>
+                        <p><i><span data-i18n="filters.display.espace-tooltip.graphiclink">Used in infographics by</span> <a href="https://reddit.com/u/bulbavisual">/u/bulbavisual</a></i></p>
+                    </span>
+                </span>
+                <span id=cmp-top class="settings-opt unselectable tooltip"><span data-i18n="filters.display.best">Best</span>
+                    <span class="tooltiptext" data-i18n="filters.display.best-tooltip">Compare to the absolute best Pokémon</span>
+                </span>
+            </div>
+        <span class="tooltip tooltip-bottom" id=settings-tiermethod-header><span data-i18n="filters.display.tiers">Tiers</span>
+            <span class="tooltiptext" data-i18n="filters.display.tiers-tooltip">Determines how tiers are computed.<br>Depends on comparison Pokémon.</span>
+            </span>
+            <div class="col" id=settings-tiermethod>
+                <span id=tier-jenks class="settings-opt settings-opt-sel unselectable tooltip">Jenks
+                    <span class="tooltiptext" data-i18n="filters.display.jenks-tooltip">Algorithmic tiers based on minimum variance</span></span>
+                <!--<span id=tier-broad class="settings-opt unselectable tooltip">Broad
+                    <span class="tooltiptext">Broad tiers based on hardcoded breakpoints</span></span>-->
+                <span id=tier-espace class="settings-opt unselectable tooltip">ESpace
+                    <span class="tooltiptext">
+                        <p data-i18n="filters.display.espace-tiers">Tiers with hardcoded breakpoints at every 10%</p>
+                        <p><i><span data-i18n="filters.display.espace-tooltip.authorlink">Defined by</span> <a href="https://reddit.com/u/Elastic_Space">/u/Elastic_Space</a></i></p>
+                    </span></span>
+                <span id=tier-abs class="settings-opt unselectable tooltip"><span data-i18n="filters.display.absolute">Absolute</span>
+                    <span class="tooltiptext">
+                        <p data-i18n="filters.display.absolute-tooltip.title">Absolute tiers based on only the displayed rating</p>
+                        <ul>
+                            <li data-i18n="filters.display.absolute-tooltip.contextless">Ignores context (comparison Pokémon, type)</li>
+                            <li data-i18n="filters.display.absolute-tooltip.baseline">Tuned to overall "All-type" rankings</li>
+                            <li data-i18n="filters.display.absolute-tooltip.purpose">Best for comparing across different types</li>
+                        </ul></span></span>
+            </div>
+    </div>
+</div>
+<dialog class="card" id="type-affinity-popup" style="white-space: nowrap;">
+<form autocomplete=off>
+    <div class="card-header">
+        <div class="card-title" data-i18n="type-affinity.title">Type Affinity</div>
+        <div class="drawer absolute-right v-middle dialog-close">
+            <img class="drawer-icon" src="imgs/close.svg" alt="X Button to close the dialog" />
+        </div>
+    </div>
+    <div class="card-body">
+        <div id="affinity-table">
+            <span>&nbsp;</span>
+            <span class="affinity-header" data-i18n="type-affinity.weakness">Boss<br>Weakness</span>
+            <span class="affinity-header" data-i18n="type-affinity.damage">Boss<br>Damage</span>
+        </div>
+    </div>
+</form>
+</dialog>
 <dialog class="card" id="moveset-edit" style="white-space: nowrap;">
 <form autocomplete=off>
     <div class="card-header">
-        <div class="card-title">Edit Moveset</div>
+        <div class="card-title" data-i18n="moveset-editor.title">Edit Moveset</div>
         <div class="drawer absolute-right v-middle dialog-close">
             <img class="drawer-icon" src="imgs/close.svg" alt="X Button to close the dialog" />
         </div>
@@ -56,7 +207,7 @@
     <div class="card-body">
         <div class="row">
             <div class="column-l">
-                <h3>Fast Moves</h3>
+                <h3 data-i18n="terms.fast-move-plural">Fast Moves</h3>
                 <div style="position: relative; margin-bottom: 0.5em;">
                     <input id=fm-search-box class=search-box type=text aria-label="FM Search">
                     <img class="inlaid-icon search-icon" src="imgs/search.svg" alt="" />
@@ -64,7 +215,7 @@
                 <ul class="move-select" id="fm-select"></ul>
             </div>
             <div class="column-r">
-                <h3>Charged Moves</h3>
+                <h3 data-i18n="terms.charged-move-plural">Charged Moves</h3>
                 <div style="position: relative; margin-bottom: 0.5em;">
                     <input id=cm-search-box class=search-box type=text aria-label="CM Search">
                     <img class="inlaid-icon search-icon" src="imgs/search.svg" alt="" />
@@ -74,63 +225,64 @@
         </div>
     </div>
     <div class="card-footer buttons">
-        <input type="button" value="Reset" id="move-reset">
-        <input type="submit" value="Apply" autofocus formmethod="dialog">
+        <input type="button" value="Reset" id="move-reset" data-i18n="moveset-editor.reset">
+        <input type="submit" value="Apply" data-i18n="moveset-editor.apply" autofocus formmethod="dialog">
     </div>
 </form>
 </dialog>
 <dialog class="card" id="move-edit" style="white-space: nowrap;">
 <form autocomplete=off>
     <div class="card-header">
-        <div class="card-title" id="move-edit-title">Edit Move Data</div>
+        <div class="card-title" id="move-edit-title" data-i18n="move-editor.edit.title">Edit Move Data</div>
         <div class="drawer absolute-right v-middle dialog-close">
             <img class="drawer-icon" src="imgs/close.svg" alt="X Button to close the dialog" />
         </div>
     </div>
     <div class="card-body">
         <div class="move-form">
-            <label for="any-search-box">Name:</label>
+            <label for="any-search-box"><span data-i18n="terms.name">Name</span>:</label>
                 <div style="position: relative;">
-                    <input type=text class=search-box name="name" id="any-search-box" aria-label="Move Name">
+                    <input type=text class=search-box name="display_name" id="any-search-box" aria-label="Move Name">
                     <img class="inlaid-icon search-icon" src="imgs/search.svg" alt="" />
+                    <input type=hidden name="name" id="move-edit-name">
                 </div>
-            <label for="move-edit-type">Type:</label>
+            <label for="move-edit-type"><span data-i18n="terms.type">Type</span>:</label>
                 <div class="row" style="gap: 1em; white-space-collapse: collapse;">
                     <select type="select" class="type-text bg-Normal" name="type" id="move-edit-type">
-                        <option value="Normal" class="bg-Normal">Normal</option>
-                        <option value="Fire" class="bg-Fire">Fire</option>
-                        <option value="Water" class="bg-Water">Water</option>
-                        <option value="Grass" class="bg-Grass">Grass</option>
-                        <option value="Electric" class="bg-Electric">Electric</option>
-                        <option value="Ice" class="bg-Ice">Ice</option>
-                        <option value="Fighting" class="bg-Fighting">Fighting</option>
-                        <option value="Poison" class="bg-Poison">Poison</option>
-                        <option value="Ground" class="bg-Ground">Ground</option>
-                        <option value="Flying" class="bg-Flying">Flying</option>
-                        <option value="Psychic" class="bg-Psychic">Psychic</option>
-                        <option value="Bug" class="bg-Bug">Bug</option>
-                        <option value="Rock" class="bg-Rock">Rock</option>
-                        <option value="Ghost" class="bg-Ghost">Ghost</option>
-                        <option value="Dragon" class="bg-Dragon">Dragon</option>
-                        <option value="Dark" class="bg-Dark">Dark</option>
-                        <option value="Steel" class="bg-Steel">Steel</option>
-                        <option value="Fairy" class="bg-Fairy">Fairy</option>
+                        <option value="Normal" class="bg-Normal" data-i18n="pokedata.types.Normal">Normal</option>
+                        <option value="Fire" class="bg-Fire" data-i18n="pokedata.types.Fire">Fire</option>
+                        <option value="Water" class="bg-Water" data-i18n="pokedata.types.Water">Water</option>
+                        <option value="Grass" class="bg-Grass" data-i18n="pokedata.types.Grass">Grass</option>
+                        <option value="Electric" class="bg-Electric" data-i18n="pokedata.types.Electric">Electric</option>
+                        <option value="Ice" class="bg-Ice" data-i18n="pokedata.types.Ice">Ice</option>
+                        <option value="Fighting" class="bg-Fighting" data-i18n="pokedata.types.Fighting">Fighting</option>
+                        <option value="Poison" class="bg-Poison" data-i18n="pokedata.types.Poison">Poison</option>
+                        <option value="Ground" class="bg-Ground" data-i18n="pokedata.types.Ground">Ground</option>
+                        <option value="Flying" class="bg-Flying" data-i18n="pokedata.types.Flying">Flying</option>
+                        <option value="Psychic" class="bg-Psychic" data-i18n="pokedata.types.Psychic">Psychic</option>
+                        <option value="Bug" class="bg-Bug" data-i18n="pokedata.types.Bug">Bug</option>
+                        <option value="Rock" class="bg-Rock" data-i18n="pokedata.types.Rock">Rock</option>
+                        <option value="Ghost" class="bg-Ghost" data-i18n="pokedata.types.Ghost">Ghost</option>
+                        <option value="Dragon" class="bg-Dragon" data-i18n="pokedata.types.Dragon">Dragon</option>
+                        <option value="Dark" class="bg-Dark" data-i18n="pokedata.types.Dark">Dark</option>
+                        <option value="Steel" class="bg-Steel" data-i18n="pokedata.types.Steel">Steel</option>
+                        <option value="Fairy" class="bg-Fairy" data-i18n="pokedata.types.Fairy">Fairy</option>
                     </select>
                     <input type="checkbox" class="toggling" value="fast" name="kind" id="move-edit-kind">
                     <label class="togglebutton" for="move-edit-kind" tabindex="0">
                         <div class="action">
-                            <span class="option-1">Fast</span>
-                            <span class="option-2">Charged</span>
+                            <span class="option-1" data-i18n="terms.fast">Fast</span>
+                            <span class="option-2" data-i18n="terms.charged">Charged</span>
                         </div>
                     </label>
                 </div>
-            <label for="move-edit-power">Power:</label>
+            <label for="move-edit-power"><span data-i18n="terms.power">Power</span>:</label>
                 <div class="num-input-group">
                     <input type="button" data-id="move-edit-power" class="minus" value="–" />
                     <input type=number name="power" id="move-edit-power" min=0 max=50 step=1 >
                     <input type="button" data-id="move-edit-power" class="plus" value="+" />
                 </div>
-            <label for="move-edit-energy">Energy:</label>
+            <label for="move-edit-energy"><span data-i18n="terms.energy">Energy</span>:</label>
                 <div>
                     <div class="bar-bg unselectable" id="move-edit-energybar"></div>
                     <div class="num-input-group" id="move-edit-energygroup">
@@ -139,7 +291,7 @@
                         <input type="button" data-id="move-edit-energy" class="plus" value="+" />
                     </div>
                 </div>
-            <label for="move-edit-duration">Duration:</label>
+            <label for="move-edit-duration"><span data-i18n="terms.duration">Duration</span>:</label>
                 <div class="num-input-group">
                     <input type="button" data-id="move-edit-duration" class="minus" value="–" />
                     <input type=number name="duration" id="move-edit-duration" min=0.5 max=5 step=0.5 >
@@ -148,16 +300,16 @@
         </div>
     </div>
     <div class="card-footer buttons">
-        <input type="button" value="Clear" id="move-edit-clear">
-        <input type="button" value="Apply" id="move-edit-apply" style="background-color: var(--col-widget);" autofocus>
-        <input type="button" value="Delete" id="move-edit-delete" style="background-color: var(--col-red);" hidden>
+        <input type="button" value="Clear" id="move-edit-clear" data-i18n="move-editor.clear">
+        <input type="button" value="Apply" id="move-edit-apply" style="background-color: var(--col-widget);" autofocus data-i18n="move-editor.apply">
+        <input type="button" value="Delete" id="move-edit-delete" data-i18n="move-editor.delete.action" style="background-color: var(--col-red);" hidden>
     </div>
 </form>
 </dialog>
 <dialog class="card" id="search-string-popup" style="white-space: nowrap;">
 <form autocomplete=off>
     <div class="card-header">
-        <div class="card-title">Generate Search String</div>
+        <div class="card-title" data-i18n="search-string.title">Generate Search String</div>
         <div class="drawer absolute-right v-middle dialog-close">
             <img class="drawer-icon" src="imgs/close.svg" alt="X Button to close the dialog" />
         </div>
@@ -165,19 +317,19 @@
     <div class="card-body">
         <div class="row">
             <div class="column-l">
-                <h3>Settings</h3>
+                <h3 data-i18n="search-string.settings">Settings</h3>
                 <div class="settings-list">
-                    <span>Check Movesets</span>
+                    <span data-i18n="search-string.incl-moves">Check Movesets</span>
                         <label class="switch">
                             <input type=checkbox value=include-movesets id=chk-include-movesets>
                             <span class="slider"></span>
                         </label>
-                    <span>Check Elite Moves Only</span>
+                    <span data-i18n="search-string.elite-only">Check Elite Moves Only</span>
                         <label class="switch">
                             <input type=checkbox value=elite-movesets id=chk-elite-movesets checked disabled>
                             <span class="slider"></span>
                         </label>
-                    <span class="settings-span">Minimum Tier</span>
+                    <span class="settings-span" data-i18n="search-string.min-tier">Minimum Tier</span>
                     <div class="tier-selector settings-span">
                         <label class="tier-C tier-label">
                             <input type=radio name=min-tier value=C />C
@@ -195,30 +347,30 @@
                 </div>
             </div>
             <div class="column-r col">
-                <h3>Search String</h3>
+                <h3 data-i18n="search-string.result-title">Search String</h3>
                 <textarea id=search-string-result readonly></textarea>
             </div>
         </div>
         <details id="search-string-issues">
-            <summary><h3>Possible Issues</h3></summary>
-            <div id="string-length-issue" class="issue-highlight">Generated search string exceeds the 5000 character limit.<br/>Try tweaking the settings to be more restrictive.</div>
+            <summary><h3 data-i18n="search-string.issues">Possible Issues</h3></summary>
+            <div id="string-length-issue" class="issue-highlight" data-i18n="search-string.length-issue">Generated search string exceeds the 5000 character limit.<br/>Try tweaking the settings to be more restrictive.</div>
             <div class="row">
                 <div class="column-l col" id="search-string-included-col">
-                    <h4>Incorrectly Included</h4>
+                    <h4 data-i18n="search-string.incl-msg">Incorrectly Included</h4>
                     <div class="pkm-list" id="search-string-included"></div>
                 </div>
                 <div class="column-r col" id="search-string-excluded-col">
-                    <h4>Incorrectly Excluded</h4>
+                    <h4 data-i18n="search-string.excl-msg">Incorrectly Excluded</h4>
                     <div class="pkm-list" id="search-string-excluded"></div>
                 </div>
             </div>
         </details>
     </div>
     <div class="card-footer buttons">
-        <input type="button" value="Copy" id="search-string-copy" style="background-color: var(--col-widget);" autofocus>
+        <input type="button" value="Copy" id="search-string-copy" style="background-color: var(--col-widget);" autofocus data-i18n="search-string.copy">
     </div>
-</dialog>
 </form>
+</dialog>
 <header>
     <div class="site-size" id="header-content">
         <a id="header-left" href="/">
@@ -238,53 +390,53 @@
                     <div class="drawer-popup" id=settings >
                         <!--<div class=settings-title>Settings</div>-->
                         <div class=settings-list>
-                            <div class=settings-subtitle>Metric Settings</div>
-                            <span>PvE metric</span>
+                            <div class=settings-subtitle data-i18n="settings.calculation">Calculation Settings</div>
+                            <span data-i18n="settings.metric">PvE Metric</span>
                                 <div class="col">
-                                    <span id=metric-dps class="settings-opt tooltip unselectable">DPS
+                                    <span id=metric-dps class="settings-opt tooltip unselectable"><span data-i18n="terms.dps">DPS</span>
                                         <span class="tooltiptext">
-                                            <div class="tooltip-title">Damage Per Second</div>
+                                            <div class="tooltip-title" data-i18n="settings.dps-tooltip.title">Damage Per Second</div>
                                             <ul>
-                                                <li>Speed of damage output</li>
-                                                <li>Favors glass cannons</li>
+                                                <li data-i18n="settings.dps-tooltip.explanation">Speed of damage output</li>
+                                                <li data-i18n="settings.dps-tooltip.characteristic">Favors glass cannons</li>
                                             </ul></span></span>
-                                    <span id=metric-tdo class="settings-opt tooltip unselectable">TDO
+                                    <span id=metric-tdo class="settings-opt tooltip unselectable"><span data-i18n="terms.tdo">TDO</span>
                                         <span class="tooltiptext">
-                                            <div class="tooltip-title">Total Damage Output</div>
+                                            <div class="tooltip-title" data-i18n="settings.tdo-tooltip.title">Total Damage Output</div>
                                             <ul>
-                                                <li>Amount of damage done before fainting</li>
-                                                <li>Favors bulk</li>
+                                                <li data-i18n="settings.tdo-tooltip.explanation">Amount of damage done before fainting</li>
+                                                <li data-i18n="settings.tdo-tooltip.characteristic">Favors bulk</li>
                                             </ul></span></span>
-                                    <span id=metric-edps class="settings-opt tooltip settings-opt-sel unselectable">eDPS
+                                    <span id=metric-edps class="settings-opt tooltip settings-opt-sel unselectable"><span data-i18n="terms.edps">eDPS</span>
                                         <span class="tooltiptext">
-                                            <div class="tooltip-title">Effective DPS</div>
-                                            <p>In an infinite-length raid, this is the actual DPS that would be
+                                            <div class="tooltip-title" data-i18n="settings.edps-tooltip.title">Effective DPS</div>
+                                            <p data-i18n="settings.edps-tooltip.characteristic">In an infinite-length raid, this is the actual DPS that would be
                                                 achieved when accounting for the time lost relobbying.
                                             </p></span></span>
                                 </div>
-                            <span>Pokémon Level</span>
+                            <span data-i18n="settings.level">Pokémon Level</span>
                                 <div class="col">
                                     <div class="setting-value">
                                         <span id=lvl-30 class="settings-opt unselectable">30</span>
                                         <span id=lvl-40 class="settings-opt settings-opt-sel unselectable">40</span>
                                         <span id=lvl-50 class="settings-opt unselectable">50</span>
                                     </div>
-                                    <span id=lvl-xl-budget class="settings-opt unselectable tooltip">Budget50
+                                    <span id=lvl-xl-budget class="settings-opt unselectable tooltip"><span data-i18n="settings.budget50-tooltip.title">Budget50</span>
                                         <span class="tooltiptext">
-                                            <div class="tooltip-title">Level 50 for Budget Pokémon</div>
+                                            <div class="tooltip-title" data-i18n="settings.budget50-tooltip.explanation">Level 50 for Budget Pokémon</div>
                                             <ul>
-                                                <li>Use stats at Level 40 for Legendaries</li>
-                                                <li>Use stats at Level 50 for non-Legendaries</li>
-                                                <li>Helps adjust for the scarcity of rare XL candies</li>
+                                                <li data-i18n="settings.budget50-tooltip.lv40">Use stats at Level 40 for Legendaries</li>
+                                                <li data-i18n="settings.budget50-tooltip.lv50">Use stats at Level 50 for non-Legendaries</li>
+                                                <li data-i18n="settings.budget50-tooltip.characteristic">Helps adjust for the scarcity of rare XL candies</li>
                                             </ul></span></span>
                                 </div>
                                 <!--<span id=lvl-both class="settings-opt unselectable tooltip">40+50
                                     <span class="tooltiptext">Shows both level 40 and level 50 entries in type ranks, otherwise uses level 40 for PokeDex</span></span>-->
                             <!--<div class=settings-subtitle><i>Beta</i> Features</div>-->
-                            <span class="tooltip tooltip-left">Party Power
+                            <span class="tooltip tooltip-left"><span data-i18n="settings.pp-tooltip.title">Party Power</span>
                                 <span class="tooltiptext">
-                                    <p>Size of Party for party power boosts</p>
-                                    <p><i>Boosts charged damage based on the ratio of fast:charged moves</i></p></span>
+                                    <p data-i18n="settings.pp-tooltip.explanation">Size of Party for party power boosts</p>
+                                    <p><i data-i18n="settings.pp-tooltip.characteristic">Boosts charged damage based on the ratio of fast:charged moves</i></p></span>
                             </span>
                                 <div class=setting-value>
                                     <span id=pp-1 class="settings-opt settings-opt-sel unselectable">1</span>
@@ -292,43 +444,54 @@
                                     <span id=pp-3 class="settings-opt unselectable">3</span>
                                     <span id=pp-4 class="settings-opt unselectable">4</span>
                                 </div>
-                            <span class="tooltip tooltip-left">Type Affinity
+                            <span class="tooltip tooltip-left"><span data-i18n="settings.affinity-tooltip.title">Type Affinity</span>
                                 <span class="tooltiptext">
-                                    <p>Use real high-tier raid bosses when calculating rankings</p>
-                                    <p>Takes into account the actual types, attack types, attack strengths, and stats of
+                                    <p data-i18n="settings.affinity-tooltip.explanation">Use real high-tier raid bosses when calculating rankings</p>
+                                    <p data-i18n="settings.affinity-tooltip.characteristic">Takes into account the actual types, attack types, attack strengths, and stats of
                                         raid bosses based on the current scenario.</p></span>
                             </span>
                                 <label class="switch">
                                     <input type="checkbox" value="affinity" id="settings-affinity" checked>
                                     <span class="slider"></span>
                                 </label>
-                            <span class="tooltip tooltip-left" id="settings-teamsize-header">Raid Team Size
+                            <span class="tooltip tooltip-left" id="settings-teamsize-header"><span  data-i18n="settings.team-tooltip.title">Raid Team Size</span>
                                 <span class="tooltiptext">
-                                    <p>Size of battle team for computing eDPS</p>
-                                    <p><i>Computes eDPS as if N identical copies of the Pokémon were in a battle team, and relobbying only occurred after each Nth death</i></p></span>
+                                    <p data-i18n="settings.team-tooltip.explanation">Size of battle team for computing eDPS</p>
+                                    <p><i data-i18n="settings.team-tooltip.characteristic">Computes eDPS as if N identical copies of the Pokémon were in a battle team, and relobbying only occurred after each Nth death</i></p></span>
                             </span>
                                 <div class="col" id="settings-teamsize">
-                                    <span id=rt-6 class="settings-opt settings-opt-sel unselectable">6-Stack</span>
-                                    <span id=rt-1 class="settings-opt unselectable">Solo</span>
-                                    <span id=rt-m1 class="settings-opt unselectable tooltip">MegaSolo
+                                    <span id=rt-6 class="settings-opt settings-opt-sel unselectable" data-i18n="settings.6stack">6-Stack</span>
+                                    <span id=rt-1 class="settings-opt unselectable" data-i18n="settings.solo">Solo</span>
+                                    <span id=rt-m1 class="settings-opt unselectable tooltip"><span data-i18n="settings.megasolo-tooltip.title">MegaSolo</span>
                                         <span class="tooltiptext">
-                                        <p>Use a 6-mon team for everything but Megas, which fight solo</p></span></span>
+                                        <p data-i18n="settings.megasolo-tooltip.explanation">Use a 6-mon team for everything but Megas, which fight solo</p></span></span>
                                 </div>
-                            <span class="tooltip tooltip-left" id="settings-relobby-header">Relobby Time
-                                <span class="tooltiptext">Time spent max reviving a full raid team and rejoining the battle</span>
+                            <span class="tooltip tooltip-left" id="settings-relobby-header"><span data-i18n="settings.relobby-tooltip.title">Relobby Time</span>
+                                <span class="tooltiptext" data-i18n="settings.relobby-tooltip.explanation">Time spent max reviving a full raid team and rejoining the battle</span>
                             </span>
                                 <input type="number" id=relobby-time class="settings-num" value="10" min="0" max="300" step="1">
-                            <div class=settings-subtitle>Site Settings</div>
-                            <span>Data Preview</span>
+                            <div class=settings-subtitle data-i18n="settings.site">Site Settings</div>
+                            <span data-i18n="settings.preview">Data Preview</span>
                                 <label class="switch">
                                     <input type="checkbox" value="speculative" id="settings-speculative" checked>
                                     <span class="slider"></span>
                                 </label>
-                            <span>Dark Mode</span>
+                            <span data-i18n="settings.darkmode">Dark Mode</span>
                                 <label class="switch">
                                     <input type="checkbox" value="theme" id="settings-darkmode" checked>
                                     <span class="slider"></span>
                                 </label>
+                            <span data-i18n="settings.language">Language</span>
+                                <div class="col">
+                                    <div class="setting-grid3">
+                                        <span id=lang-en class="settings-opt settings-opt-sel unselectable">EN</span>
+                                        <span id=lang-es class="settings-opt unselectable">ES</span>
+                                        <span id=lang-fr class="settings-opt unselectable">FR</span>
+                                        <span class="settings-opt unselectable"></span>
+                                        <span id=lang-de class="settings-opt unselectable">DE</span>
+                                        <span id=lang-it class="settings-opt unselectable">IT</span>
+                                    </div>
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -336,9 +499,9 @@
                     <img class="drawer-icon" src="imgs/menu.svg" alt="Menu button to open navigation menu to different pages" />
                     <div class="drawer-popup" id="nav-drawer">
                         <ul class="menu">
-                            <li><a id=rankings-link href="/?strongest">Attacker Rankings</a></li>
-                            <li><a id=moves-link href="/?moves">Move Data</a></li>
-                            <li><a id=typechart-link href="/?typechart">Type Chart</a></li>
+                            <li><a id=rankings-link href="/?strongest" data-i18n="site.links.rankings">Attacker Rankings</a></li>
+                            <li><a id=moves-link href="/?moves" data-i18n="site.links.moves">Move Data</a></li>
+                            <li><a id=typechart-link href="/?typechart" data-i18n="site.links.types">Type Chart</a></li>
                         </ul>
                     </div>
                 </div>
@@ -347,1150 +510,26 @@
     </div>
 </header>
 <div id=site class="site-size">
-    <!-- pokedex -->
-    <div id=pokedex-page class="page">
-        <div class=center id=pokedex>
-            <div id=containers-father>
-                <div class=pokemon-containers id=previous-containers></div>
-                <div class=pokemon-containers id=main-container></div>
-                <div class=pokemon-containers id=next-containers></div>
-            </div>
-            <div id=additional-containers></div>
-        </div>
-
-        <!-- pokedex stats and moves table -->
-        <div id=pokedex-details>
-            <div id=not-released>
-                <br>
-                <p class="center">Not found in the <b>Pokémon GO</b> files yet :(</p>
-            </div>
-            <div id=released>
-                <div class="card" id="attack-tiers">
-                    <div class="card-header">
-                        <div class="card-title" id="attack-tiers-title">Raid Attacker Rankings</div>
-                    </div>
-                    <div class="card-body">
-                        <div class="dex-layout-table" id="attack-tier-results">
-                            <div class="dex-layout-tablecell">
-                                <div class="dex-layout-header tier-label tier-D">
-                                    D<span class="desktop"> Tier</span>
-                                </div>
-                                <div class="dex-layout-content" id="dex-tier-D"></div>
-                            </div>
-                            <div class="dex-layout-tablecell">
-                                <div class="dex-layout-header tier-label tier-C">
-                                    C<span class="desktop"> Tier</span>
-                                </div>
-                                <div class="dex-layout-content" id="dex-tier-C"></div>
-                            </div>
-                            <div class="dex-layout-tablecell">
-                                <div class="dex-layout-header tier-label tier-B">
-                                    B<span class="desktop"> Tier</span>
-                                </div>
-                                <div class="dex-layout-content" id="dex-tier-B"></div>
-                            </div>
-                            <div class="dex-layout-tablecell">
-                                <div class="dex-layout-header tier-label tier-A">
-                                    A<span class="desktop"> Tier</span>
-                                </div>
-                                <div class="dex-layout-content" id="dex-tier-A"></div>
-                            </div>
-                            <div class="dex-layout-tablecell">
-                                <div class="dex-layout-header tier-label tier-S">
-                                    S+<span class="desktop"> Tier</span>
-                                </div>
-                                <div class="dex-layout-content" id="dex-tier-S"></div>
-                            </div>
-                        </div>
-                        <div class="secondary-header tier-label shadow-bg center" id="attack-tier-shadow-header">When Shadow</div>
-                        <div class="dex-layout-table rounded-bottom" id="attack-tier-results-shadow">
-                            <div class="dex-layout-tablecell">
-                                <div class="dex-layout-content" id="dex-tier-D-shadow">&nbsp;</div>
-                            </div>
-                            <div class="dex-layout-tablecell">
-                                <div class="dex-layout-content" id="dex-tier-C-shadow">&nbsp;</div>
-                            </div>
-                            <div class="dex-layout-tablecell">
-                                <div class="dex-layout-content" id="dex-tier-B-shadow">&nbsp;</div>
-                            </div>
-                            <div class="dex-layout-tablecell">
-                                <div class="dex-layout-content" id="dex-tier-A-shadow">&nbsp;</div>
-                            </div>
-                            <div class="dex-layout-tablecell">
-                                <div class="dex-layout-content" id="dex-tier-S-shadow">&nbsp;</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card" id="stats-calculator">
-                    <form id=stats-form>
-                    <div class="card-header">
-                        <div class="card-title">Stats, IVs, and CP</div>
-                    </div>
-                    <div class="card-body">
-                        <div class="col5-layout">
-                            <!--header-->
-                            <div></div>
-                            <div class="col-header">Attack</div>
-                            <div class="col-header">Defense</div>
-                            <div class="col-header">HP</div>
-                            <div></div>
-                            <!--base-->
-                            <div class="row-header">
-                                <span class="tooltip tooltip-top">Base Stats
-                                    <span class="tooltiptext">Pokémon stats as found in the Game Master<br/>for this species/form</span>
-                                </span>
-                            </div>
-                            <div id=base-stat-atk></div>
-                            <div id=base-stat-def></div>
-                            <div id=base-stat-hp></div>
-                            <div></div>
-                            <!--true max-->
-                            <div class="row-header">
-                                <span class="tooltip tooltip-top">Lv50 Stats
-                                    <span class="tooltiptext">Real in-game stats for a<br/>Perfect-IV Level 50 Pokémon</span>
-                                </span>
-                            </div>
-                            <div id=max-stat-atk></div>
-                            <div id=max-stat-def></div>
-                            <div id=max-stat-hp></div>
-                            <div id=max-cp></div>
-                            
-                            <div></div>
-                            <div class="mid3 col-header">Stat Calculator</div>
-                            <div></div>
-                            <!--level-->
-                            <div class="row-header">
-                                <span class="tooltip tooltip-top">Level
-                                    <span class="tooltiptext">
-                                        <ul>
-                                            <li>Determines the Multiplier (CPM) used when calculating effective stats</li>
-                                            <li>Can be raised by one half-level per "Power-up"</li>
-                                            <li>Maximum level is 50 (+1 if Best Buddy)</li>
-                                            <li>Never displayed directly in game; represented by a white arc in the Pokémon screen</li>
-                                        </ul>
-                                    </span>
-                                </span>
-                            </div>
-                            <div><input id=input-lvl type=number min=1 max=51 step=0.5 value=40></div>
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                            <!--ivs-->
-                            <div class="row-header">
-                                <span class="tooltip tooltip-top">IVs
-                                    <span class="tooltiptext">
-                                        <div class="tooltip-title">"Individual Values"</div>
-                                        <p>Additional points in each stat, as displayed in the Appraisal screen</p>
-                                    </span>
-                                </span>
-                            </div>
-                            <div><input id=input-atk type=number min=0 max=15 value=15></div>
-                            <div><input id=input-def type=number min=0 max=15 value=15></div>
-                            <div><input id=input-hp type=number min=0 max=15 value=15></div>
-                            <div></div>
-                            <!--maximum-->
-                            <div class="row-header">
-                                <span class="tooltip tooltip-top">100% Stats
-                                    <span class="tooltiptext">Real in-game stats for a Perfect-IV Pokémon<br/>at the specified Level</span>
-                                </span>
-                            </div>
-                            <div id=hundo-stat-atk></div>
-                            <div id=hundo-stat-def></div>
-                            <div id=hundo-stat-hp></div>
-                            <div id=hundo-cp></div>
-                            <!--effective-->
-                            <div class="row-header" data-vis-nonhundo="">
-                                <span class="tooltip tooltip-top">Effective Stats
-                                    <span class="tooltiptext">Real in-game stats for a Pokémon with the specified Level and IVs</span>
-                                </span>
-                            </div>
-                            <div id=eff-stat-atk data-vis-nonhundo></div>
-                            <div id=eff-stat-def data-vis-nonhundo></div>
-                            <div id=eff-stat-hp data-vis-nonhundo></div>
-                            <div id=eff-cp data-vis-nonhundo></div>
-                            <!--compare-->
-                            <div></div>
-                            <div class="off" style="grid-column: 2 / 6;">
-                                <div id=eff-iv-compare data-vis-nonhundo></div>
-                                <div id=eff-stat-compare data-vis-nonhundo></div>
-                                <div id=rat-pct-vs-max data-vis-nonhundo></div>
-                                <div id=sh-rat-pct-vs-max></div>
-                            </div>
-                            <div class="small-text full-row"><!--spacer--></div>
-                        </div>
-                    </div>
-                    <div class="card-footer buttons">
-                        <input type=button value=Reset id=stats-reset />
-                        <input type=submit value=Calculate />
-                    </div>
-                    </form>
-                </div>
-                <div class="card" id=effectiveness>
-                    <div class="card-header">
-                        <div class="card-title" id="effectiveness-title">Type Matchups</div>
-                    </div>
-                    <div class="card-body">
-                        <div class="dex-layout-table rounded-bottom" id=effectiveness-table>
-                            <div class="dex-layout-tablecell">
-                                <div class="dex-layout-header tooltip tooltip-top">
-                                    <span class="resist immune">
-                                        <img src="imgs/triple-resistance.svg" class="tripleshield-icon" alt="3 shields representing triple resistance" >
-                                    </span>
-                                    <span class="desktop">3x Resistance</span>
-                                    <span class="tooltiptext">Damage Multiplier x0.244</span>
-                                </div>
-                                <div class="dex-layout-content" id="effectiveness-0244"></div>
-                            </div>
-                            <div class="dex-layout-tablecell">
-                                <div class="dex-layout-header tooltip tooltip-top">
-                                    <span class="immune">
-                                        <img src="imgs/double-resistance.svg" class="tripleshield-icon" alt="2 shields representing double resistance">
-                                    </span>
-                                    <span class="desktop">2x Resistance</span>
-                                    <span class="tooltiptext">Damage Multiplier x0.391</span>
-                                </div>
-                                <div class="dex-layout-content" id="effectiveness-0391"></div>
-                            </div>
-                            <div class="dex-layout-tablecell">
-                                <div class="dex-layout-header tooltip tooltip-top">
-                                    <span class="resist">
-                                        <img src="imgs/resistance.svg" class="shield-icon" alt="A shield representing type resistance">
-                                    </span>
-                                    <span class="desktop">1x Resistance</span>
-                                    <span class="tooltiptext">Damage Multiplier x0.625</span>
-                                </div>
-                                <div class="dex-layout-content" id="effectiveness-0625"></div>
-                            </div>
-                            <div class="dex-layout-tablecell">
-                                <div class="dex-layout-header tooltip tooltip-top">
-                                    <span class="supereffective">
-                                        <img src="imgs/effective.svg" class="sword-icon" alt="A sword representing supereffective damage">
-                                    </span>
-                                    <span class="desktop">1x Weakness</span>
-                                    <span class="tooltiptext">Damage Multiplier x1.60</span>
-                                </div>
-                                <div class="dex-layout-content" id="effectiveness-160"></div>
-                            </div>
-                            <div class="dex-layout-tablecell">
-                                <div class="dex-layout-header tooltip tooltip-top">
-                                    <span class="supereffective">
-                                        <img src="imgs/double-effective.svg" class="sword-icon" alt="2 swords representing doubly supereffective damage">
-                                    </span>
-                                    <span class="desktop">2x Weakness</span>
-                                    <span class="tooltiptext">Damage Multiplier x2.56</span>
-                                </div>
-                                <div class="dex-layout-content" id="effectiveness-256"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card" id="counters">
-                    <div class="card-header">
-                        <div class="card-title">Raid Counters</div>
-                        <div class="drawer absolute-right v-middle">
-                            <img class="drawer-icon" src="imgs/filter.svg" alt="Funnel button to open filter and display options" />
-                            <div id=counters-filters class="drawer-popup"></div>
-                        </div> 
-                    </div>
-                    <div class="card-body">
-                        <div class=center id=counters-popup></div>
-                        <div id=counters-table><div id=counters-grid></div></div>
-                    </div>
-                    <div class="card-footer">
-                        <ul class="footnotes">
-                            <li>* Elite fast or charged move</li>
-                            <li>Calculations take into account the counter's damage against this Pokémon and the counter's resistance 
-                                to incoming damage from this Pokémon.
-                            </li>
-                            <li class="off">Disclaimer: Calculations cannot capture some of the nuances of real raid battles. These calculations are 
-                                best used to gauge overall attacker strength, not performance against any single raid boss. For the most
-                                accurate list of raid counters, please reference simulations instead.
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title" id="movesets-title">Best Movesets</div>
-                        <div class="drawer absolute-right v-middle" id="moveset-edit-icon">
-                            <img class="drawer-icon" src="imgs/edit.svg" alt="Pencil button to open moveset editor" />
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <table class="table-bg move-table" id=pokedex-move-table>
-                            <thead>
-                                <tr class=table-header>
-                                    <th>Fast Move</th>
-                                    <th>Charged Move</th>
-                                    <th>DPS</th>
-                                    <th>DPS<br><span class='shadow-text'>(Shadow)</span></th>
-                                    <th>TDO</th>
-                                    <th>TDO<br><span class='shadow-text'>(Shadow)</span></th>
-                                    <th id=table-metric-header class=sortable onclick=SortPokedexTable(6)>
-                                        eDPS <span class=th-triangle>▿</span>
-                                    </th>
-                                    <th id=table-metric-header-sh>eDPS<br><span class='shadow-text'>(Shadow)</span></th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                    <div class="card-footer">
-                        <ul class="footnotes">
-                            <li>* Elite fast or charged move</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- strongest pokemon section -->
-    <div id=strongest class="page">
-        <!--<p class="center small-text off no-bottom-m">select what type's strongest Pokémon you want to see</p>-->
-        <div id=strongest-links class="unselectable type-links">
-            <ul id="strongest-links-types">
-                <li>&nbsp;</li>
-                <li id="any-type-strongest-link"><a class="type-text" href="/?strongest" onclick="return LoadStrongestAndUpdateURL('Any')">All types</a></li>
-                <li id="each-type-strongest-link"><a class="type-text" href="/?strongest&t=Each" onclick="return LoadStrongestAndUpdateURL('Each')">Each type</a></li>
-                <li>&nbsp;</li>
-                <li><a class="type-text bg-Normal" href="/?strongest&t=Normal" onclick="return LoadStrongestAndUpdateURL('Normal')">Normal</a></li>
-                <li><a class="type-text bg-Fire" href="/?strongest&t=Fire" onclick="return LoadStrongestAndUpdateURL('Fire')">Fire</a></li>
-                <li><a class="type-text bg-Water" href="/?strongest&t=Water" onclick="return LoadStrongestAndUpdateURL('Water')">Water</a></li>
-                <li><a class="type-text bg-Grass" href="/?strongest&t=Grass" onclick="return LoadStrongestAndUpdateURL('Grass')">Grass</a></li>
-                <li><a class="type-text bg-Electric" href="/?strongest&t=Electric" onclick="return LoadStrongestAndUpdateURL('Electric')">Electric</a></li>
-                <li><a class="type-text bg-Ice" href="/?strongest&t=Ice" onclick="return LoadStrongestAndUpdateURL('Ice')">Ice</a></li>
-                <li><a class="type-text bg-Fighting" href="/?strongest&t=Fighting" onclick="return LoadStrongestAndUpdateURL('Fighting')">Fighting</a></li>
-                <li><a class="type-text bg-Poison" href="/?strongest&t=Poison" onclick="return LoadStrongestAndUpdateURL('Poison')">Poison</a></li>
-                <li><a class="type-text bg-Ground" href="/?strongest&t=Ground" onclick="return LoadStrongestAndUpdateURL('Ground')">Ground</a></li>
-                <li><a class="type-text bg-Flying" href="/?strongest&t=Flying" onclick="return LoadStrongestAndUpdateURL('Flying')">Flying</a></li>
-                <li><a class="type-text bg-Psychic" href="/?strongest&t=Psychic" onclick="return LoadStrongestAndUpdateURL('Psychic')">Psychic</a></li>
-                <li><a class="type-text bg-Bug" href="/?strongest&t=Bug" onclick="return LoadStrongestAndUpdateURL('Bug')">Bug</a></li>
-                <li><a class="type-text bg-Rock" href="/?strongest&t=Rock" onclick="return LoadStrongestAndUpdateURL('Rock')">Rock</a></li>
-                <li><a class="type-text bg-Ghost" href="/?strongest&t=Ghost" onclick="return LoadStrongestAndUpdateURL('Ghost')">Ghost</a></li>
-                <li><a class="type-text bg-Dragon" href="/?strongest&t=Dragon" onclick="return LoadStrongestAndUpdateURL('Dragon')">Dragon</a></li>
-                <li><a class="type-text bg-Dark" href="/?strongest&t=Dark" onclick="return LoadStrongestAndUpdateURL('Dark')">Dark</a></li>
-                <li><a class="type-text bg-Steel" href="/?strongest&t=Steel" onclick="return LoadStrongestAndUpdateURL('Steel')">Steel</a></li>
-                <li><a class="type-text bg-Fairy" href="/?strongest&t=Fairy" onclick="return LoadStrongestAndUpdateURL('Fairy')">Fairy</a></li>
-            </ul>
-        </div>
-        <div class="card">
-            <div id=strongest-header class="card-header">
-                <div class="card-title" style="padding: 0.5rem 3rem">
-                    <span class="desktop">Strongest </span><span class="mobile">Top </span>
-                    <span id="strongest-type-title"></span>
-                    <input type='checkbox' class='toggling' value='versus' id='chk-versus' unchecked>
-                    <label class='togglebutton' for='chk-versus'>
-                        <div class='action'>
-                            <span class='option-1'>Attackers</span>
-                            <span class='option-2'>Counters</span>
-                        </div>
-                    </label>
-                    <span id="strongest-title-suffix"></span>
-                </div>
-                <div class="absolute-right row">
-                    <div class="drawer v-middle" id="search-string-icon">
-                        <img class="drawer-icon" src="imgs/search-string.svg" alt="Magnifying glass button to open search string generator" />
-                    </div> 
-                    <div class="drawer v-middle">
-                        <img class="drawer-icon" src="imgs/filter.svg" alt="Funnel button to open filter and display options" />
-                        <div id=strongest-filters class="drawer-popup">
-                            <div id="filter-settings">
-                                <div class="settings-list">
-                                    <div class="settings-subtitle">Species Filters</div>
-                                    <span class="tooltip tooltip-left">Unreleased
-                                        <span class="tooltiptext">Include Pokémon found in the Game Master but not yet available in game</span>
-                                    </span>
-                                        <label class="switch">
-                                            <input type=checkbox value=unreleased unchecked>
-                                            <span class="slider"></span>
-                                        </label>
-                                    <span>Mega/Primal</span>
-                                        <label class="switch">
-                                            <input type=checkbox value=mega checked>
-                                            <span class="slider"></span>
-                                        </label>
-                                    <span>Shadow</span>
-                                        <label class="switch">
-                                            <input type=checkbox value=shadow checked>
-                                            <span class="slider"></span>
-                                        </label>
-                                    <span class="tooltip tooltip-left">Legendary
-                                        <span class="tooltiptext">Also includes Mythical Pokémon and Ultrabeasts</span>
-                                    </span>
-                                        <label class="switch">
-                                            <input type=checkbox value=legendary checked>
-                                            <span class="slider"></span>
-                                        </label>
-                                </div>
-                                <div class="settings-list">
-                                    <div class="settings-subtitle">Move Filters</div>
-                                    <span class="tooltip tooltip-left">Elite Moves*
-                                        <span class="tooltiptext"><p>Allow moves with limited availability</p>
-                                            <p>(Requires Special event or Elite TMs)</p></span>
-                                    </span>
-                                        <label class="switch">
-                                            <input type=checkbox value=elite checked>
-                                            <span class="slider"></span>
-                                        </label>
-                                    <span class="labeltext tooltip tooltip-left">Mixed Types
-                                        <span class="tooltiptext">Allow fast and charged moves with different types</span>
-                                    </span>
-                                        <label class="switch">
-                                            <input type=checkbox value=mixed id=chk-mixed checked>
-                                            <span class="slider"></span>
-                                        </label>
-                                    <span class="labeltext tooltip tooltip-left">Off Types
-                                        <span class="tooltiptext">Allow movesets where neither the fast nor charged move matches the target type</span>
-                                    </span>
-                                        <label class="switch">
-                                            <input type=checkbox value=offtype id=chk-offtype>
-                                            <span class="slider"></span>
-                                        </label>
-                                    <span class="tooltip tooltip-left">Suboptimal Moves
-                                        <span class="tooltiptext">Allow multiple movesets per Pokémon</span>
-                                    </span>
-                                        <label class="switch tooltip tooltip-left">
-                                            <input type=checkbox value=suboptimal id=chk-suboptimal unchecked>
-                                            <span class="slider"></span>
-                                        </label>
-                                </div>
-                                <div class="settings-list">
-                                    <div class="settings-subtitle">Display Settings</div>
-                                    <span class="tooltip tooltip-left" id=settings-group-header>Group Species
-                                        <span class="tooltiptext"><div style="display: inline-grid; grid-template-columns: auto auto auto; column-gap: 5px;">
-                                            <span>Checked</span><span>→</span><span>Compare suboptimal movesets to that Pokémon's best moveset</span>
-                                            <span>Unchecked</span><span>→</span><span>Compare all movesets to each other</span></div></span>
-                                    </span>
-                                        <label class="switch tooltip tooltip-left" id=settings-group>
-                                            <input type=checkbox value=grouped id=chk-grouped disabled>
-                                            <span class="slider" ></span>
-                                        </label>
-                                    <span class="tooltip tooltip-left" id=settings-compare-header>Baseline
-                                        <span class="tooltiptext">Sets the "100%" reference Pokémon</span>
-                                    </span>
-                                        <div class="col" id=settings-compare>
-                                            <span id=cmp-budget class="settings-opt settings-opt-sel unselectable tooltip">Budget
-                                                <span class="tooltiptext">
-                                                    <p>Compare to the top "cheap" Pokémon</p>
-                                                    <ul>
-                                                        <li>No Megas</li>
-                                                        <li>No Shadows</li>
-                                                        <li>No Legendaries</li>
-                                                        <li>Must be on-type</li>
-                                                    </ul>
-                                                </span>
-                                            </span>
-                                            <span id=cmp-espace class="settings-opt unselectable tooltip">ESpace
-                                                <span class="tooltiptext">
-                                                    <p>Compare to the top "available-ish" Pokémon</p>
-                                                    <ul>
-                                                        <li>No Shadow Legendaries</li>
-                                                        <li>No Research Mythics</li>
-                                                        <li>No Energy Gimmicks (Mega/Fusion/Crowned)</li>
-                                                        <li>No Dragon Ascent</li>
-                                                        <li>Must be on-type</li>
-                                                    </ul>
-                                                    <p><i>Defined by <a href="https://reddit.com/u/Elastic_Space">/u/Elastic_Space</a></i></p>
-                                                    <p><i>Used in infographics by <a href="https://reddit.com/u/bulbavisual">/u/bulbavisual</a></i></p>
-                                                </span>
-                                            </span>
-                                            <span id=cmp-top class="settings-opt unselectable tooltip">Best
-                                                <span class="tooltiptext">Compare to the absolute best Pokémon</span>
-                                            </span>
-                                        </div>
-                                    <span class="tooltip tooltip-left" id=settings-tiermethod-header>Tiers
-                                        <span class="tooltiptext"><p>Determines how tiers are computed.</p>
-                                            <p>Depends on comparison Pokémon.</p></span>
-                                        </span>
-                                        <div class="col" id=settings-tiermethod>
-                                            <span id=tier-jenks class="settings-opt settings-opt-sel unselectable tooltip">Jenks
-                                                <span class="tooltiptext">Algorithmic tiers based on minimum variance</span></span>
-                                            <!--<span id=tier-broad class="settings-opt unselectable tooltip">Broad
-                                                <span class="tooltiptext">Broad tiers based on hardcoded breakpoints</span></span>-->
-                                            <span id=tier-espace class="settings-opt unselectable tooltip">ESpace
-                                                <span class="tooltiptext">
-                                                    <p>Tiers with hardcoded breakpoints at every 10%</p>
-                                                    <p><i>Defined by <a href="https://reddit.com/u/Elastic_Space">/u/Elastic_Space</a></i></p>
-                                                </span></span>
-                                            <span id=tier-abs class="settings-opt unselectable tooltip">Absolute
-                                                <span class="tooltiptext">
-                                                    <p>Absolute tiers based on only the displayed rating</p>
-                                                    <ul>
-                                                        <li>Ignores context (comparison Pokémon, type)</li>
-                                                        <li>Tuned to overall "All-type" rankings</li>
-                                                        <li>Best for comparing across different types</li>
-                                                    </ul></span></span>
-                                        </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div> 
-                </div>
-            </div>
-            <div class="card-body" id="strongest-scroller">
-                <table class="table-bg" id=strongest-table>
-                    <tbody></tbody>
-                </table>
-            </div>
-            <div class="card-footer">
-                <ul class="footnotes">
-                    <li id=footnote-elite>* Elite fast or charged move</li>
-                    <li id=footnote-typed-ranking>Typed rankings are calculated using super-effective damage for the chosen type, and neutral damage for all other types.</li>
-                    <li id=footnote-versus>"Versus" rankings are calculated using appropriate effectiveness multiplier for attacking damage.
-                        <!--<br />Versus rankings also assume incoming damage is of the chosen type, and apply relevant defensive multipliers.-->
-                    </li>
-                    <li id=footnote-affinity-ranking>Rankings are calculated based on an 
-                        <a href="#" class="tooltip tooltip-top" id="type-affinity-link">average of all raid bosses
-                            <div class="tooltiptext" id="type-affinity-tooltip">
-                                <table id="affinity-table">
-                                    <thead><tr><th></th><th style='width: 100px'>Boss Weakness</th><th  style='width: 100px'>Boss Damage</th></tr></thead>
-                                    <tbody></tbody>
-                                </table>
-                            </div>
-                        </a>
-                        matching the scenario.</li>
-                </ul>
-            </div>
-        </div>
-    </div> <!-- end of 'strongest' div -->
-
-    <!-- Move List -->
-    <div id=move-data class="page">
-        <div id=move-type-links class="unselectable type-links">
-            <ul id=move-type-links-bytype>
-                <li>&nbsp;</li>
-                <li>&nbsp;</li>
-                <li id="any-type-move-link"><a class="type-text" href="/?moves" onclick="return LoadMovesAndUpdateURL('Any')">All types</a></li>
-                <li>&nbsp;</li>
-                <li>&nbsp;</li>
-                <li><a class="type-text bg-Normal" href="/?moves&t=Normal" onclick="return LoadMovesAndUpdateURL('Normal')">Normal</a></li>
-                <li><a class="type-text bg-Fire" href="/?moves&t=Fire" onclick="return LoadMovesAndUpdateURL('Fire')">Fire</a></li>
-                <li><a class="type-text bg-Water" href="/?moves&t=Water" onclick="return LoadMovesAndUpdateURL('Water')">Water</a></li>
-                <li><a class="type-text bg-Grass" href="/?moves&t=Grass" onclick="return LoadMovesAndUpdateURL('Grass')">Grass</a></li>
-                <li><a class="type-text bg-Electric" href="/?moves&t=Electric" onclick="return LoadMovesAndUpdateURL('Electric')">Electric</a></li>
-                <li><a class="type-text bg-Ice" href="/?moves&t=Ice" onclick="return LoadMovesAndUpdateURL('Ice')">Ice</a></li>
-                <li><a class="type-text bg-Fighting" href="/?moves&t=Fighting" onclick="return LoadMovesAndUpdateURL('Fighting')">Fighting</a></li>
-                <li><a class="type-text bg-Poison" href="/?moves&t=Poison" onclick="return LoadMovesAndUpdateURL('Poison')">Poison</a></li>
-                <li><a class="type-text bg-Ground" href="/?moves&t=Ground" onclick="return LoadMovesAndUpdateURL('Ground')">Ground</a></li>
-                <li><a class="type-text bg-Flying" href="/?moves&t=Flying" onclick="return LoadMovesAndUpdateURL('Flying')">Flying</a></li>
-                <li><a class="type-text bg-Psychic" href="/?moves&t=Psychic" onclick="return LoadMovesAndUpdateURL('Psychic')">Psychic</a></li>
-                <li><a class="type-text bg-Bug" href="/?moves&t=Bug" onclick="return LoadMovesAndUpdateURL('Bug')">Bug</a></li>
-                <li><a class="type-text bg-Rock" href="/?moves&t=Rock" onclick="return LoadMovesAndUpdateURL('Rock')">Rock</a></li>
-                <li><a class="type-text bg-Ghost" href="/?moves&t=Ghost" onclick="return LoadMovesAndUpdateURL('Ghost')">Ghost</a></li>
-                <li><a class="type-text bg-Dragon" href="/?moves&t=Dragon" onclick="return LoadMovesAndUpdateURL('Dragon')">Dragon</a></li>
-                <li><a class="type-text bg-Dark" href="/?moves&t=Dark" onclick="return LoadMovesAndUpdateURL('Dark')">Dark</a></li>
-                <li><a class="type-text bg-Steel" href="/?moves&t=Steel" onclick="return LoadMovesAndUpdateURL('Steel')">Steel</a></li>
-                <li><a class="type-text bg-Fairy" href="/?moves&t=Fairy" onclick="return LoadMovesAndUpdateURL('Fairy')">Fairy</a></li>
-            </ul>
-        </div>
-        <div class="card">
-            <div id=move-data-header class="card-header">
-                <div class="card-title">
-                    <span id="move-type-title"></span>
-                    <input type='checkbox' class='toggling' value='charged' id='chk-move-kind' unchecked>
-                    <label class='togglebutton' for='chk-move-kind'>
-                        <div class='action'>
-                            <span class='option-1'>Fast</span>
-                            <span class='option-2'>Charged</span>
-                        </div>
-                    </label>
-                    <span> Move Data</span>
-                </div>
-                <div class="drawer absolute-right v-middle" id="move-edit-icon">
-                    <img class="drawer-icon" src="imgs/edit.svg" alt="Pencil button to open move data editor" />
-                </div>
-            </div>
-            <div class="card-body">
-                <table class="table-bg move-table" id=move-data-table>
-                    <thead>
-                        <tr class=table-header>
-                            <th id=move-name><a href="#" class=sortable onclick="MoveSort('name')">Move</a></th>
-                            <th id=move-power><a href="#" class=sortable onclick="MoveSort('power')">
-                                <span class="desktop">Power</span><span class="mobile">PWR</span>
-                            </a></th>
-                            <th id=move-energy><a href="#" class=sortable onclick="MoveSort('energy')">
-                                <span class="desktop">Energy</span><span class="mobile">ENG</span>
-                            </a></th>
-                            <th id=move-duration><a href="#" class=sortable onclick="MoveSort('duration')">
-                                <span class="desktop">Duration</span><span class="mobile">DUR</span>
-                            </a></th>
-                            <th id=move-pps><a href="#" class="tooltip tooltip-top sortable" onclick="MoveSort('pps')">P/S
-                                <span class="tooltiptext">
-                                    <div class="tooltip-title">Power per Second (DPS)</div>
-                                    <p>How effective a move is at dealing damage</p>
-                                </span>
-                            </a></th>
-                            <th id=move-eps><a href="#" class="tooltip tooltip-top sortable" onclick="MoveSort('eps')">E/S
-                                <span class="tooltiptext">
-                                    <div class="tooltip-title">Energy per Second (EPS)</div>
-                                    <p>How effective a fast move is at building up charged move energy</p>
-                                </span>
-                            </a></th>
-                            <th id=move-ppe><a href="#" class="tooltip tooltip-top sortable" onclick="MoveSort('ppe')">P/E
-                                <span class="tooltiptext">
-                                    <div class="tooltip-title">Power per Energy (DPE)</div>
-                                    <p>How efficiently a charged move converts energy into damage</p>
-                                </span>
-                            </a></th>
-                            <th id=move-p2pes><a href="#" class="tooltip tooltip-top sortable" onclick="MoveSort('p2pes')">P<sup class='small-text'>2</sup>/ES
-                                <span class="tooltiptext">
-                                    <div class="tooltip-title">P/S * P/E</div>
-                                    <p>How well a charged move both uses charged energy <em>and</em> deals damage</p>
-                                </span>
-                            </a></th>
-                            <th id=move-peps2><a href="#" class="tooltip tooltip-top sortable" onclick="MoveSort('peps2')">PE/S<sup class="small-text">2</sup>
-                                <span class="tooltiptext">
-                                    <div class="tooltip-title">P/S * E/S</div>
-                                    <p>How well a fast move accomplishes both building charged energy <em>and</em> dealing damage on its own</p>
-                                </span>
-                            </a></th>
-                            <th>Top Users</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-            <div class="card-footer">&nbsp;</div>
-        </div>
-    </div>
-
-    <!-- Type Effectiveness Matrix -->
-    <div id=type-matrix class="page">
-        <div class="card">
-            <div id=type-matrix-header class="card-header">
-                <div class="card-title">
-                    <span>Type Matchups</span>
-                </div>
-                <div class="table-legend">
-                    <div class="tooltip">
-                        <span class="supereffective"><img src="imgs/effective.svg" class="sword-icon" alt="A sword representing supereffective damage"></span>
-                        Super Effective
-                        <span class="tooltiptext">Damage Multiplier x1.6</span>
-                    </div>
-                    <div class="tooltip">
-                        <span class="resist"><img src="imgs/resistance.svg" class="shield-icon" alt="A shield representing type resistance"></span>
-                        Resisted
-                        <span class="tooltiptext">Damage Multiplier x0.625</span>
-                    </div>
-                    <div class="tooltip">
-                        <span class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon" alt="2 shields representing double resistance"></span>
-                        Immune
-                        <span class="tooltiptext">Damage Multiplier x0.391</span>
-                    </div>
-                </div>
-                <div class="center table-title">
-                    <span>Defending Type</span>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="table-with-leftheader">
-                    <div class="table-leftheader">
-                        <div class="center table-title vertical">
-                            <span>Attacking Type</span>
-                        </div>
-                    </div>
-                    <table class="table-bg move-table" id=type-matrix-table>
-                        <thead>
-                            <tr class="table-header">
-                                <th>
-                                    <div class="corner-writing">
-                                        <span>Attacker</span><span>Defender</span>
-                                    </div>
-                                </th>
-                                <th class="vertical"><a class="type-text bg-Normal" href="/?strongest&t=Normal&v" onclick="return LoadStrongestAndUpdateURL('Normal', true)">Normal</a></th>
-                                <th class="vertical"><a class="type-text bg-Fire" href="/?strongest&t=Fire&v" onclick="return LoadStrongestAndUpdateURL('Fire', true)">Fire</a></th>
-                                <th class="vertical"><a class="type-text bg-Water" href="/?strongest&t=Water&v" onclick="return LoadStrongestAndUpdateURL('Water', true)">Water</a></th>
-                                <th class="vertical"><a class="type-text bg-Grass" href="/?strongest&t=Grass&v" onclick="return LoadStrongestAndUpdateURL('Grass', true)">Grass</a></th>
-                                <th class="vertical"><a class="type-text bg-Electric" href="/?strongest&t=Electric&v" onclick="return LoadStrongestAndUpdateURL('Electric', true)">Electric</a></th>
-                                <th class="vertical"><a class="type-text bg-Ice" href="/?strongest&t=Ice&v" onclick="return LoadStrongestAndUpdateURL('Ice', true)">Ice</a></th>
-                                <th class="vertical"><a class="type-text bg-Fighting" href="/?strongest&t=Fighting&v" onclick="return LoadStrongestAndUpdateURL('Fighting', true)">Fighting</a></th>
-                                <th class="vertical"><a class="type-text bg-Poison" href="/?strongest&t=Poison&v" onclick="return LoadStrongestAndUpdateURL('Poison', true)">Poison</a></th>
-                                <th class="vertical"><a class="type-text bg-Ground" href="/?strongest&t=Ground&v" onclick="return LoadStrongestAndUpdateURL('Ground', true)">Ground</a></th>
-                                <th class="vertical"><a class="type-text bg-Flying" href="/?strongest&t=Flying&v" onclick="return LoadStrongestAndUpdateURL('Flying', true)">Flying</a></th>
-                                <th class="vertical"><a class="type-text bg-Psychic" href="/?strongest&t=Psychic&v" onclick="return LoadStrongestAndUpdateURL('Psychic', true)">Psychic</a></th>
-                                <th class="vertical"><a class="type-text bg-Bug" href="/?strongest&t=Bug&v" onclick="return LoadStrongestAndUpdateURL('Bug', true)">Bug</a></th>
-                                <th class="vertical"><a class="type-text bg-Rock" href="/?strongest&t=Rock&v" onclick="return LoadStrongestAndUpdateURL('Rock', true)">Rock</a></th>
-                                <th class="vertical"><a class="type-text bg-Ghost" href="/?strongest&t=Ghost&v" onclick="return LoadStrongestAndUpdateURL('Ghost', true)">Ghost</a></th>
-                                <th class="vertical"><a class="type-text bg-Dragon" href="/?strongest&t=Dragon&v" onclick="return LoadStrongestAndUpdateURL('Dragon', true)">Dragon</a></th>
-                                <th class="vertical"><a class="type-text bg-Dark" href="/?strongest&t=Dark&v" onclick="return LoadStrongestAndUpdateURL('Dark', true)">Dark</a></th>
-                                <th class="vertical"><a class="type-text bg-Steel" href="/?strongest&t=Steel&v" onclick="return LoadStrongestAndUpdateURL('Steel', true)">Steel</a></th>
-                                <th class="vertical"><a class="type-text bg-Fairy" href="/?strongest&t=Fairy&v" onclick="return LoadStrongestAndUpdateURL('Fairy', true)">Fairy</a></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td><a class="type-text bg-Normal" href="/?strongest&t=Normal" onclick="return LoadStrongestAndUpdateURL('Normal', false)">Normal</a></td>
-                                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
-                            </tr>
-                            <tr><td><a class="type-text bg-Fire" href="/?strongest&t=Fire" onclick="return LoadStrongestAndUpdateURL('Fire', false)">Fire</a></td>
-                                <td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td>
-                            </tr>
-                            <tr><td><a class="type-text bg-Water" href="/?strongest&t=Water" onclick="return LoadStrongestAndUpdateURL('Water', false)">Water</a></td>
-                                <td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td>
-                            </tr>
-                            <tr><td><a class="type-text bg-Grass" href="/?strongest&t=Grass" onclick="return LoadStrongestAndUpdateURL('Grass', false)">Grass</a></td>
-                                <td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
-                            </tr>
-                            <tr><td><a class="type-text bg-Electric" href="/?strongest&t=Electric" onclick="return LoadStrongestAndUpdateURL('Electric', false)">Electric</a></td>
-                                <td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td>
-                            </tr>
-                            <tr><td><a class="type-text bg-Ice" href="/?strongest&t=Ice" onclick="return LoadStrongestAndUpdateURL('Ice', false)">Ice</a></td>
-                                <td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
-                            </tr>
-                            <tr><td><a class="type-text bg-Fighting" href="/?strongest&t=Fighting" onclick="return LoadStrongestAndUpdateURL('Fighting', false)">Fighting</a></td>
-                                <td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td>
-                            </tr>
-                            <tr><td><a class="type-text bg-Poison" href="/?strongest&t=Poison" onclick="return LoadStrongestAndUpdateURL('Poison', false)">Poison</a></td>
-                                <td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td>
-                            </tr>
-                            <tr><td><a class="type-text bg-Ground" href="/?strongest&t=Ground" onclick="return LoadStrongestAndUpdateURL('Ground', false)">Ground</a></td>
-                                <td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td>
-                            </tr>
-                            <tr><td><a class="type-text bg-Flying" href="/?strongest&t=Flying" onclick="return LoadStrongestAndUpdateURL('Flying', false)">Flying</a></td>
-                                <td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
-                            </tr>
-                            <tr><td><a class="type-text bg-Psychic" href="/?strongest&t=Psychic" onclick="return LoadStrongestAndUpdateURL('Psychic', false)">Psychic</a></td>
-                                <td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td></td><td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
-                            </tr>
-                            <tr><td><a class="type-text bg-Bug" href="/?strongest&t=Bug" onclick="return LoadStrongestAndUpdateURL('Bug', false)">Bug</a></td>
-                                <td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td>
-                            </tr>
-                            <tr><td><a class="type-text bg-Rock" href="/?strongest&t=Rock" onclick="return LoadStrongestAndUpdateURL('Rock', false)">Rock</a></td>
-                                <td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
-                            </tr>
-                            <tr><td><a class="type-text bg-Ghost" href="/?strongest&t=Ghost" onclick="return LoadStrongestAndUpdateURL('Ghost', false)">Ghost</a></td>
-                                <td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td>
-                            </tr>
-                            <tr><td><a class="type-text bg-Dragon" href="/?strongest&t=Dragon" onclick="return LoadStrongestAndUpdateURL('Dragon', false)">Dragon</a></td>
-                                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td>
-                            </tr>
-                            <tr><td><a class="type-text bg-Dark" href="/?strongest&t=Dark" onclick="return LoadStrongestAndUpdateURL('Dark', false)">Dark</a></td>
-                                <td></td><td></td><td></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td>
-                            </tr>
-                            <tr><td><a class="type-text bg-Steel" href="/?strongest&t=Steel" onclick="return LoadStrongestAndUpdateURL('Steel', false)">Steel</a></td>
-                                <td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td>
-                            </tr>
-                            <tr><td><a class="type-text bg-Fairy" href="/?strongest&t=Fairy" onclick="return LoadStrongestAndUpdateURL('Fairy', false)">Fairy</a></td>
-                                <td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="card-footer">&nbsp;</div>
-        </div>
-    </div>
-
-    <!-- About -->
-    <div id=about class="page">
-        <h1>About DialgaDex</h1>
-        <div class="card article" id="contact">
-            <div class="card-header">
-                <div class="card-title">Contact Info</div>
-            </div>
-            <div class="card-body">
-                <p>If you have any questions, suggestions, bug reports, or feedback, please 
-                    <a target="_blank" href="https://old.reddit.com/message/compose?to=Mikegrann&subject=About%20DialgaDex">send me a PM on Reddit</a>. 
-                    Please do not use the Reddit "Chat" feature as it doesn't notify me properly, meaning your message will likely go unseen.</p>
-                <p>You can also submit issues or pull requests via the <a target="_blank" href="https://github.com/mgrann03/dialgadex">Github Repo</a>.</p>
-            </div>
-        </div>
-        <div class="card article" id="credits">
-            <div class="card-header">
-                <div class="card-title">Credits and References</div>
-            </div>
-            <div class="card-body">
-                <h4>The following articles are key to how DialgaDex calculates its metrics:</h4>
-                <ul>
-                    <li><a target="_blank" href=https://gamepress.gg/pokemongo/damage-mechanics>Damage Mechanics</a> from GamePress</li>
-                    <li><a target="_blank" href=https://gamepress.gg/pokemongo/how-calculate-comprehensive-dps>Comprehensive DPS</a> by bioweapon</li>
-                    <li><a target="_blank" href=https://www.reddit.com/r/TheSilphRoad/comments/z3xuzc/analysis_legendarymythical_signature_moves>ER (Equivalent Rating)</a> by /u/Elastic_Space</li>
-                    <li><a target="_blank" href=https://www.reddit.com/r/TheSilphRoad/comments/135nz6o/analysis_improving_pve_overall_theoretical_metric>EER (Estimator Equivalent Rating) and TER (Time Equivalent Rating)</a> by /u/Elastic_Space</li>
-                    <li><a target="_blank" href=https://www.reddit.com/r/TheSilphRoad/comments/1irq4rt/analysis_edps_a_new_theoretical_metric_for_raid>eDPS (Effective DPS)</a> by /u/Mikegrann</li>
-                </ul>
-                <h4>Media credits:</h4>
-                <ul>
-                    <li>Effectiveness and Shadow icons adapted from <a target="_blank" href=https://game-icons.net>Game-Icons.net</a>, with some minor modifications.</li>
-                    <li>Additional site icons adapted from <a target="_blank" href=https://www.svgrepo.com>SVG Repo</a>, with some minor modifications.</li>
-                    <li>Pokémon images/gifs from <a target="_blank" href=https://pokemonshowdown.com>Pokémon Showdown</a> and <a target="_blank" href=https://pokeminers.com>PokéMiners</a>.</li>
-                </ul>
-                <h4>Programming credits:</h4>
-                <ul>
-                    <li><a target="_blank" href=https://palkiadex.com>PalkiaDex</a> is the <a target="_blank" href=https://github.com/javi-b/palkiadex>open-source</a> website that forms the original codebase for this project.</li>
-                    <li><a target="_blank" href=https://github.com/TarekRaafat/autoComplete.js>autoComplete.js</a> is used for search suggestions.</li>
-                    <li><a target="_blank" href=https://github.com/simple-statistics/simple-statistics>Simple Statistics</a> provides the Javascript implementation of the Jenks algorithm.</li>
-                </ul>
-                <h4>Special thanks to:</h4>
-                <ul>
-                    <li><a target="_blank" href=https://javibonafonte.com>Javi Bonafonte</a> for developing PalkiaDex, which was the original codebase for this fork.<br/>
-                        Please consider supporting him via <a target="_blank" href=https://ko-fi.com/javibonafonte>Ko-fi</a>.</li>
-                    <li><a target="_blank" href=https://www.reddit.com/user/Flyfunner>/u/Flyfunner</a>, <a target="_blank" href=https://www.reddit.com/user/bmenrigh>/u/bmenrigh</a> and their full research team for investigating the mechanics of raid battles.</li>
-                    <li><a target="_blank" href=https://pokeminers.com>PokéMiners</a> for providing the game data.</li>
-                    <li><a target="_blank" href=https://www.chasenlee.com>Chasen Less</a> for feedback and collaboration on the user interface.</li>
-                </ul>
-            </div>
-        </div>
-        <div class="card article" id="privacy">
-            <div class="card-header">
-                <div class="card-title">Privacy Policy</div>
-            </div>
-            <div class="card-body">
-                <p>DialgaDex does not directly process or store any personally identifiable information. The website uses no analytics, no cookies, etc.</p>
-                <p>DialgaDex is hosted by GitHub Pages. As a natural consequence of hosting web servers, GitHub may collect personal information such as logging
-                    the IP addresses of visitors. For more information about what may or may not be collected, please refer to the
-                    <a target="_blank" href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub Privacy Statement</a>.
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <!-- FAQ -->
-    <div id=faq class="page">
-        <h1>Frequently Asked Questions</h1>
-        <p>This page collects answers to some of the most common questions I receive or see on Reddit
-            related to DialgaDex. Most of this information (and more) is already available elsewhere
-            on the site via footnotes and tooltips, or is answered in some of the linked reference pages.
-            If you don't find your answer in this FAQ, try looking in one of those places.</p>
-        <p>If you still can't find an answer to your question, consider asking for help on Reddit or
-            contacting me directly.</p>
-        <details class="card article">
-            <summary class="card-header">
-                <div class="card-title">Evaluating Pokémon</div>
-            </summary>
-            <div class="card-body">
-                <h3>How do I decide if my Pokémon is good?</h3>
-                <p>This is a massive question, and it's the main reason DialgaDex exists. There are plenty
-                    of factors that go into determining which Pokémon are good in raids, and many of these
-                    factors aren't visible at all in-game. Here are a few ways of evaluating your Pokémon
-                    using the tools available on this website.</p>
-                <p>First and foremost, anything in the higher tiers of the overall "All-type" attacker ranking 
-                    is obviously going to be useful. These are some of the absolute strongest Pokémon in the
-                    game, many of which are so powerful that you could use them to some degree of success
-                    regardless of the context (weather, party size, type effectiveness). These so-called
-                    "generalists" are always valuable, and only grow more powerful in the specific niches
-                    where they shine brightest.</p>
-                <p>You can also go to your Pokémon's PokéDex page (either by clicking on the Pokémon or 
-                    searching for them at the top of the page). There, your Pokémon's tier rankings are listed
-                    for all of its attack types (including attacks that don't even match the Pokémon's types.)</p>
-                <p>You can also consult the "type" rankings for each type of your Pokémon. For example,
-                    if you're evaluating Garchomp you should consider both the Ground-type and Dragon-type
-                    rankings to see how valuable he is in each situation.</p>
-                <p>As an alternative, you can (and usually should) consider the "counter" rankings for types
-                    that are weak against your Pokémon. To continue our example, a Ground-type like Garchomp
-                    will show up on the Steel-counters ranking. These lists are especially valuable because
-                    they help capture the overlap between different types. While Garchomp is a very good
-                    Ground-type, he has strong competition from Fighting- and Fire-types when facing Steel-type
-                    raid bosses. These "counter" rankings are one of the best ways to cross-reference all the
-                    different ranking lists in one place.</p>
-                <p>To access the "counter" rankings for a type, go to that type's attacker ranking list (click
-                    on "Attacker Rankings" in the dropdown menu in the site header, then select the type at the
-                    top of the page). From there, click on the highlighted "Attackers" button in the header to
-                    toggle from "Strongest X-type Attackers" to "Strongest X-type Counters."</p>
-                <p class="sidenote">(Can't remember what types your Pokémon is good against? Use the Type Chart to
-                    quickly find out! Clicking on any of the attacking types (left side of the table) will bring you
-                    to that type's ranking. Clicking on any of the defending types (top of the table) will bring you 
-                    to that type's "counters" ranking.)</p>
-                <h3>What should I use to compare two Pokémon's rankings?</h3>
-                <p>While the exact eDPS for each Pokémon is the most accurate point of comparison, it can be a little
-                    misleading. eDPS is a stand-in for real world results, and it implies more precision than it
-                    can actually achieve, as real raids are full of volatile, random probabilities. For this reason,
-                    DialgaDex assigns each ranking result a "tier" level. Any Pokémon in the same tier are likely to
-                    perform relatively similarly in the real world. Within any one tier, IVs, boss movesets, unique
-                    tempo and energy interactions, and plain random chance are going to take over. So Pokémon should
-                    be judged primarily by where they appear in these "tiers", not their exact position in the
-                    ranking. There's nothing magical about placing one Pokémon at rank 9 and another at rank 10 if
-                    both of them have very similar eDPS (say, within about ~5% of each other).</p>
-                <h3>How do I find the best moveset for my Pokémon?</h3>
-                <p>On your Pokémon's PokéDex page, the "movesets" area shows the strength of each of it's movesets.
-                    Both the fast and charged move are important, as they each depend on the other to perform
-                    optimally. Some charged moves want to be paired with fast moves that generate a lot of energy,
-                    while others are okay being combined with fast moves that prioritize damage. Make sure to TM
-                    both moves onto your Pokémon, as they only work properly when combined properly.</p>
-                <p>This area only gives the best moves against a generic stand-in enemy, with no super-effective
-                    type bonuses being applied. Usually you'll want your moves to both be super-effective against
-                    whatever boss you're facing, so prioritize movesets where both types match.</p>
-                <p>You can also look up your Pokémon in the various ranking lists to see what moveset is recommended.
-                    If you know the specific raid boss you'll be facing, you can also check that boss's counters
-                    (preferrably using a simulator) to see what movesets are best against that boss.</p>
-                <h3>How do I decide if my Pokémon has good enough IVs ("Appraisal")?</h3>
-                <p>In order to check how your specific Pokémon's IVs stack up, go to the "Stats, IVs, and CP" area on
-                    its PokéDex page. There you can enter your exact IVs and level. When you click "Calculate", the
-                    "Effective Stats" of your Pokémon will be displayed, as well as a comparison between your Pokémon
-                    and a perfect "hundo" at the same level. The most important stat to look at is "Percent of Perfect
-                    eDPS", which represents the performance difference in real raids. (You'll notice that this also
-                    updates the "movesets" area with real DPS values for your specific Pokémon.)</p>
-                <p>IVs are usually overemphasized by the Pokémon Go community. In order, usually it's most important
-                    to have the best Pokémon species, then second most important to have the correct moves, then
-                    least important to have the best IVs.</p>
-                <p>In most circumstances, a perfect 15/15/15 IV Pokémon is only going to be 5-10% better than the
-                    very worst 0/0/0 IV version of that same species and moveset. Most worthwhile attackers are also
-                    obtained from raids, which guarantee at least 10/10/10 minimum IVs. The difference between this
-                    "minimum" raid-reward Pokémon and a "hundo" is usually more like 3%. So while you should generally
-                    prioritize the highest-IV Pokémon you have (especially the attack IV, which is the most relevant
-                    for raids), the difference usually isn't significant enough to fret over.</p>
-                <p>Similarly, even the very worst 0/0/0 IV shadow version of a Pokémon is usually around 5% better
-                    than a "hundo" of the non-shadow version. This means any shadow Pokémon is usually an upgrade
-                    over its pure form. Do not purify a shadow Pokémon to use in raids. The only except is purifying it 
-                    in order to have a high-IV Pokémon to Mega-evolve. Even in this scenario, usually it's better to
-                    hold on to the shadow version, which will be useful on its own, and find a different already-pure
-                    Pokémon to Mega-evolve instead.</p>
-                <h3>How do I figure out whether I have any of the top-tier Pokémon in-game?</h3>
-                <p>On any of the ranking lists, click on the search icon (magnifying class with three dots) to open the
-                    Search String Generator. This tool will take the data being displayed in the list, and transform
-                    it into a search string compatible with Pokémon Go. Just copy the displayed search string, and paste
-                    it into the search window in your app to filter down your list of owned Pokémon.</p>
-                <p>By default the search string will only look for the correct species of Pokémon, but there are additional
-                    options you can enable to search for moves as well. It's recommended that you only search for "elite"
-                    moves (those that require an Elite TM or a limited-time event to obtain), as any other moves can easily
-                    be swapped using regular TMs.</p>
-                <p>The search string will include all Pokémon of a certain tier ranking or better. You can select what tiers
-                    should be included. Generally, anything ranked A-tier or better is very usable in raids.</p>
-                <p>Sometimes, due to limitations in how Pokémon Go implemented its search function and the exact generator
-                    settings you're using, the resulting search string might not be able to perfectly match what is shown
-                    in the ranking list. For instance, there is no direct way to differentiate between two forms of the same 
-                    species with the exact same typing - such as Dialga's Altered and Origin forms. In those cases, the
-                    generator tool attempts to identify any possible inaccuracies and display them so you can double check
-                    whether you are affected.</p>
-            </div>
-        </details>
-        <details class="card article">
-            <summary class="card-header">
-                <div class="card-title">Settings and Options</div>
-            </summary>
-            <div class="card-body">
-                <h3>How can I tweak the parameters used in these calculations?</h3>
-                <p>Most of the calculation settings are available in the settings dropdown in the site header.
-                    This is where you can set the parameters in the eDPS formula: Raid Team Size and Relobby Time.
-                    It also allows you to enable party power, including customizing how many players are in your
-                    party raiding together.</p>
-                <p>These settings apply site-wide and affect all calculations found on both the PokéDex pages and
-                    the ranking lists.</p>
-                <h3>What if I don't have the top Pokémon - how do I find "budget" options?</h3>
-                <p>Whether it's a lack of stardust and candy, lack of Elite TMs, having missed a time-limited
-                    raid/event/research, etc. there are many reasons why you might not be able to access the very
-                    best of the best attackers. The settings for the ranking lists (and "counters" list on a boss's
-                    PokéDex page) have some helpful tools for finding more accessible replacements.</p>
-                <p>The biggest tool is the Species filter, which allows you to remove Mega, shadow, and legendary
-                    Pokémon. Most of the remaining attackers are reasonably available. Often they'll be a rarer
-                    spawn, typically something featured in an event, but they're reasonably likely to be available 
-                    as a wild catch right now. Many of these Pokémon are still very good options, even if they're a
-                    clear tier or two below the top. Target these while you wait to have the resources or access to
-                    better Pokémon. At that point, they'll still be useful for filling out the rest of your raid team.</p>
-                <p>There are also useful Move Filters. If you're looking for true "budget" picks, you can disable
-                    Elite Moves to find Pokémon whose movesets won't require an Elite TM. Often these are the same
-                    species, just with slightly worse moves. In order to compare how much of a difference the Elite TM
-                    would make, you can enable "Suboptimal Moves." This will show up to the top 5 movesets per species,
-                    and the performance of those worse moves as compared to the very best moveset for that species.</p>
-                <p>You can also increase the length of the table with the "Row Count" settings, allowing you to see
-                    more Pokémon and movesets. While Pokémon further down the list will naturally be worse, usually
-                    their performance drops off pretty slowly. For example, the gap between the #1 best Fire-type 
-                    attacker and the 20th best Fire-attacker is roughly the same as the gap to the 90th best, meaning
-                    there are many roughly-equivalent options in the lower tiers.</p>
-                <h3>What are the "Tiers" and "Baseline" settings doing?</h3>
-                <p>The "Tiers" setting determines how Pokémon get grouped into the different tier rankings. Everything
-                    on DialgaDex is calculated dynamically (in fact, it's all calculated directly in your web browser),
-                    and tiers are no exception. This helps remove bias from the tier-making process. Still, there are
-                    a few different ways of building tiers, each with its own motivation and advantages.</p>
-                <p>The Jenks and ESpace methods both rely on choosing a reference "Baseline" Pokémon as a point of
-                    comparison. This Pokémon is placed around the A-tier, then all other Pokémon are ranked relative to it.
-                    There are different ways of selecting this "Baseline." The default "Budget" method looks for the
-                    best highly-available option (which excludes things like Megas, shadows, and legendaries).
-                    The ESpace method - which is designed to be used alongside the ESpace tiers option - looks for the
-                    best reasonably-available option (which excludes most limited Pokémon but includes things like
-                    most shadows and most legendaries). The "Best" method just picks the very best option, without any
-                    further filtering.</p>
-                <p>From here, the tier-making setting takes over. "Jenks" uses an optimization algorithm to find the best
-                    places to split the results into a new tier. It is sometimes called the "Natural Breaks" algorithm,
-                    because it tries to place these splits where there are already gaps in the data, very similar to how
-                    a human would "naturally" define a tier-break if they were doing it by hand. "ESpace" uses a strict
-                    rule that every tier should be 10% wide, meaning A-tier would contain everything from 5% worse to 
-                    5% better than the reference Pokémon, B-tier would be from 15% worse to 5% worse, and so on.</p>
-                <p>"Absolute" tier-making is slightly different. Instead of looking at the context and always searching
-                    for a new point of reference, it has defined "absolute" breakpoints for what eDPS values correspond
-                    to which tiers. This makes it very effective for comparing performance across multiple different type
-                    rankings (exposing, for instance, that even the very best Poison types are still very weak relative
-                    to other types). However, this lacks context - in the rare case where you need a Poison type, even
-                    an otherwise-mediocre option will look S-tier.</p>
-                <h3>Why isn't there a setting to see the best counters against two types?</h3>
-                <p>Generally speaking, very few Pokémon (and even fewer high-difficulty raid bosses worth considering)
-                    share a dual-type combination. At the point where you're looking to find the best counters against 
-                    a specific type combination, you're probably looking to find the best counters against a specific
-                    raid boss. If you're looking for counters against a specific raid boss, you should go there directly
-                    instead of checking a generic ranking list, because other factors like the boss's stats and movesets
-                    become important.</p>
-                <p>For example, if you're looking to find the best counters against a Ground/Fire-type, you're probably
-                    actually looking for the best counters against Primal Groudon. In that case, it's important to know that
-                    Groudon has access to Solar Beam, which means Water-type counters generally underperform against it 
-                    (compared to normal rankings) and certain Pokémon like Golisopod are uniquely equipped against it
-                    (due to Bug's helpful resistance to both Grass- and Ground-type damage).</p>
-                <h3>Why aren't my settings saved between visits?</h3>
-                <p>This feature is on the roadmap, but has not yet been released.</p>
-            </div>
-        </details>
-        <details class="card article">
-            <summary class="card-header">
-                <div class="card-title">Calculation Method</div>
-            </summary>
-            <div class="card-body">
-                <h3>What is eDPS?</h3>
-                <p>eDPS is short for "Effective" DPS. It is calculated using a combination of TDO and DPS,
-                    and represents the actual long-term DPS a Pokémon is expected to do. It accounts for the 
-                    time wasted dying and relobbying, time during which no damage is being done. It should be
-                    considered the successor to previous performance metrics like ER, EER, and TER.</p>
-                <p>For more details about eDPS, check out the original article outlining the measure, its 
-                    motivation, and its advantages over existing metrics.</p>
-                <h3>How is DPS calculated?</h3>
-                <p>DPS and TDO are calculated using the Comprehensive DPS Formula. DialgaDex has some tweaks to
-                    the original formula, including:</p>
-                <ul>
-                    <li>A new formula for estimating y (incoming DPS from the raid boss) more accurately</li>
-                    <li>An updated (higher) "generic" value for y based on results from this new formula and 
-                        cross-referenced against simulations</li>
-                    <li>A new formula for estimating x (energy wasted upon death) more accurately by taking into
-                        account the energy gained and wasted in the final "killing blow"
-                    </li>
-                </ul>
-                <h3>How is Party Power calculated?</h3>
-                <p>In Pokémon Go, party power will double the damage of the next charged attack after it gets
-                    activated. Party power build based on the number of fast attacks you personally use,
-                    regardless of what your party members are doing. The number of fast attacks required to fully
-                    build party power depends on the size of your party: 18 attacks for a duo, 9 for a trio, and
-                    6 for a quad. In order to best utilize party power, you want your ratio of fast-to-charged attacks
-                    to perfectly match these values. This prevents any extra fast moves being required to fully
-                    charge a charged move when party power is already active, and prevents any extra fast moves being
-                    required to fully build party power when a charged move is already charged.</p>
-                <p>The Comprehensive DPS Formula already calculates a Pokémon's expected number of fast and charged
-                    attacks. From there, we can compare this ratio against the desired optimal ratio to see how
-                    frequently party power will be active and boosting charged move damage. (This method is rough and
-                    only applies in the long-term, e.g. over the span of an entire raid. If the opposing raid boss
-                    is known, then exact interactions with incoming damage are best captured using a simulator.)</p>
-            </div>
-        </details>
-        <details class="card article">
-            <summary class="card-header">
-                <div class="card-title">Calculation Accuracy</div>
-            </summary>
-            <div class="card-body">
-                <h3>Why don't these metrics match other websites?</h3>
-                <p>DialgaDex uses the latest, most up-to-date calculation methods possible. While the basic 
-                    formula for calculating DPS and TDO is very similar, this site incorporates multiple 
-                    tweaks to improve on the original work.</p>
-                <p>The most notable change involves incoming damage from raid bosses. Old calculations
-                    significantly underestimated how quickly your Pokémon would die. This had a ripple effect,
-                    resulting in poor estimates for wasted energy. DialgaDex uses an updated method for
-                    estimating incoming damage from bosses, which results in about a 50% higher final value.
-                    Ultimately, this means "glass cannons" (high DPS, frail Pokémon) are typically lower
-                    rated on this website.</p>
-                <p>An additional change further improves the estimate for wasted energy. By recognizing that
-                    energy waste includes both the energy you had when you died and the energy you received
-                    from the final "killing blow," DialgaDex calculates lower overall energy efficiency. This
-                    especially penalizes movesets with energy-hungry 1-bar attacks.</p>
-                <p>DialgaDex is also the only website currently using the latest metric, eDPS. This metric
-                    reflects real game mechanics instead of relying on statistical modeling. It can handle
-                    new scenarios like "solos" (fighting with just a single attacker). And it has been
-                    validated against simulations as more accurate than any previous metrics.</p>
-                <h3>Why doesn't the list of counters match simulations?</h3>
-                <p>While DPS calculations are fairly accurate, they still have their limits. There are
-                    some nuances related to the tempo of attacks (from both your team and the raid boss)
-                    which cannot be fully captured by our DPS formula. For this reason, DialgaDex is best
-                    used to gauge the overall effectiveness of your Pokémon instead of the performance
-                    against any one specific raid boss.</p>
-                <p>For the most accurate list of raid counters, please consult PokéBattler instead.</p>
-                <h3>Why don't the values shown in the ranking tables match the ones in the PokéDex?</h3>
-                <p>For most of the rankings (anything besides the overall "All" types and "Each" type lists),
-                    the DPS calculation includes a super-effective type multiplier. For example, the Fire-type
-                    attackers list applies a 1.6x damage multiplier for Fire-type attacks. The Fire-type 
-                    counters list applies a 1.6x damage multiplier for Water-, Rock-, and Ground-type
-                    attacks (everything super-effective against a Fire-type Pokémon).</p>
-                <p>For overall rankings and PokéDex pages, there is no super-effective multiplier. DPS is
-                    calculated as if you were fighting a completely typeless enemy.</p>
-                <p>If the Type Affinity setting is enabled, instead of the damage multipliers outlined above,
-                    calculations take into account the average multipliers across a relevant selection of real,
-                    high-tier raid bosses. This means e.g. that Flying-type attacks will be marginally boosted
-                    when viewing the Psychic-type rankings, as many of the raid bosses that are weak to Psychic
-                    damage (e.g. Fighting-types) are also vulnerable to Flying damage. Similarly, Fire-type is
-                    boosted on the Flying-type rankings, because many of the targets (Bug and Grass types) overlap.</p>
-                <p>If the Type Affinity setting is enabled, the exact values used for the average boss's weakness
-                    (multiplier on incoming damage) and damage mix (types of damage being dealt by the boss) are
-                    visible in the footnotes.</p>
-                <p><i>Note that quirks of the damage formula in Pokémon Go mean that a 1.6x super-effective
-                    multiplier isn't the same as a 1.6x multiplier on damage. The values in one area will
-                    be roughly 1.6x those in the other area, but the exact ratio is usually closer to 1.5-1.59x</i></p>
-            </div>
-        </details>
-        <details class="card article">
-            <summary class="card-header">
-                <div class="card-title">Modifying the Game Data</div>
-            </summary>
-            <div class="card-body">
-                <h3>Why aren't any of my modifications saved?</h3>
-                <p>Each time the page is loaded, all game data (species, moves, stats, etc.) are freshly
-                    loaded from the Game Master. Any modifications you make will only be active in this
-                    same window. If you navigate away from the website (or open a new tab, or refresh the
-                     page), all the game data is reloaded and your modifications will be lost.</p>
-                <p>DialgaDex is designed to always keep you in the same session while using the website so
-                    your modifications aren't lost during normal browsing.</p>
-                <h3>How do I preview announced-but-unimplemented changes?</h3>
-                <p>In the site settings (accessible via the header), there's an option to preview "speculative"
-                    changes to the game data. These changes are already announced officially, but haven't yet
-                    made it into the Game Master because they haven't yet been added to the game. Such changes
-                    include releases of new Pokémon species or forms, releases of the shadow form for a Pokémon,
-                    and modifications to the moves a Pokémon can learn.</p>
-                <p>By default this setting is enabled so that upcoming releases can easily be previewed and shared.
-                    You can disable these changes in order to show only the currently-available data.</p>
-                <h3>How do I add new moves to a Pokémon?</h3>
-                <p>On the Pokémon's dex page, scroll to the "movesets" area. In the header, you can press
-                    the Edit (pencil) button to open the learnset editor.</p>
-                <p>To add a new move, go to the correct area (fast or charged move) and start typing the name
-                    of the move you're looking for into the search box, then select it from the displayed options.</p>
-                <p>To delete a move (either from the Pokémon's real learnset, or a move you added), find it in
-                    the current move list and press the red X to delete it.</p>
-                <h3>How do I view/edit the attributes for a move?</h3>
-                <p>Anywhere a move is displayed on DialgaDex (in the ranking lists, on a dex page, in the move list, 
-                    etc.) you can click on that move to open the move data editor popup. There, you can easily view
-                    and modify any of the move's attributes, including its type, power, energy, and duration.</p>
-                <h3>How do I add a new move that doesn't yet exist in the Game Master?</h3>
-                <p>On the move data page, click the Edit (pencil) button in the table header to open the move data
-                    editor popup. In this window you can define all the data attributes for your new move, then click
-                    the "Add" button to submit this move data.</p>
-                <p>After this, you'll likely want to make your new move learnable by some Pokémon. This can be done
-                    from that Pokémon's dex page, as described above.</p>
-                <h3>How do I release the shadow version of a Pokémon?</h3>
-                <p>On the Pokémon's dex page, scroll to the top where you find the Pokémon's name and image.
-                    Next to the Pokémon's name is a purple, flame-like "Shadow" icon. Clicking on this icon
-                    will toggle whether the shadow version of this species/form has been released.</p>
-                <h3>How do I add a new species that doesn't yet exist in the Game Master, or add stats for a
-                    species currently missing them, or release an unreleased species?</h3>
-                <p>This feature is on the roadmap, but has not yet been implemented.</p>
-            </div>
-        </details>
-        <details class="card article">
-            <summary class="card-header">
-                <div class="card-title">Ideas, Suggestions, and Bug Reports</div>
-            </summary>
-            <div class="card-body">
-                <h3>Why doesn't _______ do _______?</h3>
-                <p>Sometimes there's a good reason a feature isn't implemented - a few of these are already
-                    explained elsewhere in this FAQ. But often, the real reason is "because nobody has suggested
-                    it yet." Development is still active, so if you have a new idea or find something that isn't
-                    behaving correctly, please reach out via one of the methods listed in the "Contact" page.</p>
-            </div>
-        </details>
-    </div>
+    
+    <div id=pokedex-page class="page"></div>
+    <div id=strongest class="page"></div>
+    <div id=move-data class="page"></div>
+    <div id=type-matrix class="page"></div>
+    <div id=about class="page"></div>
+    <div id=faq class="page"></div>
 
     <!-- footer -->
     <div id=footer>
-        <p>DialgaDex is not affiliated with The Pokémon Company, Niantic, Scopely, Pokémon Go, or any other such entities.<br/>
+        <p data-i18n="site.disclaimer">DialgaDex is not affiliated with The Pokémon Company, Niantic, Scopely, Pokémon Go, or any other such entities.<br/>
             Pokémon is a trademark of Nintendo. All such trademarks are the property of their respective owners.</p>
         <nav id=footer-links>
-            <a id=faq-link href="/?faq">FAQ</a>
+            <a id=faq-link href="/?faq" data-i18n="site.links.FAQ">FAQ</a>
             •
-            <a id=contact-link href="/?about#contact">Contact</a>
+            <a id=contact-link href="/?about#contact" data-i18n="site.links.contact">Contact</a>
             •
-            <a id=credits-link href="/?about#credits">Credits</a>
+            <a id=credits-link href="/?about#credits" data-i18n="site.links.credits">Credits</a>
             •
-            <a id=privacy-link href="/?about#privacy">Privacy</a>
+            <a id=privacy-link href="/?about#privacy" data-i18n="site.links.privacy">Privacy</a>
         </nav>
     </div>
 
