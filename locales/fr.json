@@ -76,7 +76,7 @@
                 "explanation": "Points supplémentaires dans chaque statistique, tels qu'affichés dans l'écran d'évaluation"
             },
             "hundo": "IV 100%",
-            "hundo-tooltip": "Statistiques réelles en jeu pour un Pokémon avec des \nIV parfaits au niveau spécifié",
+            "hundo-tooltip": "§Statistiques réelles en jeu pour un Pokémon avec des \nIV parfaits au niveau spécifié",
             "effective": "Statistiques Réelles",
             "effective-tooltip": "Statistiques réelles en jeu pour un Pokémon avec le niveau et les IV spécifiés.",
             "»percent-perfect-metric": [
@@ -183,7 +183,7 @@
             "absolute-tooltip": {
                 "title": "Niveaux absolus basés uniquement sur la note affichée",
                 "contextless": "Ignore le contexte (comparaison des Pkm, des types)",
-                "baseline": "Optimisé pour les classements généraux « Tous types »",
+                "baseline": "Optimisé pour les classements généraux \"Tous types\"",
                 "purpose": "Idéal pour comparer différents types"
             }
         }

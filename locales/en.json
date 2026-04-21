@@ -76,7 +76,7 @@
                 "explanation": "Additional points in each stat, as displayed in the Appraisal screen"
             },
             "hundo": "100% Stats",
-            "hundo-tooltip": "Real in-game stats for a Perfect-IV Pokémon\nat the specified Level",
+            "hundo-tooltip": "§Real in-game stats for a Perfect-IV Pokémon\nat the specified Level",
             "effective": "Effective Stats",
             "effective-tooltip": "Real in-game stats for a Pokémon with the specified Level and IVs",
             "»percent-perfect-metric": [

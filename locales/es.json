@@ -38,9 +38,9 @@
         },
         
         "notes": {
-            "elite": "* Ataque élite (rápido o cargardo)",
-            "typed": "",
-            "versus": "",
+            "elite": "* Ataque élite (rápido o cargado)",
+            "typed": "Listas de clasificación por tipo son calculado con daño super eficaz por eso tipo, y daño neutral por todos los otros tipos.",
+            "versus": "Listas de clasificación \"versus\" un tipo son calculado con los multiplicadores de daño contra eso tipo.",
             "affinity": {
                 "prefix": "Lista de clasificación usa el",
                 "link": "promedio de los oponentes",
@@ -55,30 +55,30 @@
     },
 
     "dex": {
-        "unreleased": "",
+        "unreleased": "§Esta especie o forma aún no está disponible en **Pokémon GO**",
         "tier-title": "Clasificaciones como Atacante",
         "shadow-title": "Como Oscuro",
         "stats": {
             "title": "Estadísticas, Potencial, y PC",
             "base": "Stats Base",
-            "base-tooltip": "",
+            "base-tooltip": "§Estadísticas de Pokémon como aparecen para esta especie/forma",
             "max": "Nv50 Stats",
-            "max-tooltip": "",
+            "max-tooltip": "§Estadísticas reales del juego\npara un Pokémon de nivel 50 con IVs perfectos.",
             "calc-title": "Calculadora de Estadísticas",
             "level-tooltip": {
-                "cpm": "",
-                "levelup": "",
-                "max": "",
-                "hidden": ""
+                "cpm": "El multiplicador (CPM) utilizado al calcular las estadísticas efectivas.",
+                "levelup": "Lo sube medio nivel por cada mejora",
+                "max": "El nivel máximo es 50 (+1 si es Mejor Amigo).",
+                "hidden": "No es visible en el juego; se representa con un arco blanco en la pantalla del Pokémon"
             },
             "iv-tooltip": {
                 "title": "\"Valores Individuales\"",
-                "explanation": ""
+                "explanation": "Puntos adicionales en cada estadística, como se muestra en la pantalla de evaluación"
             },
             "hundo": "100% Stats",
-            "hundo-tooltip": "",
+            "hundo-tooltip": "§Estadísticas reales del juego\npara un Pokémon de este nivel con IVs perfectos",
             "effective": "Stats Efectivas",
-            "effective-tooltip": "",
+            "effective-tooltip": "Estadísticas efectivas del juego para un Pokémon con el nivel y los IVs especificados.",
             "»percent-perfect-metric": [
                 "#rat-pct-val",
                 "#rat-pct-oftxt",
@@ -118,8 +118,8 @@
             "mega-abbrev": "(M)",
             "shadow-abbrev": "(Os)",
             "notes": {
-                "method": "",
-                "disclaimer": ""
+                "method": "Los cálculos usan el daño que el contraataque inflige a este Pokémon, y la resistencia del contraataque al daño viniendo de este Pokémon.",
+                "disclaimer": "Advertencia: Los cálculos no pueden reproducir las sutilezas de incursiónes reales. Estos cálculos se utilizan mejor para evaluar la fuerza general de los atacantes, y no para un oponente específico. Para obtener la lista más precisa de atacantes, por favor usa un simulador."
             }
         },
         "moves": {
@@ -132,7 +132,7 @@
         "species": {
             "title": "Filtros de Especies",
             "unreleased": "Inédito",
-            "unreleased-tooltip": "",
+            "unreleased-tooltip": "Incluye Pokémon que existen en los archivos del juego, pero todavía no son posibles a obtener.",
             "mega": "Mega/Primigenio",
             "shadow": "Oscuro",
             "legendary": "Legendario",
@@ -141,31 +141,31 @@
         "moves": {
             "title": "Filtros de Ataques",
             "elite": "Ataques Élite*",
-            "elite-tooltip": "",
+            "elite-tooltip": "Incluye ataques limitados\n(Requiere un evento o una MT Élite)",
             "mixed": "Tipos Mezclados",
-            "mixed-tooltip": "",
+            "mixed-tooltip": "Permite que los ataques rápidos y cargados sean de tipos diferentes",
             "off": "Otros Tipos",
-            "off-tooltip": "",
+            "off-tooltip": "Permite que ninguno de los dos ataques sean el tipo deseado",
             "suboptimal": "Ataques Subóptimos",
-            "suboptimal-tooltip": ""
+            "suboptimal-tooltip": "Incluye más de un conjunto de ataques por cada Pokémon"
         },
         "display": {
             "title": "Configuraciónes Visuales",
             "group": "Agrupar Especies",
-            "group-enabled": "",
-            "group-disabled": "",
+            "group-enabled": "Compara los peores ataques con los mejores de ese Pokémon",
+            "group-disabled": "Compara todos los ataques entre sí",
             "baseline": "Base",
-            "baseline-tooltip": "",
+            "baseline-tooltip": "Configurar el Pokémon \"100%\" de referencia",
             "budget": "Económica",
             "budget-tooltip": {
-                "title": "",
+                "title": "Compara con el mejor Pokémon económico",
                 "mega": "Sin Megas",
                 "shadow": "Sin Oscuros",
                 "legendary": "Sin Legendarios",
                 "type": "Necesita ser el mismo tipo"
             },
             "espace-tooltip": {
-                "title": "",
+                "title": "Compara con el mejor Pokémon que es fácilmente disponible",
                 "slegend": "Sin Legendarios Oscuros",
                 "rmythic": "Sin Singulares de Investigaciónes",
                 "energy": "Que no necesitan Energía (Mega/Fusión/Supremo)",
@@ -174,17 +174,17 @@
                 "graphiclink": "Usado en infografías por"
             },
             "best": "Mejor",
-            "best-tooltip": "",
+            "best-tooltip": "Compara con el mejor Pokémon",
             "tiers": "Gradas",
-            "tiers-tooltip": "",
-            "jenks-tooltip": "",
-            "espace-tiers": "",
-            "absolute": "Absoluto",
+            "tiers-tooltip": "§Determina cómo se calculan las gradas.\nDepende del Pokémon de comparación.",
+            "jenks-tooltip": "Gradas algorítmicos para obtener la varianza mínima",
+            "espace-tiers": "Gradas que cambian en puntos predefinidos cada 10%",
+            "absolute": "Absoluta",
             "absolute-tooltip": {
-                "title": "",
-                "contextless": "",
-                "baseline": "",
-                "purpose": ""
+                "title": "Gradas absolutas usando únicamente la calificación mostrada",
+                "contextless": "Sin contexto (sin Pokémon de referencia y sin tipo)",
+                "baseline": "Coincide con las clasificaciones \"generales\"",
+                "purpose": "Mejor para comparar entre tipos diferentes"
             }
         }
     },
@@ -194,50 +194,50 @@
         "metric": "PvE Métrica",
         "dps-tooltip": {
             "title": "Daño por Segundo",
-            "explanation": "",
-            "characteristic": ""
+            "explanation": "Velocidad de hacer daño",
+            "characteristic": "Prefiere los cañones de cristal"
         },
         "tdo-tooltip": {
             "title": "Daño Total",
-            "explanation": "",
-            "characteristic": ""
+            "explanation": "Daño causado antes de morir",
+            "characteristic": "Prefiere los tanques"
         },
         "edps-tooltip": {
             "title": "DPS Efectivo",
-            "explanation": ""
+            "explanation": "En una incursión interminable, es el DPS real que puedes lograr si consideras el tiempo perdido al reingreso a la batalla."
         },
         "level": "Nivel de Pokémon",
         "budget50-tooltip": {
             "title": "Econo50",
             "explanation": "Nivel 50 por Pokémon económicos",
-            "lv40": "",
-            "lv50": "",
-            "characteristic": ""
+            "lv40": "Usa estadísticas de nivel 40 por legendarios",
+            "lv50": "Usa estadísticas de nivel 50 por Pokémon que no son legendarios",
+            "characteristic": "Compensa la escasez de Caramelos raros XL"
         },
         "pp-tooltip": {
             "title": "Mejora de Equipo",
-            "explanation": "",
-            "characteristic": ""
+            "explanation": "Tamaño del grupo para llenar el medidor del \"Mejora de Equipo\"",
+            "characteristic": "Aumenta el daño de los ataques cargados con la proporción entre ataques rápidos y cargados"
         },
         "affinity-tooltip": {
             "title": "Afinidad de Tipos",
-            "explanation": "",
-            "characteristic": ""
+            "explanation": "Considera a los oponentes reales de alta grada al calcular",
+            "characteristic": "Considera los tipos de ataques, potencias de ataques, tipos de Pokémon, y estadísticas de Pokémon por oponentes de este contexto."
         },
         "team-tooltip": {
             "title": "Tamaño del Equipo",
-            "explanation": "",
-            "characteristic": ""
+            "explanation": "Tamaño del Equipo de la incursión por calculando eDPS",
+            "characteristic": "Calcula el eDPS como son N copia idénticas del Pokémon en el equipo, y reingresas la batalla tras cada N-ésima muerte"
         },
         "6stack": "6-Stack",
         "solo": "Solo",
         "megasolo-tooltip": {
             "title": "MegaSolo",
-            "explanation": ""
+            "explanation": "Calcula todos como están luchando en un equipo del 6 Pokémon - excepto Megas, que luchan solo"
         },
         "relobby-tooltip": {
             "title": "Tiempo Reviviendo",
-            "explanation": ""
+            "explanation": "Tiempo necesario para revivir a un equipo de incursión completo y reingresar la batalla"
         },
         "site": "Opciones del Sitio",
         "preview": "Vista Previa",
@@ -252,19 +252,19 @@
 
         "pps": "Potencia por Segundo (DPS)",
         "pps-short": "P/S",
-        "pps-tooltip": "",
+        "pps-tooltip": "La eficacia de un ataque para infligir daño",
         "eps": "Energía por Segundo (EPS)",
         "eps-short": "E/S",
-        "eps-tooltip": "",
+        "eps-tooltip": "La eficacia de un ataque para generar energía",
         "ppe": "Potencia por Energía (DPE)",
         "ppe-short": "P/E",
-        "ppe-tooltip": "",
+        "ppe-tooltip": "La eficacia de un ataque cargado para convertir energía en daño",
         "p2pes": "P/S * P/E",
         "p2pes-short": "§P^2^/ES",
-        "p2pes-tooltip": "",
+        "p2pes-tooltip": "La eficacia de un ataque para infligir daño y usar energía",
         "peps2": "P/S * E/S",
         "peps2-short": "§PE/S^2^",
-        "peps2-tooltip": "",
+        "peps2-tooltip": "La eficacia de un ataque para infligir daño y generar energía",
         
         "»move-title": [
             "#move-data-span",
@@ -383,7 +383,7 @@
         "min-tier": "Grada Mínima",
         "result-title": "Cadena de Búsqueda",
         "issues": "Posibles Problemas",
-        "length-issue": "",
+        "length-issue": "La cadena de búsqueda generada tiene más que el límite de 5000 caracteres.\nModifica los parámetros para que sean más restrictivos.",
         "incl-msg": "Incluido Incorrectamente",
         "excl-msg": "Excluido Incorrectamente",
         "missing": "Faltante: ",
@@ -398,36 +398,36 @@
         "rankings": {
             "typed": {
                 "title": "Mejores Atacantes del tipo {type} - DialgaDex",
-                "description": ""
+                "description": "Los mejores atacantes del tipo {type} en Pokémon Go, utilizando la nueva métrica eDPS."
             },
             "each": {
                 "title": "Mejores Atacantes de Cada Tipo - DialgaDex",
-                "description": ""
+                "description": "Los mejores atacantes de cada tipo en Pokémon Go, utilizando la nueva métrica eDPS."
             },
             "versus": {
                 "title": "Mejores Atacantes contra Oponentes de tipo {type} - DialgaDex",
-                "description": ""
+                "description": "Los mejores atacantes contra oponentes del tipo {type} en Pokémon Go, utilizando la nueva métrica eDPS."
             }
         },
         "moves": {
             "title": "Ataques {kind} {type} - DialgaDex",
-            "description": ""
+            "description": "Todos los datos ocultos de ataques de tipo {type} y clase {kind} en Pokémon Go."
         },
         "pokedex": {
             "title": "#{id} {name} - DialgaDex",
-            "description": ""
+            "description": "Los mejores ataques, los mejores contrarios de incursiones, y las estadísticas base de {name} en Pokémon Go."
         },
         "typechart": {
             "title": "Efectividades de los Tipos - DialgaDex",
-            "description": ""
+            "description": "La efectividad de cada tipo de ataque contra oponentes en Pokémon GO."
         },
         "faq": {
             "title": "PF - DialgaDex",
-            "description": ""
+            "description": "Respuestas a preguntas frecuentes sobre DialgaDex."
         },
         "about": {
             "title": "Sobre - DialgaDex",
-            "description": ""
+            "description": "Créditos, referencias, información de contacto y detalles sobre DialgaDex."
         }
     }
 }
