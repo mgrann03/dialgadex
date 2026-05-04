@@ -1612,7 +1612,8 @@
         "491": "Caboche-Kaboum",
         "492": "Tambour Battant",
         "493": "Ballon Brûlant",
-        "494": "Marteau Mastoc"
+        "494": "Marteau Mastoc",
+        "495": "Plasma Punch"
     },
     "special_moves": {
         "Weather Ball": "Ball'Météo",
