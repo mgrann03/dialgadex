@@ -1613,7 +1613,8 @@
         "492": "Drum Beating",
         "493": "Pyro Ball",
         "494": "Gigaton Hammer",
-        "497": "Plasma Fists"
+        "497": "Plasma Fists",
+        "498": "Glaive Rush"
     },
     "special_moves": {
         "Weather Ball": "Weather Ball",

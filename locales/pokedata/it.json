@@ -1613,7 +1613,8 @@
         "492": "Tamburattacco",
         "493": "Palla Infuocata",
         "494": "Granmartello",
-        "497": "Pugni Plasma"
+        "497": "Pugni Plasma",
+        "498": "Spadoncarica"
     },
     "special_moves": {
         "Weather Ball": "Palla Clima",
