@@ -312,8 +312,7 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal") {
  * Makes string clean, all lowercases and only alphanumeric characters.
  */
 function CleanPokeName(string) {
-
-    return string.toLowerCase().replace(/\W/g, "");
+    return string.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\W/g, "");
 }
 
 /**
