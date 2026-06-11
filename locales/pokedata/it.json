@@ -1614,7 +1614,7 @@
         "493": "Palla Infuocata",
         "494": "Granmartello",
         "497": "Pugni Plasma",
-        "498": "Spadoncarica"
+        "500": "Spadoncarica"
     },
     "special_moves": {
         "Weather Ball": "Palla Clima",
