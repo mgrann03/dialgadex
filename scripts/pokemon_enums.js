@@ -565,6 +565,8 @@ function GetPokemonForms(pokemon_id) {
             return [ "Normal", "Female" ];
         case 925: // Maushold
             return [ "Family_of_four", "Family_of_three" ]
+        case 931: // Squawkabilly
+            return [ "Green", "Blue", "Yellow", "White" ]
         case 964: // Palafin
             return [ "Zero", "Hero" ]
         case 978: // Tatsugiri
@@ -678,6 +680,10 @@ function GetFormText(pokemon_id, form) {
 
     if (pokemon_id == 875) { // Eiscue
         return TranslatedFormName(form+"_face");
+    }
+
+    if (pokemon_id == 931) { // Squawkabilly
+        return TranslatedFormName(form+"_plumage");
     }
 
     switch (form) {
@@ -1139,7 +1145,13 @@ function GetPokemonIconCoords(pokemon_id, form) {
         if (form == "Curly") offsetID = pokemon_id;
         else offsetID = tatsugiriOffset + tatsugiriLookup.indexOf(form);
     }
-    // Squawkabilly
+    else if (pokemon_id == 931) { // Squawkabilly
+        const squawkOffset = 1265;
+        const squawkLookup = ['Blue','Yellow','White'];
+
+        if (form == "Green") offsetID = pokemon_id;
+        else offsetID = squawkOffset + squawkLookup.indexOf(form);
+    }
     // Ursaloon Blood Moon
     // Ogerpon
     // Terapagos
