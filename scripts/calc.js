@@ -700,7 +700,7 @@ async function GetStrongestVersus(enemy_params, search_params, num_counters = 10
 /**
  * Give the effective DPS when accounting for relobbying after every 6 deaths
  */
-function GetEDPS(dps, tdo, pkm_obj = null, enemy_params = null) {
+function GetEDPS(dps, tdo, pkm_obj = null, enemy_params = null, real_damage = false) {
     const RESPAWN_TIME = 1;
     const REJOIN_TIME = settings_relobbytime;
     const RAID_PARTY_SIZE = (pkm_obj.form == "Mega" || pkm_obj.form == "MegaY" || pkm_obj.form == "MegaZ" ) ? settings_team_size_mega : settings_team_size_normal;
@@ -708,8 +708,8 @@ function GetEDPS(dps, tdo, pkm_obj = null, enemy_params = null) {
 
     const tof = tdo/dps;
     const lives = hp / tdo; // total number of attacker-lives needed to kill raid boss
-    const deaths = Math.ceil(lives)-1; // total number of deaths experienced
-    const relobbies = Math.floor(deaths / RAID_PARTY_SIZE); // total relobby penalties incurred (1 relobby per certain # of deaths)
+    const deaths = (real_damage) ? Math.ceil(lives)-1 : lives - 0.5; // total number of deaths experienced
+    const relobbies = (real_damage) ? Math.floor(deaths / RAID_PARTY_SIZE) : deaths / RAID_PARTY_SIZE - 0.5; // total relobby penalties incurred (1 relobby per certain # of deaths)
     const ttw = (lives * tof + (deaths-relobbies) * RESPAWN_TIME + REJOIN_TIME * relobbies); // total battle time (time spent attacking + time spent relobbying)
 
     // naive formula
@@ -718,10 +718,10 @@ function GetEDPS(dps, tdo, pkm_obj = null, enemy_params = null) {
     return hp / ttw;
 }
 
-function GetMetric(dps, tdo, pkm_obj = null, enemy_params = null) {
+function GetMetric(dps, tdo, pkm_obj = null, enemy_params = null, real_damage = false) {
     switch (settings_metric) {
         case "eDPS":
-            return GetEDPS(dps, tdo, pkm_obj, enemy_params);
+            return GetEDPS(dps, tdo, pkm_obj, enemy_params, real_damage);
         default:
             // metrics from Reddit user u/Elastic_Space
             return Math.pow(dps, 1-settings_metric_exp) * Math.pow(tdo, settings_metric_exp);
