@@ -172,6 +172,9 @@ function TranslateEverything() {
     document.getElementById("strongest-links-types")?.updateTranslations();
     document.getElementById("move-type-links-bytype")?.updateTranslations();
 
+    // Rebuild search
+    InitializePokemonSearch();
+
     DisplaySelectedLang();
 }
 
