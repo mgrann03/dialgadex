@@ -457,7 +457,7 @@ function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow, level,
                     fm_mult, cm_mult, enemy_def, y, search_params.real_damage);
                 const tdo = GetTDO(dps, hp, def, y);
                 // metrics from Reddit user u/Elastic_Space
-                const rat = GetMetric(dps, tdo, pkm_obj, enemy_params);
+                const rat = GetMetric(dps, tdo, pkm_obj, enemy_params, search_params.real_damage);
                 all_ratings.push({rat: rat, dps: dps, tdo: tdo});
             }
 
