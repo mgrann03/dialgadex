@@ -1614,7 +1614,7 @@
         "493": "Feuerball",
         "494": "Riesenhammer",
         "497": "Plasmafäuste",
-        "500": "Großklingenstoß"
+        "590": "Großklingenstoß"
     },
     "special_moves": {
         "Weather Ball": "Meteorologe",
