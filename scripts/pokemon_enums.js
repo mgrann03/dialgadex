@@ -321,7 +321,7 @@ function GetPokemonForms(pokemon_id) {
         case 254: // Sceptile
         case 257: // Blaziken
         case 260: // Swampert
-        case 277: // Skarmory
+        case 227: // Skarmory
         case 282: // Gardevoir
         case 302: // Sableye
         case 303: // Mawile
