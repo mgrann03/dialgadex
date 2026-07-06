@@ -1614,7 +1614,8 @@
         "493": "Balón Ígneo",
         "494": "Martillo Colosal",
         "497": "Puños Plasma",
-        "590": "Asalto Espadón"
+        "590": "Asalto Espadón",
+        "592": "Disparo Certero"
     },
     "special_moves": {
         "Weather Ball": "Meteorobola",

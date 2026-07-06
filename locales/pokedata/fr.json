@@ -1614,7 +1614,8 @@
         "493": "Ballon Brûlant",
         "494": "Marteau Mastoc",
         "497": "Plasma Punch",
-        "590": "Charge Glaive"
+        "590": "Charge Glaive",
+        "592": "Tir de Précision"
     },
     "special_moves": {
         "Weather Ball": "Ball'Météo",
