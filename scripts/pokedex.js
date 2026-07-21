@@ -52,7 +52,7 @@ async function LoadPokedex(pokedex_mon) {
             (pokedex_mon.form == def_form), def_form));
 
     // sets previous and next pokemon containers
-    for (i = 1; i <= 2; i++) {
+    for (let i = 1; i <= 2; i++) {
         const prev_pokemon_id = parseInt(pokedex_mon.pokemon_id) - i;
         if (prev_pokemon_id > 0) {
             $("#previous-containers").prepend(
@@ -72,7 +72,7 @@ async function LoadPokedex(pokedex_mon) {
     let additional_cs = $("#additional-containers");
     const additional_forms = forms.slice(1);
 
-    for (f of additional_forms) {
+    for (const f of additional_forms) {
         additional_cs.append(
             GetPokemonContainer(pokedex_mon.pokemon_id, pokedex_mon.form == f, f));
     }
@@ -803,7 +803,7 @@ function SortPokedexTable(column_i, sec_column_j) {
 
     // updates downside triangles
     let triangles = $(".th-triangle");
-    for (triangle of triangles)
+    for (const triangle of triangles)
         triangle.remove();
 
     cells = table.tHead.rows[0].cells;

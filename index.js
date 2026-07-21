@@ -176,7 +176,7 @@ function OnDocumentClick(event)  {
             ShowCountersPopup(this, false);
         // removes rat pcts borders
         let rat_pcts = $(".counter-rat-pct > a");
-        for (rat_pct of rat_pcts)
+        for (const rat_pct of rat_pcts)
             $(rat_pct).css("border", "none");
     }
 
@@ -508,7 +508,7 @@ function InitializePokemonSearch() {
                 }
                 
                 // Add types
-                for (type of data.value.types) {
+                for (const type of data.value.types) {
                     $(item).append($("<td><img src='imgs/types/"
                         + type.toLowerCase() + ".gif' alt='"
                         + type + "'></img></td>"));

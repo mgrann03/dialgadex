@@ -300,7 +300,7 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal") {
     // pokemon types
     const types = poke_obj !== undefined ? poke_obj.types : [];
     const pokemon_types_div = $("<div class=pokemon-types></div>");
-    for (type of types) {
+    for (const type of types) {
         pokemon_types_div.append(GetTypeLinkImg(type));
     }
     pokemon_container_div.append(pokemon_types_div);

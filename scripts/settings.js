@@ -121,7 +121,7 @@ function ToggleDrawer(drawer_icon, drawer_elem) {
         drawer_icon.addClass("active");
     } else {
         drawer_elem.css("display", "none");
-        drawer_icon.removeClassClass("active");
+        drawer_icon.removeClass("active");
     }
 }
 

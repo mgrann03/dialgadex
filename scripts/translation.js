@@ -47,7 +47,7 @@ function GetPreferredLocale() {
 /**
  * Load locale in preparation for translation
  */
-async function SetLocale(newLocale) {  
+async function SetLocale(newLocale) {
     const oldLocale = currentLocale;
     if (!newLocale)
         newLocale = GetPreferredLocale();
@@ -73,12 +73,12 @@ async function SetLocale(newLocale) {
     }
     catch (err) {
         console.error("No translation context found");
-        translationMap = LoadFallbackLocale();
+        translationMap = await LoadFallbackLocale();
     }
-    finally { 
+    finally {
         if (currentLocale != oldLocale)
             TranslateEverything();
-        
+
         document.documentElement.lang = currentLocale;
     }
 }

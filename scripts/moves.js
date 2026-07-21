@@ -249,7 +249,7 @@ function SetMoveTable(sort_info) {
 
     // update header based on sort order
     let triangles = $("#move-data-table .th-triangle");
-    for (triangle of triangles)
+    for (const triangle of triangles)
         triangle.remove();
     $("#move-"+sort_info.sort_by).append("<span class=th-triangle>" + (sort_info.reverse ? "▴" : "▾") + "</span>");
 
