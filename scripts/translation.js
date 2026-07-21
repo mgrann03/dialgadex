@@ -3,6 +3,7 @@ let translationMap;
 let fallbackMap;
 
 const availableLocales = ['en', 'es', 'fr', 'de', 'it'];
+const LOCALE_STORAGE_KEY = "dialgadex_locale";
 /**
  * Checks whether the input locale is currently supported.
  */
@@ -30,6 +31,12 @@ function GetPreferredLocale() {
         }
     }
 
+    // User previously chose a preference on this device
+    try {
+        const savedLocale = localStorage.getItem(LOCALE_STORAGE_KEY);
+        if (IsSupportedLocale(savedLocale)) return savedLocale;
+    } catch (err) { /* localStorage unavailable (e.g. private browsing) */ }
+
     // Check preferred languages in browser instead
     for (let lang of navigator.languages) {
         if (IsSupportedLocale(lang)) { // acceptable preference
@@ -49,6 +56,7 @@ function GetPreferredLocale() {
  */
 async function SetLocale(newLocale) {
     const oldLocale = currentLocale;
+    const explicitChoice = !!newLocale;
     if (!newLocale)
         newLocale = GetPreferredLocale();
     if (!IsSupportedLocale(newLocale)) return;
@@ -80,6 +88,11 @@ async function SetLocale(newLocale) {
             TranslateEverything();
 
         document.documentElement.lang = currentLocale;
+
+        if (explicitChoice) {
+            try { localStorage.setItem(LOCALE_STORAGE_KEY, currentLocale); }
+            catch (err) { /* localStorage unavailable (e.g. private browsing) */ }
+        }
     }
 }
 

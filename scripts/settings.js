@@ -26,6 +26,70 @@ let settings_speculative = true;
 let settings_metric_exp = 0.225;
 let settings_newdps = true;
 
+const SETTINGS_STORAGE_KEY = "dialgadex_settings";
+
+/**
+ * Persists the current user-facing settings to localStorage.
+ */
+function SaveSettings() {
+    try {
+        localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify({
+            metric: settings_metric,
+            default_level: settings_default_level,
+            xl_budget: settings_xl_budget,
+            compare: settings_compare,
+            tiermethod: settings_tiermethod,
+            party_size: settings_party_size,
+            relobbytime: settings_relobbytime,
+            team_size_normal: settings_team_size_normal,
+            team_size_mega: settings_team_size_mega,
+            type_affinity: settings_type_affinity,
+            theme: settings_theme,
+            speculative: settings_speculative
+        }));
+    } catch (err) { /* localStorage unavailable (e.g. private browsing) */ }
+}
+
+/**
+ * Restores previously-saved settings from localStorage, if any, applying
+ * only the ones that differ from the current default to avoid redundant
+ * page updates and re-patching already-applied data (e.g. speculative).
+ */
+function LoadPersistedSettings() {
+    let saved;
+    try {
+        const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
+        if (!raw) return;
+        saved = JSON.parse(raw);
+    } catch (err) {
+        return;
+    }
+
+    if (typeof saved.theme === "string" && saved.theme !== settings_theme)
+        SetTheme(saved.theme);
+    if (METRICS.has(saved.metric) && saved.metric !== settings_metric)
+        SetMetric(saved.metric);
+    if (Array.isArray(saved.default_level) &&
+        (JSON.stringify(saved.default_level) !== JSON.stringify(settings_default_level) ||
+            !!saved.xl_budget !== settings_xl_budget))
+        SetDefaultLevel(saved.default_level, !!saved.xl_budget);
+    if (["top", "budget", "ESpace"].includes(saved.compare) && saved.compare !== settings_compare)
+        SetCompare(saved.compare);
+    if (["jenks", "broad", "ESpace", "absolute"].includes(saved.tiermethod) && saved.tiermethod !== settings_tiermethod)
+        SetTierMethod(saved.tiermethod);
+    if (Number.isInteger(saved.party_size) && saved.party_size !== settings_party_size)
+        SetPartySize(saved.party_size);
+    if (Number.isInteger(saved.relobbytime) && saved.relobbytime !== settings_relobbytime)
+        SetRelobbyPenalty(saved.relobbytime);
+    if (Number.isInteger(saved.team_size_normal) && Number.isInteger(saved.team_size_mega) &&
+        (saved.team_size_normal !== settings_team_size_normal || saved.team_size_mega !== settings_team_size_mega))
+        SetTeamSize(saved.team_size_normal, saved.team_size_mega);
+    if (typeof saved.type_affinity === "boolean" && saved.type_affinity !== settings_type_affinity)
+        SetAffinity(saved.type_affinity);
+    if (typeof saved.speculative === "boolean" && saved.speculative !== settings_speculative)
+        SetSpeculative(saved.speculative);
+}
+
 /**
  * Bind event handlers for all settings options
  */
@@ -214,6 +278,8 @@ function SetMetric(metric) {
 
     // reload page
     CheckURLAndAct();
+
+    SaveSettings();
 }
 
 /**
@@ -239,6 +305,8 @@ function SetPartySize(party_size) {
 
     // reload page
     CheckURLAndAct();
+
+    SaveSettings();
 }
 
 /**
@@ -265,9 +333,11 @@ function SetTeamSize(normal_mon_count, mega_count) {
 
     // Reset any cached tier rankings
     ClearTypeTiers();
-    
+
     // reload page
     CheckURLAndAct();
+
+    SaveSettings();
 }
 
 /**
@@ -283,9 +353,11 @@ function SetRelobbyPenalty(penalty) {
 
     // Reset any cached tier rankings
     ClearTypeTiers();
-    
+
     // reload page
     CheckURLAndAct();
+
+    SaveSettings();
 }
 
 /**
@@ -316,9 +388,11 @@ function SetDefaultLevel(level, xl_budget = false) {
 
     // Reset any cached tier rankings
     ClearTypeTiers();
-    
+
     // reload page
     CheckURLAndAct();
+
+    SaveSettings();
 }
 
 /**
@@ -376,9 +450,11 @@ function SetCompare(compareTo = "top") {
 
     // Reset any cached tier rankings
     ClearTypeTiers();
-    
+
     // reload page
     CheckURLAndAct();
+
+    SaveSettings();
 }
 
 /**
@@ -410,9 +486,11 @@ function SetTierMethod(method = "jenks") {
 
     // Reset any cached tier rankings
     ClearTypeTiers();
-    
+
     // reload page
     CheckURLAndAct();
+
+    SaveSettings();
 }
 
 /**
@@ -422,6 +500,10 @@ function SetTheme(theme = "darkmode") {
     $("body").removeClass();
     $("body").addClass(theme);
     settings_theme = theme;
+
+    $("#settings-darkmode").prop("checked", theme === "darkmode");
+
+    SaveSettings();
 }
 
 /**
@@ -444,11 +526,15 @@ function SetAffinity(useAffinity) {
     // sets global variable
     settings_type_affinity = useAffinity;
 
+    $("#settings-affinity").prop("checked", useAffinity);
+
     // Reset any cached tier rankings
     ClearTypeTiers();
-    
+
     // reload page
     CheckURLAndAct();
+
+    SaveSettings();
 }
 
 /**
@@ -457,14 +543,18 @@ function SetAffinity(useAffinity) {
 function SetSpeculative(useUpcoming) {
     settings_speculative = useUpcoming;
 
+    $("#settings-speculative").prop("checked", useUpcoming);
+
     PatchSpeculative(settings_speculative);
-    
+
     // Reset caches
     ClearTypeTiers();
     ClearMoveUserMap()
-    
+
     // reload page
     CheckURLAndAct();
+
+    SaveSettings();
 }
 
 /**

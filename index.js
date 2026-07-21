@@ -35,6 +35,7 @@ async function Main() {
     try {
         await Promise.all(loadPromises);
 
+        LoadPersistedSettings();
         CheckURLAndAct();
         InitializePokemonSearch();
     }
