@@ -538,6 +538,8 @@ function GetPokemonForms(pokemon_id) {
             return [ "Disguised", "Busted" ];
         case 800: // Necrozma
             return [ "Normal", "Dawn_wings", "Dusk_mane", "Ultra" ];
+        case 845: // Cramorant
+            return [ "Normal", "Gulping", "Gorging" ];
         case 849: // Toxtricity
             return [ "Amped", "Low_key" ];
         case 854: // Sinistea
@@ -1113,6 +1115,13 @@ function GetPokemonIconCoords(pokemon_id, form) {
 
         if (form == "Normal") offsetID = pokemon_id;
         else offsetID = necrozmaOffset + necrozmaLookup.indexOf(form);
+    }
+    else if (pokemon_id == 845) { // Cramorant
+        const cramorantOffset = 1212;
+        const cramorantLookup = ['Gulping','Gorging'];
+
+        if (form == "Normal") offsetID = pokemon_id;
+        else offsetID = cramorantOffset + cramorantLookup.indexOf(form);
     }
     else if (pokemon_id == 849 && form == "Low_key") offsetID = 1214; // Toxtricity
     // Alcremie
