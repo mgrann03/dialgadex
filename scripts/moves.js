@@ -126,7 +126,7 @@ function GetMoveData(type = "Any", move_kind = "Fast") {
     all_move_data = all_move_data.map(e=>({
         id: e.id,
         name: e.name,
-        display_name: TranslatedMoveName(e.id, e.type),
+        display_name: TranslatedMoveName(e.id, e.type, e.name),
         kind: e.kind,
         type: e.type,
         power: e.power,
@@ -338,9 +338,9 @@ function SetMoveTable(sort_info) {
 function GetMovesOfKind(moveKind = "any") {
     let moveList = [];
     if (moveKind == "fm" || moveKind == "any")
-        jb_fm.forEach(e => moveList.push({...e, display_name: TranslatedMoveName(e.id, e.type)}));
+        jb_fm.forEach(e => moveList.push({...e, display_name: TranslatedMoveName(e.id, e.type, e.name)}));
     if (moveKind == "cm" || moveKind == "any")
-        jb_cm.forEach(e => moveList.push({...e, display_name: TranslatedMoveName(e.id, e.type)}));
+        jb_cm.forEach(e => moveList.push({...e, display_name: TranslatedMoveName(e.id, e.type, e.name)}));
     moveList = moveList.sort((a,b)=>(a.display_name.localeCompare(b.display_name, currentLocale)));;
 
     return moveList;

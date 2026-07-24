@@ -855,7 +855,7 @@ function SanitizeMoveNameSearch(move_name) {
     let move_obj = jb_fm.find(e=>e.name==move_name);
     if (!move_obj) move_obj = jb_cm.find(e=>e.name==move_name);
 
-    const transName = TranslatedMoveName(move_obj.id, "None"); // Sanitize to "untyped" base names as they appear in-game
+    const transName = TranslatedMoveName(move_obj.id, "None", move_obj.name); // Sanitize to "untyped" base names as they appear in-game
 
     if (move_name == "Psychic") {
         if (currentLocale == "en" || currentLocale == "es") // technically also hindi, portuguese, turkish
@@ -883,7 +883,7 @@ function FixMoveTranslationCollision(incl_pkm, all_incl_cms, incl_cm, excl_cm, e
         return PokemonCanLearn(pkm_obj, excl_cm);
     })) return "";
 
-    return "&!" + incl_pkm[0].id + ",!@" + TranslatedMoveName(excl_cm_id);
+    return "&!" + incl_pkm[0].id + ",!@" + TranslatedMoveName(excl_cm_id, "None", excl_cm);
 }
 
 
@@ -934,7 +934,7 @@ function GetHiddenPowerSearch(pkm_id, all_fms) {
 
     let hp_only_types = hp_types.difference(non_hp_types);
 
-    let str = '&!' + pkm_id + ",!@" + TranslatedMoveName(281); // Hidden Power ID
+    let str = '&!' + pkm_id + ",!@" + TranslatedMoveName(281, "None", "Hidden Power"); // Hidden Power ID
     for (const t of hp_only_types) {
         str = str + ",@1" + t;
     }

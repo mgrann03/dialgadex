@@ -221,9 +221,9 @@ function UpdateMoveEditor(move_name, clear_fields = true) {
 
     let move_obj, move_kind = "fm";
     if (typeof move_name === 'string' || move_name instanceof String) {
-        move_obj = jb_fm.find(e=>e.name.toLowerCase()==move_name.toLowerCase() || collator.compare(TranslatedMoveName(e.id, e.type), move_name)===0);
+        move_obj = jb_fm.find(e=>e.name.toLowerCase()==move_name.toLowerCase() || collator.compare(TranslatedMoveName(e.id, e.type, e.name), move_name)===0);
         if (!move_obj) {
-            move_obj = jb_cm.find(e=>e.name.toLowerCase()==move_name.toLowerCase() || collator.compare(TranslatedMoveName(e.id, e.type), move_name)===0);
+            move_obj = jb_cm.find(e=>e.name.toLowerCase()==move_name.toLowerCase() || collator.compare(TranslatedMoveName(e.id, e.type, e.name), move_name)===0);
             move_kind = "cm";
         }
     }
@@ -233,7 +233,7 @@ function UpdateMoveEditor(move_name, clear_fields = true) {
         editor_action = "edit";
         $("#move-edit-title").text(GetTranslation("move-editor.edit.title"));
         
-        $("#any-search-box").val(TranslatedMoveName(move_obj.id, move_obj.type));
+        $("#any-search-box").val(TranslatedMoveName(move_obj.id, move_obj.type, move_obj.name));
         $("#move-edit-name").val(move_obj.name);
         $("#move-edit-type").val(move_obj.type);
         $("#move-edit-type").trigger("change");
@@ -393,7 +393,7 @@ function GetMoveLink(move_name, move_type, is_elite) {
 
     const span = $("<span class='type-text'></a>");
     span.addClass("bg-" + move_type);
-    span.text(TranslatedMoveName(move_obj.id, move_obj.type) + (is_elite ? "*" : ""));
+    span.text(TranslatedMoveName(move_obj.id, move_obj.type, move_obj.name) + (is_elite ? "*" : ""));
     span.on("click", function (e) {
         e.preventDefault();
         OpenMoveEditor(move_name);
@@ -516,7 +516,7 @@ function UpdateMovesetEditor() {
         if (!move_obj) return;
 
         const li = $("<li class='move-select-move'><span class='type-text bg-"+(move_obj.type=="None" ? "any-type" : move_obj.type)+"'>"
-            +TranslatedMoveName(move_obj.id, move_obj.type)+(is_elite ? "*" : "")+"</span></li>");
+            +TranslatedMoveName(move_obj.id, move_obj.type, move_obj.name)+(is_elite ? "*" : "")+"</span></li>");
         const img = $("<img class='absolute-right delete-icon' src='imgs/delete.svg' alt='Delete Button' />");
         img.click(function(e) {
             // default move; add to _rem

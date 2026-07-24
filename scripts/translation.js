@@ -276,8 +276,8 @@ function TranslatedFormName(form_key) {
  * If type=None for typed moves, strip type down to base name
  * Else shift to appropriate type, if it exists
  */
-function TranslatedMoveName(id, type) {
-    let trans = GetTranslation("pokedata.moves."+id, "");
+function TranslatedMoveName(id, type, backup = "") {
+    let trans = GetTranslation("pokedata.moves."+id, backup);
 
     // Add appropriate Hidden Power type
     if (id == 281 && type) {
