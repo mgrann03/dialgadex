@@ -10,6 +10,7 @@ Usage:
 """
 
 import json
+import re
 import sys
 import urllib.request
 from pathlib import Path
@@ -88,6 +89,21 @@ def update_species(local, source):
             while len(species) <= idx:
                 species.append("")
             species[idx] = val
+
+
+_MOVE_REF = re.compile(r"<<move_name_(\d+)>>")
+
+
+def resolve_move_references(local):
+    for move_id, val in list(local["moves"].items()):
+        matches = _MOVE_REF.findall(val)
+        if matches:
+            new_val = val
+            for ref_id in matches:
+                ref_key = str(int(ref_id))
+                resolved = local["moves"].get(ref_key, f"<<move_name_{ref_id}>>")
+                new_val = new_val.replace(f"<<move_name_{ref_id}>>", resolved)
+            local["moves"][move_id] = new_val
 
 
 def update_moves(local, source):
@@ -182,6 +198,7 @@ def main():
 
         update_species(local, source)
         update_moves(local, source)
+        resolve_move_references(local)
         update_types(local, source, english_source)
         update_forms(local, source, english_source, local_english)
         update_special_moves(local, source, english_source)
