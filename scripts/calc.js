@@ -309,15 +309,29 @@ function ProcessDuration(duration) {
  * https://www.reddit.com/r/TheSilphRoad/comments/1fkrjxx/analysis_dynamax_raid_mechanics_even_more_move/
  */
 function ProcessPower(move_obj) {
+    let super_mega_mult = 1;
+    if (move_obj.mega_temp) {
+        switch (settings_supermega_level) {
+            case 2:
+                super_mega_mult = Math.fround(1.1);
+            break;
+            case 3:
+                super_mega_mult = Math.fround(1.2);
+            break;
+            case 4:
+                super_mega_mult = Math.fround(1.3);
+            break;
+        }
+    }
 
     if (settings_pve_turns) {
         const newDuration = ProcessDuration(move_obj.duration);
         const modifier = (newDuration - move_obj.duration / 1000) / newDuration;
         if (Math.abs(modifier) >= 0.199)
-            return move_obj.power * (1 + modifier);
+            return move_obj.power * (1 + modifier) * super_mega_mult;
     }
     
-    return move_obj.power;
+    return move_obj.power * super_mega_mult;
 }
 
 /**

@@ -120,6 +120,12 @@ function GetPokemonMoves(pkm_obj, hidden_power_filter = "Type-Match") {
         }
     }
 
+    // Add temporary mega+ moves to Super Mega Forms
+    if (Array.isArray(pkm_obj.temp_cm)) {
+        for (const c of pkm_obj.temp_cm) 
+            cm.push(c);
+    }
+
     // Add moves if in customizations
     if (Array.isArray(pkm_obj.fm_add)) {
         for (const f of pkm_obj.fm_add) 

@@ -21,6 +21,7 @@ let settings_team_size_mega = 6;
 let settings_type_affinity = true;
 let settings_theme = "darkmode";
 let settings_speculative = true;
+let settings_supermega_level = 1;
 
 // inaccessible
 let settings_metric_exp = 0.225;
@@ -56,6 +57,12 @@ function BindSettings() {
     $("#pp-2").click(function() { SetPartySize(2); });
     $("#pp-3").click(function() { SetPartySize(3); });
     $("#pp-4").click(function() { SetPartySize(4); });
+    
+    // Super Mega Level
+    $("#supermegalevel-1").click(function() { SetSuperMegaLevel(1); });
+    $("#supermegalevel-2").click(function() { SetSuperMegaLevel(2); });
+    $("#supermegalevel-3").click(function() { SetSuperMegaLevel(3); });
+    $("#supermegalevel-4").click(function() { SetSuperMegaLevel(4); });
 
     // Raid Team Size
     $("#rt-1").click(function() { SetTeamSize(1, 1); });
@@ -233,6 +240,32 @@ function SetPartySize(party_size) {
     $("#pp-4").removeClass("settings-opt-sel");
     
     $("#pp-" + party_size.toString()).addClass("settings-opt-sel");
+
+    // Reset any cached tier rankings
+    ClearTypeTiers();
+
+    // reload page
+    CheckURLAndAct();
+}
+
+
+/**
+ * Sets the degree of mega evolution for Super Mega species and updates the page accordingly.
+ */
+function SetSuperMegaLevel(mega_level) {
+    mega_level = parseInt(mega_level);
+    mega_level = Math.max(1, Math.min(mega_level, 4));
+
+    // sets global variable
+    settings_supermega_level = mega_level;
+
+    // sets settings options selected class
+    $("#supermegalevel-1").removeClass("settings-opt-sel");
+    $("#supermegalevel-2").removeClass("settings-opt-sel");
+    $("#supermegalevel-3").removeClass("settings-opt-sel");
+    $("#supermegalevel-4").removeClass("settings-opt-sel");
+    
+    $("#supermegalevel-" + mega_level.toString()).addClass("settings-opt-sel");
 
     // Reset any cached tier rankings
     ClearTypeTiers();

@@ -39,6 +39,7 @@
 
         "notes": {
             "elite": "* Elite fast or charged move",
+            "supermega": "Super Mega move level",
             "typed": "Typed rankings are calculated using super-effective damage for the chosen type, and neutral damage for all other types.",
             "versus": "\"Versus\" rankings are calculated using appropriate effectiveness multiplier for attacking damage.",
             "affinity": {
@@ -218,6 +219,11 @@
             "title": "Party Power",
             "explanation": "Size of Party for party power boosts",
             "characteristic": "Boosts charged damage based on the ratio of fast:charged moves"
+        },
+        "supermegalevel-tooltip": {
+            "title": "Super Mega Level",
+            "explanation": "Degree of Mega Evolution for Super Mega Pokémon",
+            "characteristic": "Determines the damage multiplier (1.0/1.1/1.2/1.3x) for temporary Super Mega charged attacks. Level 4 also temporarily grants +2 levels to the Pokémon."
         },
         "affinity-tooltip": {
             "title": "Type Affinity",

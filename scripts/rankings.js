@@ -157,6 +157,7 @@ async function LoadStrongest(type = "Any", versus) {
     $("#footnote-typed-ranking").css('display', type != "Any" && !settings_type_affinity ? 'block' : 'none');
     $("#footnote-affinity-ranking").css('display', type != "Each" && settings_type_affinity ? 'block' : 'none');
     $("#footnote-versus").css('display', search_params.versus ? 'block' : 'none');
+    $("#footnote-supermega-value").text(settings_supermega_level);
 
     // Update Icon
     ShowHideSearchStringIcon(type != "Each");

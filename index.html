@@ -433,16 +433,18 @@
                                 <!--<span id=lvl-both class="settings-opt unselectable tooltip">40+50
                                     <span class="tooltiptext">Shows both level 40 and level 50 entries in type ranks, otherwise uses level 40 for PokeDex</span></span>-->
                             <!--<div class=settings-subtitle><i>Beta</i> Features</div>-->
-                            <span class="tooltip tooltip-left"><span data-i18n="settings.pp-tooltip.title">Party Power</span>
+                            <span class="tooltip tooltip-left"><span data-i18n="settings.supermegalevel-tooltip.title">Super Mega Level</span>
                                 <span class="tooltiptext">
-                                    <p data-i18n="settings.pp-tooltip.explanation">Size of Party for party power boosts</p>
-                                    <p><i data-i18n="settings.pp-tooltip.characteristic">Boosts charged damage based on the ratio of fast:charged moves</i></p></span>
+                                    <p data-i18n="settings.supermegalevel-tooltip.explanation">Degree of Mega Evolution for Super Mega Pokémon</p>
+                                    <p><i data-i18n="settings.supermegalevel-tooltip.characteristic">Determines the damage multiplier (1.0/1.1/1.2/1.3x) for temporary Super Mega
+                                        charged attacks. Level 4 also temporarily grants +2 levels to the Pokémon.
+                                    </i></p></span>
                             </span>
                                 <div class=setting-value>
-                                    <span id=pp-1 class="settings-opt settings-opt-sel unselectable">1</span>
-                                    <span id=pp-2 class="settings-opt unselectable">2</span>
-                                    <span id=pp-3 class="settings-opt unselectable">3</span>
-                                    <span id=pp-4 class="settings-opt unselectable">4</span>
+                                    <span id=supermegalevel-1 class="settings-opt settings-opt-sel unselectable">1</span>
+                                    <span id=supermegalevel-2 class="settings-opt unselectable">2</span>
+                                    <span id=supermegalevel-3 class="settings-opt unselectable">3</span>
+                                    <span id=supermegalevel-4 class="settings-opt unselectable">4</span>
                                 </div>
                             <span class="tooltip tooltip-left"><span data-i18n="settings.affinity-tooltip.title">Type Affinity</span>
                                 <span class="tooltiptext">
@@ -454,6 +456,17 @@
                                     <input type="checkbox" value="affinity" id="settings-affinity" checked>
                                     <span class="slider"></span>
                                 </label>
+                            <span class="tooltip tooltip-left"><span data-i18n="settings.pp-tooltip.title">Party Power</span>
+                                <span class="tooltiptext">
+                                    <p data-i18n="settings.pp-tooltip.explanation">Size of Party for party power boosts</p>
+                                    <p><i data-i18n="settings.pp-tooltip.characteristic">Boosts charged damage based on the ratio of fast:charged moves</i></p></span>
+                            </span>
+                                <div class=setting-value>
+                                    <span id=pp-1 class="settings-opt settings-opt-sel unselectable">1</span>
+                                    <span id=pp-2 class="settings-opt unselectable">2</span>
+                                    <span id=pp-3 class="settings-opt unselectable">3</span>
+                                    <span id=pp-4 class="settings-opt unselectable">4</span>
+                                </div>
                             <span class="tooltip tooltip-left" id="settings-teamsize-header"><span  data-i18n="settings.team-tooltip.title">Raid Team Size</span>
                                 <span class="tooltiptext">
                                     <p data-i18n="settings.team-tooltip.explanation">Size of battle team for computing eDPS</p>

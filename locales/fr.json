@@ -39,6 +39,7 @@
 
         "notes": {
             "elite": "* = Attaque Élite",
+            "supermega" : "Niveau de attaque Super Mega",
             "typed": "Les classements par type sont calculés en utilisant les dégâts super efficaces pour le type choisi et les dégâts neutres pour tous les autres types.",
             "versus": "Les classements sont calculés à l'aide d'un multiplicateur d'efficacité approprié pour les dégâts d'attaque.",
             "affinity": {
@@ -218,6 +219,11 @@
             "title": "Bonus d'Équipe",
             "explanation": "Taille du groupe pour booster le bonus d'équipe",
             "characteristic": "Augmente les dégâts chargés en fonction du ratio attaques rapides/attaques chargées"
+        },
+        "supermegalevel-tooltip": {
+            "title": "Niveau Super Méga",
+            "explanation": "Degré de Méga-Évolution pour les Pokémon Super Méga",
+            "characteristic": "Détermine le multiplicateur de dégâts (1,0/1,1/1,2/1,3x) pour les attaques chargées Super Méga temporaires. Le niveau 4 confère également temporairement +2 niveaux au Pokémon." 
         },
         "affinity-tooltip": {
             "title": "Affinité de type",

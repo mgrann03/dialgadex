@@ -394,6 +394,8 @@ function GetMoveLink(move_name, move_type, is_elite) {
     const span = $("<span class='type-text'></a>");
     span.addClass("bg-" + move_type);
     span.text(TranslatedMoveName(move_obj.id, move_obj.type, move_obj.name) + (is_elite ? "*" : ""));
+    if (move_obj.mega_temp)
+        span.append("<sup>"+ settings_supermega_level +"</sup>");
     span.on("click", function (e) {
         e.preventDefault();
         OpenMoveEditor(move_name);

@@ -1641,6 +1641,10 @@ input.settings-num {
         rgb(240, 128, 48), rgb(104, 144, 240), rgb(120, 200, 80));
 }
 
+.type-text sup {
+    font-size: 70%;
+}
+
 .type-links {
     margin: 0 auto;
     width: 50%;
