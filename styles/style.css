@@ -839,7 +839,7 @@ span.strongest-name {
     color: var(--col-text-lowkey);
 }
 
-sup.xl { 
+sup.lvl { 
     font-size: 60%;
     color: var(--col-text-lowkey);
 }

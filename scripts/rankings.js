@@ -738,7 +738,8 @@ function GetRankingRow(row_i) {
             + coords.y + "px'></span>"
             + " <span class='strongest-name'>"
             + name
-            + ((p.level == 50) ? "<sup class='xl'>XL</sup>" : "")
+            + ((settings_xl_budget && p.level >= 50) ? "<sup class='lvl'>XL</sup>" : "")
+            + ((settings_supermega_level == 4 && p.level % 10 == 2) ? "<sup class='lvl'>+2</sup>" : "")
             +"</span>"
             + ((form_text.length > 0)
                 ? "<span class=poke-form-name> (" + form_text + ")</span>" 

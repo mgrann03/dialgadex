@@ -355,6 +355,7 @@ async function SearchAll(search_params, f_process_pokemon) {
                 await f_process_pokemon(pkm_obj, true, level, search_params);
             }
 
+            const base_level = level;
             // other forms
             for (let form_i = 1; form_i < forms.length; form_i++) {
 
@@ -365,6 +366,9 @@ async function SearchAll(search_params, f_process_pokemon) {
                 if (!pkm_obj || (!search_params.unreleased && !pkm_obj.released)
                     || (!search_params.mega && (pkm_obj.form == "Mega" || pkm_obj.form == "MegaY" || pkm_obj.form == "MegaZ")))
                     continue;
+
+                if ((pkm_obj.raid_tier == 8 || pkm_obj.raid_tier == 9) && settings_supermega_level == 4)
+                    level = base_level + 2;
 
                 await f_process_pokemon(pkm_obj, false, level, search_params);
                 // other forms and shadow (except not released when it shouldn't)
