@@ -354,7 +354,7 @@ function AddEditMove() {
         move_obj.duration = dest_move_obj.duration;
     }
     else { // Adding
-        const new_id = Math.max(jb_fm.at(-1).id, jb_cm.at(-1).id)+1; // next available id
+        const new_id = jb_fm.concat(jb_cm).reduce((curMax,e)=>Math.max(curMax, e.id), -Infinity) + 1; // next available id
         dest_move_obj.id = new_id;
         AddMoveNameToLocale(new_id, dest_move_obj.name);
         //TODO: Persist new moves past locale swaps! The configured move name would need to still be saved somehow?
