@@ -408,7 +408,7 @@ function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow, level,
     }
 
     // searches for the movesets
-    for (fm of all_fms) {
+    for (const fm of all_fms) {
 
         const fm_is_elite = elite_fms.includes(fm);
 
@@ -430,7 +430,7 @@ function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow, level,
         const fm_mult =
             GetEffectivenessMultOfType(enemy_effectiveness, fm_obj.type);
 
-        for (cm of all_cms) {
+        for (const cm of all_cms) {
 
             const cm_is_elite = elite_cms.includes(cm);
 
@@ -463,7 +463,7 @@ function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow, level,
                 GetEffectivenessMultOfType(enemy_effectiveness, cm_obj.type);
             
             let all_ratings = [];
-            for (enemy_y of enemy_moveset_ys) {
+            for (const enemy_y of enemy_moveset_ys) {
                 const y = AvgYAgainst(enemy_y, effectiveness);
 
                 // calculates the data
