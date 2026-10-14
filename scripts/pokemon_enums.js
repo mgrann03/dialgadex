@@ -532,8 +532,8 @@ function GetPokemonForms(pokemon_id) {
             return [ "Normal", "Fire", "Water", "Grass", "Electric", "Ice",
                 "Fighting", "Poison", "Ground", "Flying", "Psychic", "Bug",
                 "Rock", "Ghost", "Dragon", "Dark", "Steel", "Fairy" ];
-        //case 774: // Minior
-            //return [ "Red" ]; // TODO not added to pokmeon go yet
+        case 774: // Minior
+            return [ "Meteor", "Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet" ];
         case 778: // Mimikyu
             return [ "Disguised", "Busted" ];
         case 800: // Necrozma
@@ -677,8 +677,12 @@ function GetFormText(pokemon_id, form) {
         return TranslatedFormName(form+"_trim");
     }
 
-    if (pokemon_id == 774) // TODO Minior not handled yet
-        return "";
+    if (pokemon_id == 774) {
+        if (form == "Meteor")
+            return TranslatedFormName("Meteor");
+
+        return TranslatedFormName("Core_"+form);
+    }
 
     if (pokemon_id == 875) { // Eiscue
         return TranslatedFormName(form+"_face");
@@ -742,7 +746,7 @@ function GetPokemonIconCoords(pokemon_id, form) {
     const NUM_COLS = 12, W = 40, H = 30;
 
     let offsetID = pokemon_id;
-    // offset reference: https://github.com/smogon/sprites/blob/master/ps-pokemon.sheet.mjs
+    // offset reference: https://github.com/smogon/sprites/blob/7493d948e6c6885d5941e1f44f7fd6be31ed6c12/ps-pokemon.sheet.mjs
 
     if (form == "Mega" || form == "MegaY") {
         const megaOffset = 1320;
@@ -1108,7 +1112,13 @@ function GetPokemonIconCoords(pokemon_id, form) {
         else if (form == 'Dusk') offsetID = 1192;
     }
     else if (pokemon_id == 746 && form == "School") offsetID = 1176 // Wishiwashi
-    // Minior
+    else if (pokemon_id == 774) { // Minior
+        const miniorOffset = 1177;
+        const miniorLookup = ['Meteor','Orange','Yellow','Green','Blue','Indigo','Violet'];
+
+        if (form == "Red") offsetID = pokemon_id;
+        else offsetID = miniorOffset + miniorLookup.indexOf(form);
+    }
     else if (pokemon_id == 800) { // Necrozma
         const necrozmaOffset = 1193;
         const necrozmaLookup = ['Dusk_mane','Dawn_wings','Ultra'];
