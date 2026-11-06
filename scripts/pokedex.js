@@ -856,14 +856,19 @@ function MergeSortPokedexTable(rows, column_i, sec_column_j) {
 function MergeRows(a, b, column_i, sec_column_j) {
 
     function GetRowValue(row) {
-        const col_i_val = parseFloat(
-            row.getElementsByTagName("TD")[column_i]
-                .innerHTML.toLowerCase());
-        if (!isNaN(col_i_val)) return col_i_val;
+        const cell = row.getElementsByTagName("TD")[column_i];
+        if (!cell) return -Infinity;
+        const primary = parseFloat(NormalizeLocaleNumber(cell.innerHTML));
+        if (!isNaN(primary)) return primary;
 
-        return parseFloat(
-            row.getElementsByTagName("TD")[sec_column_j]
-                .innerHTML.toLowerCase());
+        if (sec_column_j != null) {
+            const secCell = row.getElementsByTagName("TD")[sec_column_j];
+            if (secCell) {
+                const secondary = parseFloat(NormalizeLocaleNumber(secCell.innerHTML));
+                if (!isNaN(secondary)) return secondary;
+            }
+        }
+        return -Infinity;
     }
 
     let c = [];
@@ -1014,6 +1019,25 @@ function AddPokemonMove(pkm_obj, move_name, moveType) {
         pkm_obj.cm_add.push(move_name);
         UpdateMovesetEditor();
     }
+}
+
+/**
+ * Normalize a locale-formatted number string into a JS-parseable number string.
+ */
+function NormalizeLocaleNumber(str) {
+    let s = String(str).replace(/&#\d+;/g, '').replace(/<[^>]*>/g, '').trim();
+    // strip any remaining whitespace (incl. figure spaces)
+    s = s.replace(/\s/g, '');
+    const lastComma = s.lastIndexOf(',');
+    const lastDot = s.lastIndexOf('.');
+    if (lastComma > lastDot) {
+        // comma is the decimal separator; remove grouping dots
+        s = s.replace(/\./g, '').replace(',', '.');
+    } else {
+        // dot is the decimal separator; remove grouping commas
+        s = s.replace(/,/g, '');
+    }
+    return s;
 }
 
 /**
