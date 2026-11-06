@@ -160,20 +160,22 @@ function TranslateEverything() {
 
     UpdateURL(window.location.search);
 
-    // Refresh Dynamic content
-    CheckURLAndAct();
+    // Refresh Dynamic content only after initial load has completed
+    if (app_initialized) {
+        CheckURLAndAct();
 
-    // Always clear and rebuild type chart (not dynamic)
-    $("#type-matrix-topaxis th:not(:first)").remove();
-    $("#type-matrix-body").empty();
-    BuildTypeChart();
-    
-    // Always update type selectors
-    document.getElementById("strongest-links-types")?.updateTranslations();
-    document.getElementById("move-type-links-bytype")?.updateTranslations();
+        // Always clear and rebuild type chart (not dynamic)
+        $("#type-matrix-topaxis th:not(:first)").remove();
+        $("#type-matrix-body").empty();
+        BuildTypeChart();
 
-    // Rebuild search
-    InitializePokemonSearch();
+        // Always update type selectors
+        document.getElementById("strongest-links-types")?.updateTranslations();
+        document.getElementById("move-type-links-bytype")?.updateTranslations();
+
+        // Rebuild search
+        InitializePokemonSearch();
+    }
 
     DisplaySelectedLang();
 }

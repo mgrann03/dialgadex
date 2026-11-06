@@ -7,6 +7,7 @@ $(document).ready(Main);
 
 // global constants and variables
 let current_pkm_obj = null; // current pokedex pokemon's pkm_obj
+let app_initialized = false; // whether initial load (data + first page) has completed
 
 const pages = [
     {id: 'pokedex-page', template_path: '/templates/pokedex.html', binder: BindPokeDex},
@@ -37,6 +38,7 @@ async function Main() {
 
         CheckURLAndAct();
         InitializePokemonSearch();
+        app_initialized = true;
     }
     catch (err) {
         console.error("Fatal error in JSON data load.");
